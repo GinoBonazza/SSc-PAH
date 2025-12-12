@@ -1,0 +1,369 @@
+---
+title: "Olink_RV_dysf"
+author: "GinoBonazza (ginoandrea.bonazza@usz.ch)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr config, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+
+knitr::opts_chunk$set(message = FALSE)
+
+knitr::opts_chunk$set(cache = FALSE)
+
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+```
+
+## Setup
+
+```{r setup, class.source = "fold-hide"}
+# Get current file name to make folder
+current_file <- "Olink_RV_dysf"
+
+# Load libraries
+library(EnhancedVolcano)
+library(here)
+library(enrichplot)
+library(readr)
+library(readxl)
+library(Matrix)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(tidyverse)
+library(reshape2)
+library(S4Vectors)
+library(pheatmap)
+library(png)
+library(gridExtra)
+library(scales)
+library(RColorBrewer)
+library(Matrix.utils)
+library(tibble)
+library(ggplot2)
+library(scater)
+library(patchwork)
+library(statmod)
+library(statmod)
+library(rtracklayer)
+library(png)
+library(reactable)
+library(UpSetR)
+library(limma)
+library(igraph)
+library(gridExtra) 
+library(ggpubr)
+library(DESeq2)
+library(gprofiler2)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(AnnotationHub)
+library(OlinkAnalyze)
+library(UpSetR)
+library(ComplexHeatmap)
+library(survival)
+library(broom)
+
+
+#Output paths
+output_dir_data <- here::here("output", current_file)
+if (!dir.exists(output_dir_data)) dir.create(output_dir_data)
+
+if (!dir.exists(here::here("docs", "figure"))) dir.create(here::here("docs", "figure"))
+
+output_dir_figs <- here::here("docs", "figure", paste0(current_file, ".Rmd"))
+if (!dir.exists(output_dir_figs)) dir.create(output_dir_figs)
+```
+
+```{r read data}
+# ---- 1) Read your NPX data ----
+# Option A: pre_quant.csv (what you have now)
+npx_path <- here::here("data", "OLINK_PL", "pre_quant.csv")
+
+#npx_raw <- readr::read_csv(npx_path)
+npx_raw <- readr::read_delim(npx_path, delim = "\t")
+
+dplyr::glimpse(npx_raw)
+# Should contain columns like: SampleID, SampleType, OlinkID, Assay, NPX, PCNormalizedNPX,
+# DataAnalysisRefID, Normalization, Count, etc.
+```
+
+```{r}
+# Path to the fixed LOD file you downloaded
+fixedLOD_path <- here::here("data", "OLINK_PL", "Reveal_fixedLOD.csv")
+
+npx_lod <- olink_lod(
+  data          = npx_raw,
+  lod_file_path = fixedLOD_path,
+  lod_method    = "FixedLOD"
+)
+# This adds columns: LOD, PCNormalizedLOD, etc. for assays where NPX-based LOD is valid
+
+
+## 2) Bring in LODCount + LODMethod from the fixed LOD file
+
+lod_info <- readr::read_delim(
+  fixedLOD_path,
+  delim   = ";",
+  col_types = readr::cols()
+) %>%
+  dplyr::select(
+    OlinkID,
+    DataAnalysisRefID,
+    LODNPX,
+    LODCount,
+    LODMethod
+  )
+
+npx_lod <- npx_lod %>%
+  dplyr::left_join(
+    lod_info,
+    by = c("OlinkID", "DataAnalysisRefID")
+  )
+
+
+## 3) Define "above LOD" and distance from LOD for ALL proteins
+
+npx_lod <- npx_lod %>%
+  dplyr::mutate(
+    # NPX-based distance where LOD is available,
+    # otherwise count-based distance (log2 scale)
+    lod_dist = dplyr::case_when(
+      !is.na(LOD) ~ NPX - LOD,                         # NPX scale (lod_npx assays)
+      !is.na(LODCount) ~ log2(Count / LODCount),       # count scale (lod_count assays)
+      TRUE ~ NA_real_
+    ),
+    # Boolean: above LOD in whichever scale was used
+    above_LOD = dplyr::case_when(
+      !is.na(LOD) ~ NPX > LOD,
+      !is.na(LODCount) ~ Count > LODCount,
+      TRUE ~ NA
+    )
+  )
+```
+
+```{r}
+# Flag whether each assay is above LOD
+npx_lod <- npx_lod %>%
+  mutate(
+    above_LOD = NPX > LOD
+  )
+
+# (Optional) define your own matrix-type groups
+lysates      <- c("KR2", "KR3", "W2", "W3", "GD2", "GD3")
+supernatants <- c("MT2", "EC2")
+buffer      <- c("KR1", "W1", "GD1")
+medium <- c("MT1", "EC1")
+
+sample_info <- npx_lod %>%
+  distinct(SampleID, SampleType) %>%
+  mutate(
+    Matrix = dplyr::case_when(
+      SampleID %in% lysates                        ~ "Lysate",
+      SampleID %in% supernatants                   ~ "Supernatant",
+      SampleID %in% buffer                   ~ "Buffer",
+      SampleID %in% medium                   ~ "Medium",
+      SampleType == "NEGATIVE_CONTROL"             ~ "Negative control",
+      SampleType == "PLATE_CONTROL"             ~ "Plate control",
+      SampleType == "SAMPLE_CONTROL"             ~ "Sample control",
+      TRUE                                         ~ "Serum"
+    )
+  )
+
+npx_lod <- npx_lod %>%
+  left_join(sample_info, by = c("SampleID", "SampleType"))
+
+# Summarise: how many proteins above LOD per sample
+lod_summary <- npx_lod %>%
+  group_by(SampleID, SampleType, Matrix) %>%
+  summarise(
+    n_proteins      = dplyr::n(),
+    n_above_LOD  = sum(above_LOD, na.rm = TRUE),
+    frac_above_LOD  = n_above_LOD / n_proteins,
+    .groups = "drop"
+  )
+
+lod_summary
+
+```
+
+
+```{r, fig.height=14, fig.width=8}
+# Barplot per sample, ordered by fraction above LOD
+ggplot(lod_summary,
+       aes(x = reorder(SampleID, frac_above_LOD),
+           y = frac_above_LOD,
+           fill = Matrix)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x   = "Sample",
+    y   = "Fraction of proteins above LOD",
+    fill = "Matrix type"
+  ) +
+  theme_bw() + 
+  geom_text(
+  aes(
+    label = n_above_LOD,
+    y = frac_above_LOD + 0.03
+  ),
+  size = 3
+)
+```
+
+```{r, fig.height=14, fig.width=8}
+# Order samples by median distance from LOD
+sample_order <- npx_lod %>%
+  group_by(SampleID) %>%
+  summarise(median_lod_dist = median(lod_dist, na.rm = TRUE)) %>%
+  arrange(median_lod_dist) %>%
+  pull(SampleID)
+
+npx_lod$SampleID <- factor(npx_lod$SampleID, levels = sample_order)
+
+# Boxplot of distance-to-LOD per sample
+ggplot(npx_lod,
+       aes(x = SampleID,
+           y = lod_dist,
+           fill = Matrix)) +
+  geom_boxplot(outlier.size = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +  # LOD line
+  coord_flip() +
+  labs(
+    x   = "Sample",
+    y   = "Distance to LOD (NPX – LOD)",
+    fill = "Matrix type"
+  ) +
+  theme_bw()
+
+```
+
+```{r}
+lysates <- c("W1", "W2", "W3","GD1", "GD2", "GD3","KR1", "KR2", "KR3")
+
+lysate_mat <- npx_lod %>%
+  dplyr::filter(SampleID %in% lysates,
+         Matrix %in% c("Lysate", "Buffer")) %>%          # optional, if Matrix is defined
+  dplyr::select(Assay, SampleID, NPX) %>%        # or use Target / OlinkID instead of Assay
+  distinct() %>%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  ) %>%
+  mutate(
+    avg_lysate_NPX = rowMeans(across(all_of(lysates)), na.rm = TRUE)
+  ) %>%
+  relocate(avg_lysate_NPX, .after = Assay) %>%
+  arrange(desc(avg_lysate_NPX))
+
+lysate_mat %>% dplyr::glimpse()
+write.csv(lysate_mat, file = here::here(output_dir_data, "lysate_mat.csv"), quote=F, row.names = F)
+```
+
+```{r, fig.height=6, fig.width=8}
+# Define the samples of interest
+supernatants <- c("MT2", "EC2")
+medium       <- c("MT1", "EC1")
+sup_med_ids  <- c(supernatants, medium)
+
+# 1) Build protein × sample NPX matrix
+sup_med_long <- npx_lod %>%
+  dplyr::filter(SampleID %in% sup_med_ids) %>%
+  dplyr::select(Assay, SampleID, NPX) %>%
+  distinct()
+
+sup_med_wide <- sup_med_long %>%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  )
+
+mat_sup_med <- as.matrix(sup_med_wide[ , -1])
+rownames(mat_sup_med) <- sup_med_wide$Assay
+
+# Optional: column annotation (Matrix type)
+col_anno <- data.frame(
+  Matrix = sample_info$Matrix[match(colnames(mat_sup_med), sample_info$SampleID)]
+)
+rownames(col_anno) <- colnames(mat_sup_med)
+
+# 2) Heatmap
+pheatmap::pheatmap(
+  mat_sup_med,
+  scale               = "none",          # z-score per protein (can set to "none" if you prefer raw NPX)
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  clustering_method   = "complete",
+  show_rownames       = FALSE,          # set TRUE if you want all protein names
+  annotation_col      = col_anno,
+  main                = "NPX in supernatant and medium samples"
+)
+
+```
+
+```{r, fig.height=6, fig.width=8}
+# Define the samples of interest
+buffer <- c("W1", "GD1", "KR1")
+lysate       <- c("W2", "W3", "GD2", "GD3", "KR2", "KR3")
+sup_med_ids  <- c(buffer, lysate)
+
+# 1) Build protein × sample NPX matrix
+sup_med_long <- npx_lod %>%
+  dplyr::filter(SampleID %in% sup_med_ids) %>%
+  dplyr::select(Assay, SampleID, NPX) %>%
+  distinct()
+
+sup_med_wide <- sup_med_long %>%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  )
+
+mat_sup_med <- as.matrix(sup_med_wide[ , -1])
+rownames(mat_sup_med) <- sup_med_wide$Assay
+
+# Optional: column annotation (Matrix type)
+col_anno <- data.frame(
+  Matrix = sample_info$Matrix[match(colnames(mat_sup_med), sample_info$SampleID)]
+)
+rownames(col_anno) <- colnames(mat_sup_med)
+
+# 2) Heatmap
+pheatmap::pheatmap(
+  mat_sup_med,
+  scale               = "none",          # z-score per protein (can set to "none" if you prefer raw NPX)
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  clustering_method   = "complete",
+  show_rownames       = FALSE,          # set TRUE if you want all protein names
+  annotation_col      = col_anno,
+  main                = "NPX in supernatant and medium samples"
+)
+
+```
+
+
+```{r}
+sup_medium <- c("MT1", "EC1", "MT2", "EC2")
+
+sup_medium_mat <- npx_lod %>%
+  dplyr::filter(SampleID %in% sup_medium,
+         Matrix %in% c("Medium","Supernatant")) %>%          # optional, if Matrix is defined
+  dplyr::select(Assay, SampleID, NPX) %>%        # or use Target / OlinkID instead of Assay
+  distinct() %>%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  ) %>%
+  mutate(
+    avg_lysate_NPX = rowMeans(across(all_of(sup_medium)), na.rm = TRUE)
+  ) %>%
+  relocate(avg_lysate_NPX, .after = Assay) %>%
+  arrange(desc(avg_lysate_NPX))
+
+sup_medium_mat %>% dplyr::glimpse()
+write.csv(sup_medium_mat, file = here::here(output_dir_data, "sup_medium_mat.csv"), quote=F, row.names = F)
+```
