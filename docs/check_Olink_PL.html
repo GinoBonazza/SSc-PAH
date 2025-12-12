@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="GinoBonazza (ginoandrea.bonazza@usz.ch)" />
+
+
+<title>Olink_RV_dysf</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SSc-PAH</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/GinoBonazza/SSc-PAH">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Olink_RV_dysf</h1>
+<h4 class="author">GinoBonazza (<a
+href="mailto:ginoandrea.bonazza@usz.ch"
+class="email">ginoandrea.bonazza@usz.ch</a>)</h4>
+<h4 class="date">12 December, 2025</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-12-12
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>SSc-PAH/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20251015code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20251015)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20251015code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20251015)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree8dd406665305d6f7de7563cc35e5241c4860e7e1targetblank8dd4066a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/8dd406665305d6f7de7563cc35e5241c4860e7e1" target="_blank">8dd4066</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree8dd406665305d6f7de7563cc35e5241c4860e7e1targetblank8dd4066a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/8dd406665305d6f7de7563cc35e5241c4860e7e1" target="_blank">8dd4066</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/Olink_RV_dysf.Rmd
+    Untracked:  analysis/VennDiagram.2025-10-16_12-40-35.351562.log
+    Untracked:  analysis/VennDiagram.2025-10-22_22-26-15.195599.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-43-26.101506.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-54-12.491858.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-49-49.773885.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-58-01.820025.log
+    Untracked:  analysis/VennDiagram.2025-10-30_21-01-21.178598.log
+    Untracked:  analysis/omnipathr-log/
+    Untracked:  data/322591_DEA_Serum_ENRICH-iST_C37202WU322591.xlsx
+    Untracked:  data/Cohorts_comparison.xlsx
+    Untracked:  data/Cohorts_comparison_2.xlsx
+    Untracked:  data/DE_Groups_vs_Controls.xlsx
+    Untracked:  data/Metadata_Olink_analysis.xlsx
+    Untracked:  data/OLINK_PL/
+    Untracked:  data/Plasma_ENRICHPlus_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Plasma_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_ENRICHiST_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Zurich_47_PAH_RHC_sample_list_CB040723_CLINICAL DATA_update20240109.xlsx
+    Untracked:  data/o37198_2025-02-27_olink_SummarizedExperiment.qs2
+    Untracked:  omnipathr-log/
+    Untracked:  output/Olink_RV_dysf/
+    Untracked:  renv.lock
+    Untracked:  renv/
+
+Unstaged changes:
+    Modified:   .Rprofile
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/check_Olink_PL.Rmd</code>) and
+HTML (<code>docs/check_Olink_PL.html</code>) files. If you’ve configured
+a remote Git repository (see <code>?wflow_git_remote</code>), click on
+the hyperlinks in the table below to view the files as they were in that
+past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/GinoBonazza/SSc-PAH/blob/8dd406665305d6f7de7563cc35e5241c4860e7e1/analysis/check_Olink_PL.Rmd" target="_blank">8dd4066</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2025-12-12
+</td>
+<td>
+wflow_publish("analysis/check_Olink_PL.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<pre class="r fold-hide"><code># Get current file name to make folder
+current_file &lt;- &quot;Olink_RV_dysf&quot;
+
+# Load libraries
+library(EnhancedVolcano)
+library(here)
+library(enrichplot)
+library(readr)
+library(readxl)
+library(Matrix)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(tidyverse)
+library(reshape2)
+library(S4Vectors)
+library(pheatmap)
+library(png)
+library(gridExtra)
+library(scales)
+library(RColorBrewer)
+library(Matrix.utils)
+library(tibble)
+library(ggplot2)
+library(scater)
+library(patchwork)
+library(statmod)
+library(statmod)
+library(rtracklayer)
+library(png)
+library(reactable)
+library(UpSetR)
+library(limma)
+library(igraph)
+library(gridExtra) 
+library(ggpubr)
+library(DESeq2)
+library(gprofiler2)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(AnnotationHub)
+library(OlinkAnalyze)
+library(UpSetR)
+library(ComplexHeatmap)
+library(survival)
+library(broom)
+
+
+#Output paths
+output_dir_data &lt;- here::here(&quot;output&quot;, current_file)
+if (!dir.exists(output_dir_data)) dir.create(output_dir_data)
+
+if (!dir.exists(here::here(&quot;docs&quot;, &quot;figure&quot;))) dir.create(here::here(&quot;docs&quot;, &quot;figure&quot;))
+
+output_dir_figs &lt;- here::here(&quot;docs&quot;, &quot;figure&quot;, paste0(current_file, &quot;.Rmd&quot;))
+if (!dir.exists(output_dir_figs)) dir.create(output_dir_figs)</code></pre>
+<pre class="r"><code># ---- 1) Read your NPX data ----
+# Option A: pre_quant.csv (what you have now)
+npx_path &lt;- here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;pre_quant.csv&quot;)
+
+#npx_raw &lt;- readr::read_csv(npx_path)
+npx_raw &lt;- readr::read_delim(npx_path, delim = &quot;\t&quot;)
+
+dplyr::glimpse(npx_raw)</code></pre>
+<pre><code>Rows: 99,264
+Columns: 31
+$ SampleID                &lt;chr&gt; &quot;S323&quot;, &quot;S302&quot;, &quot;S293&quot;, &quot;L7&quot;, &quot;L13&quot;, &quot;L4&quot;, &quot;S3…
+$ SampleType              &lt;chr&gt; &quot;SAMPLE&quot;, &quot;SAMPLE&quot;, &quot;SAMPLE&quot;, &quot;SAMPLE&quot;, &quot;SAMPL…
+$ WellID                  &lt;chr&gt; &quot;A1&quot;, &quot;A2&quot;, &quot;A3&quot;, &quot;A4&quot;, &quot;A5&quot;, &quot;A6&quot;, &quot;A7&quot;, &quot;A8&quot;…
+$ PlateID                 &lt;chr&gt; &quot;plate1&quot;, &quot;plate1&quot;, &quot;plate1&quot;, &quot;plate1&quot;, &quot;plate…
+$ DataAnalysisRefID       &lt;chr&gt; &quot;R10002&quot;, &quot;R10002&quot;, &quot;R10002&quot;, &quot;R10002&quot;, &quot;R1000…
+$ OlinkID                 &lt;chr&gt; &quot;OID50348&quot;, &quot;OID50348&quot;, &quot;OID50348&quot;, &quot;OID50348&quot;…
+$ UniProt                 &lt;chr&gt; &quot;Q7Z7G0&quot;, &quot;Q7Z7G0&quot;, &quot;Q7Z7G0&quot;, &quot;Q7Z7G0&quot;, &quot;Q7Z7G…
+$ Assay                   &lt;chr&gt; &quot;ABI3BP&quot;, &quot;ABI3BP&quot;, &quot;ABI3BP&quot;, &quot;ABI3BP&quot;, &quot;ABI3B…
+$ AssayType               &lt;chr&gt; &quot;assay&quot;, &quot;assay&quot;, &quot;assay&quot;, &quot;assay&quot;, &quot;assay&quot;, &quot;…
+$ Panel                   &lt;chr&gt; &quot;Reveal&quot;, &quot;Reveal&quot;, &quot;Reveal&quot;, &quot;Reveal&quot;, &quot;Revea…
+$ Block                   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ Count                   &lt;dbl&gt; 71169, 54363, 98266, 48536, 76410, 59770, 8568…
+$ ExtNPX                  &lt;dbl&gt; 1.3414491, 0.9411095, 1.5620803, 0.8468975, 1.…
+$ NPX                     &lt;dbl&gt; 0.372975767, -0.027363893, 0.593606889, -0.121…
+$ Normalization           &lt;chr&gt; &quot;Intensity&quot;, &quot;Intensity&quot;, &quot;Intensity&quot;, &quot;Intens…
+$ PCNormalizedNPX         &lt;dbl&gt; 0.53090280, 0.13056311, 0.75153387, 0.03635114…
+$ AssayQC                 &lt;chr&gt; &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;…
+$ SampleQC                &lt;chr&gt; &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;, &quot;PASS&quot;…
+$ SoftwareVersion         &lt;chr&gt; &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;…
+$ SoftwareName            &lt;chr&gt; &quot;NPX Map CLI&quot;, &quot;NPX Map CLI&quot;, &quot;NPX Map CLI&quot;, &quot;…
+$ PanelDataArchiveVersion &lt;chr&gt; &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;1.3.0&quot;, &quot;…
+$ PreProcessingVersion    &lt;chr&gt; &quot;6.2.0&quot;, &quot;6.2.0&quot;, &quot;6.2.0&quot;, &quot;6.2.0&quot;, &quot;6.2.0&quot;, &quot;…
+$ PreProcessingSoftware   &lt;chr&gt; &quot;ngs2counts&quot;, &quot;ngs2counts&quot;, &quot;ngs2counts&quot;, &quot;ngs…
+$ InstrumentType          &lt;chr&gt; &quot;Illumina NovaSeq X Plus&quot;, &quot;Illumina NovaSeq X…
+$ IntraCV                 &lt;dbl&gt; 1.494757, 1.494757, 1.494757, 1.494757, 1.4947…
+$ InterCV                 &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ SampleBlockQCWarn       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1…
+$ SampleBlockQCFail       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ BlockQCFail             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ AssayQCWarn             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ Group_Name1             &lt;chr&gt; &quot;SSc_noPAH&quot;, &quot;SSc_noPAH&quot;, &quot;SSc_noPAH&quot;, &quot;SSc_PA…</code></pre>
+<pre class="r"><code># Should contain columns like: SampleID, SampleType, OlinkID, Assay, NPX, PCNormalizedNPX,
+# DataAnalysisRefID, Normalization, Count, etc.</code></pre>
+<pre class="r"><code># Path to the fixed LOD file you downloaded
+fixedLOD_path &lt;- here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;Reveal_fixedLOD.csv&quot;)
+
+npx_lod &lt;- olink_lod(
+  data          = npx_raw,
+  lod_file_path = fixedLOD_path,
+  lod_method    = &quot;FixedLOD&quot;
+)
+# This adds columns: LOD, PCNormalizedLOD, etc. for assays where NPX-based LOD is valid
+
+
+## 2) Bring in LODCount + LODMethod from the fixed LOD file
+
+lod_info &lt;- readr::read_delim(
+  fixedLOD_path,
+  delim   = &quot;;&quot;,
+  col_types = readr::cols()
+) %&gt;%
+  dplyr::select(
+    OlinkID,
+    DataAnalysisRefID,
+    LODNPX,
+    LODCount,
+    LODMethod
+  )
+
+npx_lod &lt;- npx_lod %&gt;%
+  dplyr::left_join(
+    lod_info,
+    by = c(&quot;OlinkID&quot;, &quot;DataAnalysisRefID&quot;)
+  )
+
+
+## 3) Define &quot;above LOD&quot; and distance from LOD for ALL proteins
+
+npx_lod &lt;- npx_lod %&gt;%
+  dplyr::mutate(
+    # NPX-based distance where LOD is available,
+    # otherwise count-based distance (log2 scale)
+    lod_dist = dplyr::case_when(
+      !is.na(LOD) ~ NPX - LOD,                         # NPX scale (lod_npx assays)
+      !is.na(LODCount) ~ log2(Count / LODCount),       # count scale (lod_count assays)
+      TRUE ~ NA_real_
+    ),
+    # Boolean: above LOD in whichever scale was used
+    above_LOD = dplyr::case_when(
+      !is.na(LOD) ~ NPX &gt; LOD,
+      !is.na(LODCount) ~ Count &gt; LODCount,
+      TRUE ~ NA
+    )
+  )</code></pre>
+<pre class="r"><code># Flag whether each assay is above LOD
+npx_lod &lt;- npx_lod %&gt;%
+  mutate(
+    above_LOD = NPX &gt; LOD
+  )
+
+# (Optional) define your own matrix-type groups
+lysates      &lt;- c(&quot;KR2&quot;, &quot;KR3&quot;, &quot;W2&quot;, &quot;W3&quot;, &quot;GD2&quot;, &quot;GD3&quot;)
+supernatants &lt;- c(&quot;MT2&quot;, &quot;EC2&quot;)
+buffer      &lt;- c(&quot;KR1&quot;, &quot;W1&quot;, &quot;GD1&quot;)
+medium &lt;- c(&quot;MT1&quot;, &quot;EC1&quot;)
+
+sample_info &lt;- npx_lod %&gt;%
+  distinct(SampleID, SampleType) %&gt;%
+  mutate(
+    Matrix = dplyr::case_when(
+      SampleID %in% lysates                        ~ &quot;Lysate&quot;,
+      SampleID %in% supernatants                   ~ &quot;Supernatant&quot;,
+      SampleID %in% buffer                   ~ &quot;Buffer&quot;,
+      SampleID %in% medium                   ~ &quot;Medium&quot;,
+      SampleType == &quot;NEGATIVE_CONTROL&quot;             ~ &quot;Negative control&quot;,
+      SampleType == &quot;PLATE_CONTROL&quot;             ~ &quot;Plate control&quot;,
+      SampleType == &quot;SAMPLE_CONTROL&quot;             ~ &quot;Sample control&quot;,
+      TRUE                                         ~ &quot;Serum&quot;
+    )
+  )
+
+npx_lod &lt;- npx_lod %&gt;%
+  left_join(sample_info, by = c(&quot;SampleID&quot;, &quot;SampleType&quot;))
+
+# Summarise: how many proteins above LOD per sample
+lod_summary &lt;- npx_lod %&gt;%
+  group_by(SampleID, SampleType, Matrix) %&gt;%
+  summarise(
+    n_proteins      = dplyr::n(),
+    n_above_LOD  = sum(above_LOD, na.rm = TRUE),
+    frac_above_LOD  = n_above_LOD / n_proteins,
+    .groups = &quot;drop&quot;
+  )
+
+lod_summary</code></pre>
+<pre><code># A tibble: 96 × 6
+   SampleID SampleType Matrix      n_proteins n_above_LOD frac_above_LOD
+   &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;            &lt;int&gt;       &lt;int&gt;          &lt;dbl&gt;
+ 1 EC1      SAMPLE     Medium            1034         280        0.271  
+ 2 EC2      SAMPLE     Supernatant       1034         623        0.603  
+ 3 GD1      SAMPLE     Buffer            1034           6        0.00580
+ 4 GD2      SAMPLE     Lysate            1034         574        0.555  
+ 5 GD3      SAMPLE     Lysate            1034         614        0.594  
+ 6 KR1      SAMPLE     Buffer            1034          10        0.00967
+ 7 KR2      SAMPLE     Lysate            1034         667        0.645  
+ 8 KR3      SAMPLE     Lysate            1034         619        0.599  
+ 9 L1       SAMPLE     Serum             1034         749        0.724  
+10 L10      SAMPLE     Serum             1034         801        0.775  
+# ℹ 86 more rows</code></pre>
+<pre class="r"><code># Barplot per sample, ordered by fraction above LOD
+ggplot(lod_summary,
+       aes(x = reorder(SampleID, frac_above_LOD),
+           y = frac_above_LOD,
+           fill = Matrix)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x   = &quot;Sample&quot;,
+    y   = &quot;Fraction of proteins above LOD&quot;,
+    fill = &quot;Matrix type&quot;
+  ) +
+  theme_bw() + 
+  geom_text(
+  aes(
+    label = n_above_LOD,
+    y = frac_above_LOD + 0.03
+  ),
+  size = 3
+)</code></pre>
+<p><img src="figure/check_Olink_PL.Rmd/unnamed-chunk-3-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Order samples by median distance from LOD
+sample_order &lt;- npx_lod %&gt;%
+  group_by(SampleID) %&gt;%
+  summarise(median_lod_dist = median(lod_dist, na.rm = TRUE)) %&gt;%
+  arrange(median_lod_dist) %&gt;%
+  pull(SampleID)
+
+npx_lod$SampleID &lt;- factor(npx_lod$SampleID, levels = sample_order)
+
+# Boxplot of distance-to-LOD per sample
+ggplot(npx_lod,
+       aes(x = SampleID,
+           y = lod_dist,
+           fill = Matrix)) +
+  geom_boxplot(outlier.size = 0.3) +
+  geom_hline(yintercept = 0, linetype = &quot;dashed&quot;) +  # LOD line
+  coord_flip() +
+  labs(
+    x   = &quot;Sample&quot;,
+    y   = &quot;Distance to LOD (NPX – LOD)&quot;,
+    fill = &quot;Matrix type&quot;
+  ) +
+  theme_bw()</code></pre>
+<p><img src="figure/check_Olink_PL.Rmd/unnamed-chunk-4-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lysates &lt;- c(&quot;W1&quot;, &quot;W2&quot;, &quot;W3&quot;,&quot;GD1&quot;, &quot;GD2&quot;, &quot;GD3&quot;,&quot;KR1&quot;, &quot;KR2&quot;, &quot;KR3&quot;)
+
+lysate_mat &lt;- npx_lod %&gt;%
+  dplyr::filter(SampleID %in% lysates,
+         Matrix %in% c(&quot;Lysate&quot;, &quot;Buffer&quot;)) %&gt;%          # optional, if Matrix is defined
+  dplyr::select(Assay, SampleID, NPX) %&gt;%        # or use Target / OlinkID instead of Assay
+  distinct() %&gt;%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  ) %&gt;%
+  mutate(
+    avg_lysate_NPX = rowMeans(across(all_of(lysates)), na.rm = TRUE)
+  ) %&gt;%
+  relocate(avg_lysate_NPX, .after = Assay) %&gt;%
+  arrange(desc(avg_lysate_NPX))
+
+lysate_mat %&gt;% dplyr::glimpse()</code></pre>
+<pre><code>Rows: 1,034
+Columns: 11
+$ Assay          &lt;chr&gt; &quot;UNG&quot;, &quot;RBPMS&quot;, &quot;NDUFS6&quot;, &quot;ATP6V1G2&quot;, &quot;PNPT1&quot;, &quot;IL33&quot;, …
+$ avg_lysate_NPX &lt;dbl&gt; 6.139245, 5.693433, 5.460510, 5.015600, 4.921640, 4.716…
+$ GD1            &lt;dbl&gt; -1.20470166, -0.98280865, -2.36993265, -0.71853131, -1.…
+$ W2             &lt;dbl&gt; 8.754209, 9.265351, 8.087728, 7.412969, 7.682251, 6.999…
+$ KR3            &lt;dbl&gt; 10.916676, 8.924059, 9.480864, 9.416475, 8.660360, 7.12…
+$ KR1            &lt;dbl&gt; -1.2696633, -0.8383814, -3.0030308, -0.7924352, -1.7713…
+$ KR2            &lt;dbl&gt; 11.104303, 8.888381, 10.280414, 9.832438, 8.783781, 8.0…
+$ GD2            &lt;dbl&gt; 10.573933, 8.577012, 10.708325, 7.354926, 8.535330, 6.7…
+$ W1             &lt;dbl&gt; -2.0873096, -1.2246562, -3.1045709, -1.3557054, -1.5909…
+$ W3             &lt;dbl&gt; 7.458923, 9.683988, 7.915838, 5.851410, 6.887999, 8.119…
+$ GD3            &lt;dbl&gt; 11.006839, 8.947949, 11.148958, 8.138850, 8.507533, 7.2…</code></pre>
+<pre class="r"><code>write.csv(lysate_mat, file = here::here(output_dir_data, &quot;lysate_mat.csv&quot;), quote=F, row.names = F)</code></pre>
+<pre class="r"><code># Define the samples of interest
+supernatants &lt;- c(&quot;MT2&quot;, &quot;EC2&quot;)
+medium       &lt;- c(&quot;MT1&quot;, &quot;EC1&quot;)
+sup_med_ids  &lt;- c(supernatants, medium)
+
+# 1) Build protein × sample NPX matrix
+sup_med_long &lt;- npx_lod %&gt;%
+  dplyr::filter(SampleID %in% sup_med_ids) %&gt;%
+  dplyr::select(Assay, SampleID, NPX) %&gt;%
+  distinct()
+
+sup_med_wide &lt;- sup_med_long %&gt;%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  )
+
+mat_sup_med &lt;- as.matrix(sup_med_wide[ , -1])
+rownames(mat_sup_med) &lt;- sup_med_wide$Assay
+
+# Optional: column annotation (Matrix type)
+col_anno &lt;- data.frame(
+  Matrix = sample_info$Matrix[match(colnames(mat_sup_med), sample_info$SampleID)]
+)
+rownames(col_anno) &lt;- colnames(mat_sup_med)
+
+# 2) Heatmap
+pheatmap::pheatmap(
+  mat_sup_med,
+  scale               = &quot;none&quot;,          # z-score per protein (can set to &quot;none&quot; if you prefer raw NPX)
+  clustering_distance_rows = &quot;euclidean&quot;,
+  clustering_distance_cols = &quot;euclidean&quot;,
+  clustering_method   = &quot;complete&quot;,
+  show_rownames       = FALSE,          # set TRUE if you want all protein names
+  annotation_col      = col_anno,
+  main                = &quot;NPX in supernatant and medium samples&quot;
+)</code></pre>
+<p><img src="figure/check_Olink_PL.Rmd/unnamed-chunk-6-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Define the samples of interest
+buffer &lt;- c(&quot;W1&quot;, &quot;GD1&quot;, &quot;KR1&quot;)
+lysate       &lt;- c(&quot;W2&quot;, &quot;W3&quot;, &quot;GD2&quot;, &quot;GD3&quot;, &quot;KR2&quot;, &quot;KR3&quot;)
+sup_med_ids  &lt;- c(buffer, lysate)
+
+# 1) Build protein × sample NPX matrix
+sup_med_long &lt;- npx_lod %&gt;%
+  dplyr::filter(SampleID %in% sup_med_ids) %&gt;%
+  dplyr::select(Assay, SampleID, NPX) %&gt;%
+  distinct()
+
+sup_med_wide &lt;- sup_med_long %&gt;%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  )
+
+mat_sup_med &lt;- as.matrix(sup_med_wide[ , -1])
+rownames(mat_sup_med) &lt;- sup_med_wide$Assay
+
+# Optional: column annotation (Matrix type)
+col_anno &lt;- data.frame(
+  Matrix = sample_info$Matrix[match(colnames(mat_sup_med), sample_info$SampleID)]
+)
+rownames(col_anno) &lt;- colnames(mat_sup_med)
+
+# 2) Heatmap
+pheatmap::pheatmap(
+  mat_sup_med,
+  scale               = &quot;none&quot;,          # z-score per protein (can set to &quot;none&quot; if you prefer raw NPX)
+  clustering_distance_rows = &quot;euclidean&quot;,
+  clustering_distance_cols = &quot;euclidean&quot;,
+  clustering_method   = &quot;complete&quot;,
+  show_rownames       = FALSE,          # set TRUE if you want all protein names
+  annotation_col      = col_anno,
+  main                = &quot;NPX in supernatant and medium samples&quot;
+)</code></pre>
+<p><img src="figure/check_Olink_PL.Rmd/unnamed-chunk-7-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sup_medium &lt;- c(&quot;MT1&quot;, &quot;EC1&quot;, &quot;MT2&quot;, &quot;EC2&quot;)
+
+sup_medium_mat &lt;- npx_lod %&gt;%
+  dplyr::filter(SampleID %in% sup_medium,
+         Matrix %in% c(&quot;Medium&quot;,&quot;Supernatant&quot;)) %&gt;%          # optional, if Matrix is defined
+  dplyr::select(Assay, SampleID, NPX) %&gt;%        # or use Target / OlinkID instead of Assay
+  distinct() %&gt;%
+  tidyr::pivot_wider(
+    names_from  = SampleID,
+    values_from = NPX
+  ) %&gt;%
+  mutate(
+    avg_lysate_NPX = rowMeans(across(all_of(sup_medium)), na.rm = TRUE)
+  ) %&gt;%
+  relocate(avg_lysate_NPX, .after = Assay) %&gt;%
+  arrange(desc(avg_lysate_NPX))
+
+sup_medium_mat %&gt;% dplyr::glimpse()</code></pre>
+<pre><code>Rows: 1,034
+Columns: 6
+$ Assay          &lt;chr&gt; &quot;LIF&quot;, &quot;COL9A1&quot;, &quot;CSF2&quot;, &quot;IL1A&quot;, &quot;TNF&quot;, &quot;PARP1&quot;, &quot;IL1B&quot;…
+$ avg_lysate_NPX &lt;dbl&gt; 4.8659813, 3.6091725, 2.4801595, 2.3139490, 1.5842394, …
+$ EC2            &lt;dbl&gt; 12.5509815, -0.3641986, 10.9014921, 5.8251762, 9.029730…
+$ EC1            &lt;dbl&gt; -0.62692350, -1.35896325, -0.25212097, -0.87817925, -0.…
+$ MT2            &lt;dbl&gt; 6.627779007, 8.028423309, -0.037069585, 2.388535976, -0…
+$ MT1            &lt;dbl&gt; 0.912088335, 8.131428719, -0.691663384, 1.920262933, -1…</code></pre>
+<pre class="r"><code>write.csv(sup_medium_mat, file = here::here(output_dir_data, &quot;sup_medium_mat.csv&quot;), quote=F, row.names = F)</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Etc/UTC
+tzcode source: system (glibc)
+
+attached base packages:
+[1] grid      stats4    stats     graphics  grDevices datasets  utils    
+[8] methods   base     
+
+other attached packages:
+ [1] broom_1.0.11                survival_3.8-3             
+ [3] ComplexHeatmap_2.26.0       OlinkAnalyze_4.4.0         
+ [5] AnnotationHub_4.0.0         BiocFileCache_3.0.0        
+ [7] dbplyr_2.5.1                org.Hs.eg.db_3.22.0        
+ [9] AnnotationDbi_1.72.0        clusterProfiler_4.18.2     
+[11] gprofiler2_0.2.4            DESeq2_1.50.2              
+[13] ggpubr_0.6.2                igraph_2.2.1               
+[15] limma_3.66.0                UpSetR_1.4.0               
+[17] reactable_0.4.5             rtracklayer_1.70.0         
+[19] statmod_1.5.1               patchwork_1.3.2            
+[21] scater_1.38.0               scuttle_1.20.0             
+[23] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+[25] Biobase_2.70.0              GenomicRanges_1.62.0       
+[27] Seqinfo_1.0.0               IRanges_2.44.0             
+[29] MatrixGenerics_1.22.0       matrixStats_1.5.0          
+[31] Matrix.utils_0.9.7          RColorBrewer_1.1-3         
+[33] scales_1.4.0                gridExtra_2.3              
+[35] png_0.1-8                   pheatmap_1.0.13            
+[37] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+[39] generics_0.1.4              reshape2_1.4.5             
+[41] lubridate_1.9.4             forcats_1.0.1              
+[43] stringr_1.6.0               purrr_1.2.0                
+[45] tidyr_1.3.1                 tibble_3.3.0               
+[47] tidyverse_2.0.0             magrittr_2.0.4             
+[49] dplyr_1.1.4                 Matrix_1.6-5               
+[51] readxl_1.4.5                readr_2.1.6                
+[53] enrichplot_1.30.4           here_1.0.2                 
+[55] EnhancedVolcano_1.29.1      ggrepel_0.9.6              
+[57] ggplot2_4.0.1              
+
+loaded via a namespace (and not attached):
+  [1] fs_1.6.6                 bitops_1.0-9             doParallel_1.0.17       
+  [4] httr_1.4.7               tools_4.5.2              backports_1.5.0         
+  [7] utf8_1.2.6               R6_2.6.1                 lazyeval_0.2.2          
+ [10] GetoptLong_1.1.0         withr_3.0.2              cli_3.6.5               
+ [13] scatterpie_0.2.6         labeling_0.4.3           sass_0.4.10             
+ [16] mvtnorm_1.3-3            S7_0.2.1                 Rsamtools_2.26.0        
+ [19] systemfonts_1.3.1        yulab.utils_0.2.2        gson_0.1.0              
+ [22] DOSE_4.4.0               R.utils_2.13.0           rstudioapi_0.17.1       
+ [25] RSQLite_2.4.5            shape_1.4.6.1            gridGraphics_0.5-1      
+ [28] BiocIO_1.20.0            vroom_1.6.7              car_3.1-3               
+ [31] GO.db_3.22.0             ggbeeswarm_0.7.3         abind_1.4-8             
+ [34] R.methodsS3_1.8.2        lifecycle_1.0.4          whisker_0.4.1           
+ [37] yaml_2.3.11              carData_3.0-5            qvalue_2.42.0           
+ [40] SparseArray_1.10.4       blob_1.2.4               promises_1.5.0          
+ [43] crayon_1.5.3             ggtangle_0.0.9           lattice_0.22-7          
+ [46] beachmat_2.26.0          cowplot_1.2.0            cigarillo_1.0.0         
+ [49] KEGGREST_1.50.0          pillar_1.11.1            knitr_1.50              
+ [52] fgsea_1.36.0             rjson_0.2.23             estimability_1.5.1      
+ [55] codetools_0.2-20         fastmatch_1.1-6          glue_1.8.0              
+ [58] ggiraph_0.9.2            ggfun_0.2.0              fontLiberation_0.1.0    
+ [61] data.table_1.17.8        vctrs_0.6.5              treeio_1.34.0           
+ [64] cellranger_1.1.0         gtable_0.3.6             cachem_1.1.0            
+ [67] xfun_0.54                S4Arrays_1.10.1          iterators_1.0.14        
+ [70] nlme_3.1-168             ggtree_4.0.1             bit64_4.6.0-1           
+ [73] fontquiver_0.2.1         filelock_1.0.3           rprojroot_2.1.1         
+ [76] bslib_0.9.0              irlba_2.3.5.1            vipor_0.4.7             
+ [79] otel_0.2.0               colorspace_2.1-2         DBI_1.2.3               
+ [82] tidyselect_1.2.1         emmeans_2.0.0            bit_4.6.0               
+ [85] compiler_4.5.2           curl_7.0.0               git2r_0.36.2            
+ [88] httr2_1.2.1              BiocNeighbors_2.4.0      fontBitstreamVera_0.1.1 
+ [91] DelayedArray_0.36.0      plotly_4.11.0            rappdirs_0.3.3          
+ [94] digest_0.6.39            rmarkdown_2.30           XVector_0.50.0          
+ [97] htmltools_0.5.9          pkgconfig_2.0.3          fastmap_1.2.0           
+[100] GlobalOptions_0.1.3      rlang_1.1.6              htmlwidgets_1.6.4       
+[103] farver_2.1.2             jquerylib_0.1.4          jsonlite_2.0.0          
+[106] BiocParallel_1.44.0      GOSemSim_2.36.0          R.oo_1.27.1             
+[109] BiocSingular_1.26.1      RCurl_1.98-1.17          Formula_1.2-5           
+[112] ggplotify_0.1.3          Rcpp_1.1.0               ape_5.8-1               
+[115] ggnewscale_0.5.2         viridis_0.6.5            gdtools_0.4.4           
+[118] stringi_1.8.7            MASS_7.3-65              plyr_1.8.9              
+[121] parallel_4.5.2           Biostrings_2.78.0        splines_4.5.2           
+[124] circlize_0.4.16          hms_1.1.4                locfit_1.5-9.12         
+[127] ggsignif_0.6.4           ScaledMatrix_1.18.0      BiocVersion_3.22.0      
+[130] XML_3.99-0.20            evaluate_1.0.5           renv_1.1.5              
+[133] BiocManager_1.30.27      foreach_1.5.2            tzdb_0.5.0              
+[136] tweenr_2.0.3             httpuv_1.6.16            grr_0.9.5               
+[139] polyclip_1.10-7          clue_0.3-66              ggforce_0.5.0           
+[142] rsvd_1.0.5               xtable_1.8-4             restfulr_0.0.16         
+[145] tidytree_0.4.6           tidydr_0.0.6             rstatix_0.7.3           
+[148] later_1.4.4              viridisLite_0.4.2        aplot_0.2.9             
+[151] memoise_2.0.1            beeswarm_0.4.0           GenomicAlignments_1.46.0
+[154] cluster_2.1.8.1          workflowr_1.7.2          timechange_0.3.0        </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
