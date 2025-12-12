@@ -245,22 +245,31 @@ ggplot(npx_lod,
 lysates <- c("W1", "W2", "W3","GD1", "GD2", "GD3","KR1", "KR2", "KR3")
 
 lysate_mat <- npx_lod %>%
-  dplyr::filter(SampleID %in% lysates,
-         Matrix %in% c("Lysate", "Buffer")) %>%          # optional, if Matrix is defined
-  dplyr::select(Assay, SampleID, NPX) %>%        # or use Target / OlinkID instead of Assay
+  dplyr::filter(
+    SampleID %in% lysates,
+    Matrix %in% c("Lysate", "Buffer")
+  ) %>%
+  dplyr::select(Assay, SampleID, NPX) %>%
   distinct() %>%
   tidyr::pivot_wider(
     names_from  = SampleID,
     values_from = NPX
   ) %>%
-  mutate(
-    avg_lysate_NPX = rowMeans(across(all_of(lysates)), na.rm = TRUE)
+  dplyr::mutate(
+    avg_lysate_NPX = rowMeans(dplyr::across(all_of(lysates)), na.rm = TRUE)
   ) %>%
-  relocate(avg_lysate_NPX, .after = Assay) %>%
-  arrange(desc(avg_lysate_NPX))
+  # set column order: Assay, avg, then lysates in desired order
+  dplyr::select(Assay, avg_lysate_NPX, dplyr::all_of(lysates)) %>%
+  dplyr::arrange(desc(avg_lysate_NPX))
 
 lysate_mat %>% dplyr::glimpse()
-write.csv(lysate_mat, file = here::here(output_dir_data, "lysate_mat.csv"), quote=F, row.names = F)
+
+write.csv(
+  lysate_mat,
+  file = here::here(output_dir_data, "lysate_mat.csv"),
+  quote = FALSE,
+  row.names = FALSE
+)
 ```
 
 ```{r, fig.height=6, fig.width=8}
@@ -350,20 +359,28 @@ pheatmap::pheatmap(
 sup_medium <- c("MT1", "EC1", "MT2", "EC2")
 
 sup_medium_mat <- npx_lod %>%
-  dplyr::filter(SampleID %in% sup_medium,
-         Matrix %in% c("Medium","Supernatant")) %>%          # optional, if Matrix is defined
-  dplyr::select(Assay, SampleID, NPX) %>%        # or use Target / OlinkID instead of Assay
+  dplyr::filter(
+    SampleID %in% sup_medium,
+    Matrix %in% c("Medium","Supernatant")
+  ) %>%
+  dplyr::select(Assay, SampleID, NPX) %>%
   distinct() %>%
   tidyr::pivot_wider(
     names_from  = SampleID,
     values_from = NPX
   ) %>%
-  mutate(
-    avg_lysate_NPX = rowMeans(across(all_of(sup_medium)), na.rm = TRUE)
+  dplyr::mutate(
+    avg_sup_medium_NPX = rowMeans(dplyr::across(all_of(sup_medium)), na.rm = TRUE)
   ) %>%
-  relocate(avg_lysate_NPX, .after = Assay) %>%
-  arrange(desc(avg_lysate_NPX))
+  dplyr::select(Assay, avg_sup_medium_NPX, dplyr::all_of(sup_medium)) %>%  # enforce order
+  dplyr::arrange(desc(avg_sup_medium_NPX))
 
 sup_medium_mat %>% dplyr::glimpse()
-write.csv(sup_medium_mat, file = here::here(output_dir_data, "sup_medium_mat.csv"), quote=F, row.names = F)
+
+write.csv(
+  sup_medium_mat,
+  file = here::here(output_dir_data, "sup_medium_mat.csv"),
+  quote = FALSE,
+  row.names = FALSE
+)
 ```
