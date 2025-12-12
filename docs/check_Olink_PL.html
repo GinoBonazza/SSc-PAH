@@ -522,15 +522,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree70df0d1ec35d498f7708e4568a46643dbaa4b118targetblank70df0d1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree20f488f98a7c5618be5c3eabaf3ab3df5192e62ctargetblank20f488fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/GinoBonazza/SSc-PAH/tree/70df0d1ec35d498f7708e4568a46643dbaa4b118" target="_blank">70df0d1</a>
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/20f488f98a7c5618be5c3eabaf3ab3df5192e62c" target="_blank">20f488f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree70df0d1ec35d498f7708e4568a46643dbaa4b118targetblank70df0d1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree20f488f98a7c5618be5c3eabaf3ab3df5192e62ctargetblank20f488fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -540,7 +540,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/GinoBonazza/SSc-PAH/tree/70df0d1ec35d498f7708e4568a46643dbaa4b118" target="_blank">70df0d1</a>.
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/20f488f98a7c5618be5c3eabaf3ab3df5192e62c" target="_blank">20f488f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -582,6 +582,7 @@ Untracked files:
     Untracked:  data/o37198_2025-02-27_olink_SummarizedExperiment.qs2
     Untracked:  omnipathr-log/
     Untracked:  output/Olink_RV_dysf/
+    Untracked:  output/check_Olink_PL/
     Untracked:  renv.lock
     Untracked:  renv/
 
@@ -631,6 +632,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/GinoBonazza/SSc-PAH/blob/20f488f98a7c5618be5c3eabaf3ab3df5192e62c/analysis/check_Olink_PL.Rmd" target="_blank">20f488f</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2025-12-12
+</td>
+<td>
+wflow_publish("analysis/check_Olink_PL.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/GinoBonazza/SSc-PAH/a79c54649662f318dcb1715b341d16788ac107b2/docs/check_Olink_PL.html" target="_blank">a79c546</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2025-12-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1018,35 +1053,43 @@ GinoBonazza
 <pre class="r"><code>lysates &lt;- c(&quot;W1&quot;, &quot;W2&quot;, &quot;W3&quot;,&quot;GD1&quot;, &quot;GD2&quot;, &quot;GD3&quot;,&quot;KR1&quot;, &quot;KR2&quot;, &quot;KR3&quot;)
 
 lysate_mat &lt;- npx_lod %&gt;%
-  dplyr::filter(SampleID %in% lysates,
-         Matrix %in% c(&quot;Lysate&quot;, &quot;Buffer&quot;)) %&gt;%          # optional, if Matrix is defined
-  dplyr::select(Assay, SampleID, NPX) %&gt;%        # or use Target / OlinkID instead of Assay
+  dplyr::filter(
+    SampleID %in% lysates,
+    Matrix %in% c(&quot;Lysate&quot;, &quot;Buffer&quot;)
+  ) %&gt;%
+  dplyr::select(Assay, SampleID, NPX) %&gt;%
   distinct() %&gt;%
   tidyr::pivot_wider(
     names_from  = SampleID,
     values_from = NPX
   ) %&gt;%
-  mutate(
-    avg_lysate_NPX = rowMeans(across(all_of(lysates)), na.rm = TRUE)
+  dplyr::mutate(
+    avg_lysate_NPX = rowMeans(dplyr::across(all_of(lysates)), na.rm = TRUE)
   ) %&gt;%
-  relocate(avg_lysate_NPX, .after = Assay) %&gt;%
-  arrange(desc(avg_lysate_NPX))
+  # set column order: Assay, avg, then lysates in desired order
+  dplyr::select(Assay, avg_lysate_NPX, dplyr::all_of(lysates)) %&gt;%
+  dplyr::arrange(desc(avg_lysate_NPX))
 
 lysate_mat %&gt;% dplyr::glimpse()</code></pre>
 <pre><code>Rows: 1,034
 Columns: 11
 $ Assay          &lt;chr&gt; &quot;UNG&quot;, &quot;RBPMS&quot;, &quot;NDUFS6&quot;, &quot;ATP6V1G2&quot;, &quot;PNPT1&quot;, &quot;IL33&quot;, …
 $ avg_lysate_NPX &lt;dbl&gt; 6.139245, 5.693433, 5.460510, 5.015600, 4.921640, 4.716…
-$ GD1            &lt;dbl&gt; -1.20470166, -0.98280865, -2.36993265, -0.71853131, -1.…
+$ W1             &lt;dbl&gt; -2.0873096, -1.2246562, -3.1045709, -1.3557054, -1.5909…
 $ W2             &lt;dbl&gt; 8.754209, 9.265351, 8.087728, 7.412969, 7.682251, 6.999…
-$ KR3            &lt;dbl&gt; 10.916676, 8.924059, 9.480864, 9.416475, 8.660360, 7.12…
+$ W3             &lt;dbl&gt; 7.458923, 9.683988, 7.915838, 5.851410, 6.887999, 8.119…
+$ GD1            &lt;dbl&gt; -1.20470166, -0.98280865, -2.36993265, -0.71853131, -1.…
+$ GD2            &lt;dbl&gt; 10.573933, 8.577012, 10.708325, 7.354926, 8.535330, 6.7…
+$ GD3            &lt;dbl&gt; 11.006839, 8.947949, 11.148958, 8.138850, 8.507533, 7.2…
 $ KR1            &lt;dbl&gt; -1.2696633, -0.8383814, -3.0030308, -0.7924352, -1.7713…
 $ KR2            &lt;dbl&gt; 11.104303, 8.888381, 10.280414, 9.832438, 8.783781, 8.0…
-$ GD2            &lt;dbl&gt; 10.573933, 8.577012, 10.708325, 7.354926, 8.535330, 6.7…
-$ W1             &lt;dbl&gt; -2.0873096, -1.2246562, -3.1045709, -1.3557054, -1.5909…
-$ W3             &lt;dbl&gt; 7.458923, 9.683988, 7.915838, 5.851410, 6.887999, 8.119…
-$ GD3            &lt;dbl&gt; 11.006839, 8.947949, 11.148958, 8.138850, 8.507533, 7.2…</code></pre>
-<pre class="r"><code>write.csv(lysate_mat, file = here::here(output_dir_data, &quot;lysate_mat.csv&quot;), quote=F, row.names = F)</code></pre>
+$ KR3            &lt;dbl&gt; 10.916676, 8.924059, 9.480864, 9.416475, 8.660360, 7.12…</code></pre>
+<pre class="r"><code>write.csv(
+  lysate_mat,
+  file = here::here(output_dir_data, &quot;lysate_mat.csv&quot;),
+  quote = FALSE,
+  row.names = FALSE
+)</code></pre>
 <pre class="r"><code># Define the samples of interest
 supernatants &lt;- c(&quot;MT2&quot;, &quot;EC2&quot;)
 medium       &lt;- c(&quot;MT1&quot;, &quot;EC1&quot;)
@@ -1200,30 +1243,37 @@ GinoBonazza
 <pre class="r"><code>sup_medium &lt;- c(&quot;MT1&quot;, &quot;EC1&quot;, &quot;MT2&quot;, &quot;EC2&quot;)
 
 sup_medium_mat &lt;- npx_lod %&gt;%
-  dplyr::filter(SampleID %in% sup_medium,
-         Matrix %in% c(&quot;Medium&quot;,&quot;Supernatant&quot;)) %&gt;%          # optional, if Matrix is defined
-  dplyr::select(Assay, SampleID, NPX) %&gt;%        # or use Target / OlinkID instead of Assay
+  dplyr::filter(
+    SampleID %in% sup_medium,
+    Matrix %in% c(&quot;Medium&quot;,&quot;Supernatant&quot;)
+  ) %&gt;%
+  dplyr::select(Assay, SampleID, NPX) %&gt;%
   distinct() %&gt;%
   tidyr::pivot_wider(
     names_from  = SampleID,
     values_from = NPX
   ) %&gt;%
-  mutate(
-    avg_lysate_NPX = rowMeans(across(all_of(sup_medium)), na.rm = TRUE)
+  dplyr::mutate(
+    avg_sup_medium_NPX = rowMeans(dplyr::across(all_of(sup_medium)), na.rm = TRUE)
   ) %&gt;%
-  relocate(avg_lysate_NPX, .after = Assay) %&gt;%
-  arrange(desc(avg_lysate_NPX))
+  dplyr::select(Assay, avg_sup_medium_NPX, dplyr::all_of(sup_medium)) %&gt;%  # enforce order
+  dplyr::arrange(desc(avg_sup_medium_NPX))
 
 sup_medium_mat %&gt;% dplyr::glimpse()</code></pre>
 <pre><code>Rows: 1,034
 Columns: 6
-$ Assay          &lt;chr&gt; &quot;LIF&quot;, &quot;COL9A1&quot;, &quot;CSF2&quot;, &quot;IL1A&quot;, &quot;TNF&quot;, &quot;PARP1&quot;, &quot;IL1B&quot;…
-$ avg_lysate_NPX &lt;dbl&gt; 4.8659813, 3.6091725, 2.4801595, 2.3139490, 1.5842394, …
-$ EC2            &lt;dbl&gt; 12.5509815, -0.3641986, 10.9014921, 5.8251762, 9.029730…
-$ EC1            &lt;dbl&gt; -0.62692350, -1.35896325, -0.25212097, -0.87817925, -0.…
-$ MT2            &lt;dbl&gt; 6.627779007, 8.028423309, -0.037069585, 2.388535976, -0…
-$ MT1            &lt;dbl&gt; 0.912088335, 8.131428719, -0.691663384, 1.920262933, -1…</code></pre>
-<pre class="r"><code>write.csv(sup_medium_mat, file = here::here(output_dir_data, &quot;sup_medium_mat.csv&quot;), quote=F, row.names = F)</code></pre>
+$ Assay              &lt;chr&gt; &quot;LIF&quot;, &quot;COL9A1&quot;, &quot;CSF2&quot;, &quot;IL1A&quot;, &quot;TNF&quot;, &quot;PARP1&quot;, &quot;I…
+$ avg_sup_medium_NPX &lt;dbl&gt; 4.8659813, 3.6091725, 2.4801595, 2.3139490, 1.58423…
+$ MT1                &lt;dbl&gt; 0.912088335, 8.131428719, -0.691663384, 1.920262933…
+$ EC1                &lt;dbl&gt; -0.62692350, -1.35896325, -0.25212097, -0.87817925,…
+$ MT2                &lt;dbl&gt; 6.627779007, 8.028423309, -0.037069585, 2.388535976…
+$ EC2                &lt;dbl&gt; 12.5509815, -0.3641986, 10.9014921, 5.8251762, 9.02…</code></pre>
+<pre class="r"><code>write.csv(
+  sup_medium_mat,
+  file = here::here(output_dir_data, &quot;sup_medium_mat.csv&quot;),
+  quote = FALSE,
+  row.names = FALSE
+)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
