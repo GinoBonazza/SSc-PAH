@@ -1,5 +1,5 @@
 ---
-title: "Olink_RV_dysf"
+title: "check_Olink_PL"
 author: "GinoBonazza (ginoandrea.bonazza@usz.ch)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: workflowr::wflow_html
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 
 ```{r setup, class.source = "fold-hide"}
 # Get current file name to make folder
-current_file <- "Olink_RV_dysf"
+current_file <- "check_Olink_PL"
 
 # Load libraries
 library(EnhancedVolcano)
