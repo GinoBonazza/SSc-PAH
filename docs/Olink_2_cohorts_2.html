@@ -1,0 +1,3778 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="GinoBonazza (ginoandrea.bonazza@usz.ch)" />
+
+
+<title>Olink_2_cohorts_2</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SSc-PAH</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/GinoBonazza/SSc-PAH">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Olink_2_cohorts_2</h1>
+<h4 class="author">GinoBonazza (<a
+href="mailto:ginoandrea.bonazza@usz.ch"
+class="email">ginoandrea.bonazza@usz.ch</a>)</h4>
+<h4 class="date">06 May, 2026</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-05-06
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>SSc-PAH/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20251015code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20251015)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20251015code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20251015)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree824032f349b678423aced7fd381078bac6dfc74btargetblank824032fa">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/824032f349b678423aced7fd381078bac6dfc74b" target="_blank">824032f</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree824032f349b678423aced7fd381078bac6dfc74btargetblank824032fa"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/824032f349b678423aced7fd381078bac6dfc74b" target="_blank">824032f</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/Olink_RV_dysf.Rmd
+    Untracked:  analysis/Olink_RV_dysf_PL.Rmd
+    Untracked:  analysis/VennDiagram.2025-10-16_12-40-35.351562.log
+    Untracked:  analysis/VennDiagram.2025-10-22_22-26-15.195599.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-43-26.101506.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-54-12.491858.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-49-49.773885.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-58-01.820025.log
+    Untracked:  analysis/VennDiagram.2025-10-30_21-01-21.178598.log
+    Untracked:  analysis/omnipathr-log/
+    Untracked:  data/322591_DEA_Serum_ENRICH-iST_C37202WU322591.xlsx
+    Untracked:  data/Cohorts_comparison.xlsx
+    Untracked:  data/Cohorts_comparison_2.xlsx
+    Untracked:  data/DE_Groups_vs_Controls.xlsx
+    Untracked:  data/Metadata_Olink_analysis.xlsx
+    Untracked:  data/OLINK_PL/
+    Untracked:  data/P2024-199-OLI_80_NPX_2024-10-10.parquet
+    Untracked:  data/Plasma_ENRICHPlus_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Plasma_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_ENRICHiST_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Zurich_47_PAH_RHC_sample_list_CB040723_CLINICAL DATA_update20240109.xlsx
+    Untracked:  data/o37198_2025-02-27_olink_SummarizedExperiment.qs2
+    Untracked:  omnipathr-log/
+    Untracked:  output/Olink_2_cohorts/
+    Untracked:  output/Olink_2_cohorts_2/
+    Untracked:  output/Olink_RV_dysf/
+    Untracked:  output/Olink_RV_dysf_PL/
+    Untracked:  output/check_Olink_PL/
+    Untracked:  renv.lock
+    Untracked:  renv/
+
+Unstaged changes:
+    Modified:   .Rprofile
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/Olink_2_cohorts_2.Rmd</code>) and
+HTML (<code>docs/Olink_2_cohorts_2.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/GinoBonazza/SSc-PAH/blob/824032f349b678423aced7fd381078bac6dfc74b/analysis/Olink_2_cohorts_2.Rmd" target="_blank">824032f</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2026-05-06
+</td>
+<td>
+wflow_publish("analysis/Olink_2_cohorts_2.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<pre class="r fold-hide"><code># Get current file name to make folder
+current_file &lt;- &quot;Olink_2_cohorts_2&quot;
+
+# Load libraries
+library(EnhancedVolcano)
+library(here)
+library(enrichplot)
+library(readr)
+library(readxl)
+library(Matrix)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(tidyverse)
+library(reshape2)
+library(S4Vectors)
+library(pheatmap)
+library(png)
+library(gridExtra)
+library(scales)
+library(RColorBrewer)
+library(Matrix.utils)
+library(tibble)
+library(ggplot2)
+library(scater)
+library(patchwork)
+library(statmod)
+library(qs2)
+library(statmod)
+library(rtracklayer)
+library(png)
+library(reactable)
+library(UpSetR)
+library(limma)
+library(igraph)
+library(gridExtra) 
+library(ggpubr)
+library(DESeq2)
+library(gprofiler2)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(AnnotationHub)
+library(ReactomePA)
+library(UpSetR)
+library(ComplexHeatmap)
+library(survival)
+library(broom)
+library(circlize)
+library(variancePartition)
+
+#Output paths
+output_dir_data &lt;- here::here(&quot;output&quot;, current_file)
+if (!dir.exists(output_dir_data)) dir.create(output_dir_data)
+
+if (!dir.exists(here::here(&quot;docs&quot;, &quot;figure&quot;))) dir.create(here::here(&quot;docs&quot;, &quot;figure&quot;))
+
+output_dir_figs &lt;- here::here(&quot;docs&quot;, &quot;figure&quot;, paste0(current_file, &quot;.Rmd&quot;))
+if (!dir.exists(output_dir_figs)) dir.create(output_dir_figs)</code></pre>
+</div>
+<div id="import-data" class="section level2">
+<h2>Import data</h2>
+<p>Olink data Zurich and Poland</p>
+<pre class="r"><code>data_z &lt;- qs_read(here::here(&quot;data&quot;, &quot;o37198_2025-02-27_olink_SummarizedExperiment.qs2&quot;))
+
+clin_z &lt;- read_excel(here::here(&quot;data&quot;, &quot;Metadata_Olink_analysis.xlsx&quot;))
+
+meta_z &lt;- colData(data_z) %&gt;% data.frame()
+isOutlierColumn &lt;- meta_z$Plate == &quot;P0194&quot; &amp; meta_z$Col %in% c(&quot;3&quot;, &quot;4&quot;)
+table(isOutlierColumn)</code></pre>
+<pre><code>isOutlierColumn
+FALSE  TRUE 
+  176    16 </code></pre>
+<pre class="r"><code>use &lt;- meta_z$SampleType %in% c(&quot;Serum&quot;) &amp; meta_z$Group %in% c(&quot;SSc-PAH&quot;, &quot;SSc-noPAH&quot;) &amp; !isOutlierColumn
+table(use)</code></pre>
+<pre><code>use
+FALSE  TRUE 
+  124    68 </code></pre>
+<pre class="r"><code>data_z &lt;- data_z[ , use]
+meta_z &lt;- meta_z[use, ]
+rownames(meta_z) &lt;- gsub(&quot;_P0194&quot;, &quot;&quot;, rownames(meta_z))
+meta_z$Barcode &lt;- rownames(meta_z)
+rownames(data_z) &lt;- data_z@elementMetadata@listData[[&quot;Gene&quot;]]
+rownames(data_z@assays@data@listData[[&quot;npx&quot;]]) &lt;- data_z@elementMetadata@listData[[&quot;Gene&quot;]]
+data_z &lt;- assay(data_z, &quot;npx&quot;)
+data_z &lt;- as.data.frame(data_z[-c(1:3), ])
+colnames(data_z) &lt;- rownames(meta_z)
+
+clin_z &lt;- clin_z %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+dim(data_z)</code></pre>
+<pre><code>[1] 1034   68</code></pre>
+<pre class="r"><code>table(clin_z$Group)</code></pre>
+<pre><code>
+SSc-noPAH   SSc-PAH 
+       37        31 </code></pre>
+<pre class="r"><code>data_p &lt;- read.delim(here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;quant.xls&quot;), sep = &quot;\t&quot;, check.names = FALSE)
+
+clin_p &lt;- read_excel(here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;Metadata_Olink_PL.xlsx&quot;))
+
+rownames(data_p) &lt;- sub(&quot;_.*&quot;, &quot;&quot;, data_p$SampleID)
+data_p &lt;- data_p[, -1]
+keep &lt;- intersect(colnames(data_p), clin_p$Barcode)
+data_p &lt;- data_p[, keep, drop = FALSE]
+dim(data_p)</code></pre>
+<pre><code>[1] 1034   73</code></pre>
+<pre class="r"><code>table(clin_p$Group)</code></pre>
+<pre><code>
+SSc-noPAH   SSc-PAH 
+       35        38 </code></pre>
+<pre class="r"><code>barcodes &lt;- colnames(data_z)
+
+grp &lt;- clin_z$Group[match(barcodes, clin_z$Barcode)]
+cmp &lt;- clin_z$COMPERA_4strata[match(barcodes, clin_z$Barcode)]
+cmp &lt;- factor(cmp, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;))
+sex &lt;- clin_z$Sex[match(barcodes, clin_z$Barcode)]
+
+# --- colors ---
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;low&quot;               = &quot;#9CA3AF&quot;,   # grey
+  &quot;intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;high&quot;              = &quot;#A63A2A&quot;
+)
+cols_sex &lt;- c(&quot;F&quot;=&quot;green4&quot;, &quot;M&quot;=&quot;yellow2&quot;)
+
+# --- z-score per protein (row) ---
+matz &lt;- t(scale(t(data_z)))
+matz[is.nan(matz)] &lt;- 0
+
+# heatmap colors
+hm_cols &lt;- colorRamp2(c(-2, 0, 2), c(&quot;#2166AC&quot;, &quot;white&quot;, &quot;#B2182B&quot;))
+
+# column annotations (COMPERA NAs shown as light grey)
+ha &lt;- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = &quot;#E5E7EB&quot;,
+  annotation_legend_param = list(
+    Group   = list(title = &quot;Group&quot;),
+    COMPERA = list(title = &quot;Risk (COMPERA)&quot;),
+    Sex   = list(title = &quot;Sex&quot;)
+  )
+)
+
+# --- draw (all proteins, no row names, default clustering, no group split) ---
+Heatmap(
+  matz,
+  name = &quot;Z-score&quot;,
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 9),
+  row_title = NULL,
+  column_title = NULL
+) |&gt;
+  draw(heatmap_legend_side = &quot;right&quot;, annotation_legend_side = &quot;right&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-1-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barcodes &lt;- colnames(data_p)
+
+grp &lt;- clin_p$Group[match(barcodes, clin_p$Barcode)]
+cmp &lt;- clin_p$Compera_4strata[match(barcodes, clin_p$Barcode)]
+cmp &lt;- factor(cmp, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;))
+sex &lt;- clin_p$Sex[match(barcodes, clin_p$Barcode)]
+
+# --- colors ---
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;Low&quot;               = &quot;#9CA3AF&quot;,   # grey
+  &quot;Intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;Intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;High&quot;              = &quot;#A63A2A&quot;
+)
+cols_sex &lt;- c(&quot;F&quot;=&quot;green4&quot;, &quot;M&quot;=&quot;yellow2&quot;)
+
+# --- z-score per protein (row) ---
+matz &lt;- t(scale(t(data_p)))
+matz[is.nan(matz)] &lt;- 0
+
+# heatmap colors
+hm_cols &lt;- colorRamp2(c(-2, 0, 2), c(&quot;#2166AC&quot;, &quot;white&quot;, &quot;#B2182B&quot;))
+
+# column annotations (COMPERA NAs shown as light grey)
+ha &lt;- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = &quot;#E5E7EB&quot;,
+  annotation_legend_param = list(
+    Group   = list(title = &quot;Group&quot;),
+    COMPERA = list(title = &quot;Risk (COMPERA)&quot;),
+    Sex   = list(title = &quot;Sex&quot;)
+  )
+)
+
+# --- draw (all proteins, no row names, default clustering, no group split) ---
+Heatmap(
+  matz,
+  name = &quot;Z-score&quot;,
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 9),
+  row_title = NULL,
+  column_title = NULL
+) |&gt;
+  draw(heatmap_legend_side = &quot;right&quot;, annotation_legend_side = &quot;right&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-2-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barcodes &lt;- colnames(data_z)
+
+grp &lt;- clin_z$Group[match(barcodes, clin_z$Barcode)]
+cmp &lt;- clin_z$COMPERA_4strata[match(barcodes, clin_z$Barcode)]
+cmp &lt;- factor(cmp, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;))
+sex &lt;- clin_z$Sex[match(barcodes, clin_z$Barcode)]
+
+# --- colors ---
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;high&quot;              = &quot;#A63A2A&quot;
+)
+cols_sex &lt;- c(&quot;F&quot;=&quot;green4&quot;, &quot;M&quot;=&quot;yellow2&quot;)
+
+# --- pick top 100 variable proteins (rows) ---
+vars &lt;- apply(data_z, 1, var, na.rm = TRUE)
+top100 &lt;- names(sort(vars, decreasing = TRUE))[1:100]
+mat_top &lt;- as.matrix(data_z[top100, , drop = FALSE])
+
+# --- z-score per protein (row) ---
+matz &lt;- t(scale(t(mat_top)))
+matz[is.nan(matz)] &lt;- 0
+
+hm_cols &lt;- colorRamp2(c(-2, 0, 2), c(&quot;#2166AC&quot;, &quot;white&quot;, &quot;#B2182B&quot;))
+
+ha &lt;- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex     = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = &quot;#E5E7EB&quot;,
+  annotation_legend_param = list(
+    Group   = list(title = &quot;Group&quot;),
+    COMPERA = list(title = &quot;Risk (COMPERA)&quot;),
+    Sex     = list(title = &quot;Sex&quot;)
+  )
+)
+
+Heatmap(
+  matz,
+  name = &quot;Z-score&quot;,
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = TRUE,              
+  row_names_gp = gpar(fontsize = 7),
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 8.5),
+  row_title = &quot;Top 100 variable proteins&quot;,
+  column_title = NULL
+) |&gt;
+  draw(heatmap_legend_side = &quot;right&quot;, annotation_legend_side = &quot;right&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmap_z_top100var-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>stopifnot(exists(&quot;data_p&quot;), exists(&quot;clin_p&quot;))
+
+barcodes &lt;- colnames(data_p)
+
+grp &lt;- clin_p$Group[match(barcodes, clin_p$Barcode)]
+cmp &lt;- clin_p$Compera_4strata[match(barcodes, clin_p$Barcode)]
+cmp &lt;- factor(cmp, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;))
+sex &lt;- clin_p$Sex[match(barcodes, clin_p$Barcode)]
+
+# --- colors ---
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;Low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;Intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;Intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;High&quot;              = &quot;#A63A2A&quot;
+)
+cols_sex &lt;- c(&quot;F&quot;=&quot;green4&quot;, &quot;M&quot;=&quot;yellow2&quot;)
+
+# --- pick top 100 variable proteins (rows) ---
+vars &lt;- apply(data_p, 1, var, na.rm = TRUE)
+top100 &lt;- names(sort(vars, decreasing = TRUE))[1:100]
+mat_top &lt;- as.matrix(data_p[top100, , drop = FALSE])
+
+# --- z-score per protein (row) ---
+matz &lt;- t(scale(t(mat_top)))
+matz[is.nan(matz)] &lt;- 0
+
+hm_cols &lt;- colorRamp2(c(-2, 0, 2), c(&quot;#2166AC&quot;, &quot;white&quot;, &quot;#B2182B&quot;))
+
+ha &lt;- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex     = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = &quot;#E5E7EB&quot;,
+  annotation_legend_param = list(
+    Group   = list(title = &quot;Group&quot;),
+    COMPERA = list(title = &quot;Risk (COMPERA)&quot;),
+    Sex     = list(title = &quot;Sex&quot;)
+  )
+)
+
+Heatmap(
+  matz,
+  name = &quot;Z-score&quot;,
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = TRUE,              # set FALSE if you want to hide protein names
+  row_names_gp = gpar(fontsize = 7),
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 8.5),
+  row_title = &quot;Top 100 variable proteins&quot;,
+  column_title = NULL
+) |&gt;
+  draw(heatmap_legend_side = &quot;right&quot;, annotation_legend_side = &quot;right&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmap_p_top100var-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PCA (samples as rows)
+pca &lt;- prcomp(t(as.matrix(data_z)), scale. = TRUE)
+pvar &lt;- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df &lt;- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  Group = clin_z$Group[match(rownames(pca$x), clin_z$Barcode)]
+)
+
+cols_group &lt;- c(&quot;SSc-noPAH&quot; = &quot;#004C8C&quot;, &quot;SSc-PAH&quot; = &quot;#A63A2A&quot;)
+
+ggplot(df, aes(PC1, PC2, color = Group)) +
+  stat_ellipse(aes(fill = Group), type = &quot;norm&quot;, level = 0.95,
+               geom = &quot;polygon&quot;, alpha = 0.10, color = NA) +
+  stat_ellipse(type = &quot;norm&quot;, level = 0.95, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_group) +
+  scale_fill_manual(values = cols_group) +
+  labs(
+    x = paste0(&quot;PC1 (&quot;, round(pvar[1], 1), &quot;%)&quot;),
+    y = paste0(&quot;PC2 (&quot;, round(pvar[2], 1), &quot;%)&quot;)
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/pca_z_group-1.png" width="1620" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># --- subset to SSc-PAH only ---
+keep &lt;- clin_z$Group == &quot;SSc-PAH&quot;
+barcodes_keep &lt;- clin_z$Barcode[keep]
+
+data_sub &lt;- data_z[, colnames(data_z) %in% barcodes_keep, drop = FALSE]
+clin_sub &lt;- clin_z[match(colnames(data_sub), clin_z$Barcode), ]
+
+# PCA
+pca &lt;- prcomp(t(as.matrix(data_sub)), scale. = TRUE)
+pvar &lt;- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df &lt;- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  COMPERA = factor(
+    clin_sub$COMPERA_4strata,
+    levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;)
+  )
+)
+
+cols_compera_z &lt;- c(
+  &quot;low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;high&quot;              = &quot;#A63A2A&quot;
+)
+
+ggplot(df, aes(PC1, PC2, color = COMPERA)) +
+  stat_ellipse(aes(fill = COMPERA), type = &quot;norm&quot;, level = 0.90,
+               geom = &quot;polygon&quot;, alpha = 0.10, color = NA) +
+  stat_ellipse(type = &quot;norm&quot;, level = 0.90, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_compera_z, name = &quot;Risk (COMPERA)&quot;) +
+  scale_fill_manual(values = cols_compera_z,  name = &quot;Risk (COMPERA)&quot;) +
+  labs(
+    x = paste0(&quot;PC1 (&quot;, round(pvar[1], 1), &quot;%)&quot;),
+    y = paste0(&quot;PC2 (&quot;, round(pvar[2], 1), &quot;%)&quot;)
+  ) +
+  theme_minimal() +
+  guides(fill = &quot;none&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/pca_z_compera-1.png" width="1620" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pca &lt;- prcomp(t(as.matrix(data_p)), scale. = TRUE)
+pvar &lt;- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df &lt;- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  Group = clin_p$Group[match(rownames(pca$x), clin_p$Barcode)]
+)
+
+cols_group &lt;- c(&quot;SSc-noPAH&quot; = &quot;#004C8C&quot;, &quot;SSc-PAH&quot; = &quot;#A63A2A&quot;)
+
+ggplot(df, aes(PC1, PC2, color = Group)) +
+  stat_ellipse(aes(fill = Group), type = &quot;norm&quot;, level = 0.95,
+               geom = &quot;polygon&quot;, alpha = 0.10, color = NA) +
+  stat_ellipse(type = &quot;norm&quot;, level = 0.95, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_group) +
+  scale_fill_manual(values = cols_group) +
+  labs(
+    x = paste0(&quot;PC1 (&quot;, round(pvar[1], 1), &quot;%)&quot;),
+    y = paste0(&quot;PC2 (&quot;, round(pvar[2], 1), &quot;%)&quot;)
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/pca_p_group-1.png" width="1620" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># --- subset to SSc-PAH only ---
+keep &lt;- clin_p$Group == &quot;SSc-PAH&quot;
+barcodes_keep &lt;- clin_p$Barcode[keep]
+
+data_sub &lt;- data_p[, colnames(data_p) %in% barcodes_keep, drop = FALSE]
+clin_sub &lt;- clin_p[match(colnames(data_sub), clin_p$Barcode), ]
+
+# PCA
+pca &lt;- prcomp(t(as.matrix(data_sub)), scale. = TRUE)
+pvar &lt;- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df &lt;- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  COMPERA = factor(
+    clin_sub$Compera_4strata,
+    levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;)
+  )
+)
+
+cols_compera_p &lt;- c(
+  &quot;Low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;Intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;Intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;High&quot;              = &quot;#A63A2A&quot;
+)
+
+ggplot(df, aes(PC1, PC2, color = COMPERA)) +
+  stat_ellipse(aes(fill = COMPERA), type = &quot;norm&quot;, level = 0.90,
+               geom = &quot;polygon&quot;, alpha = 0.10, color = NA) +
+  stat_ellipse(type = &quot;norm&quot;, level = 0.90, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_compera_p, name = &quot;Risk (COMPERA)&quot;) +
+  scale_fill_manual(values = cols_compera_p,  name = &quot;Risk (COMPERA)&quot;) +
+  labs(
+    x = paste0(&quot;PC1 (&quot;, round(pvar[1], 1), &quot;%)&quot;),
+    y = paste0(&quot;PC2 (&quot;, round(pvar[2], 1), &quot;%)&quot;)
+  ) +
+  theme_minimal() +
+  guides(fill = &quot;none&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/pca_p_compera-1.png" width="1620" style="display: block; margin: auto;" /></p>
+</div>
+<div id="variance-partitioning" class="section level2">
+<h2>Variance partitioning</h2>
+<pre class="r"><code># expression: proteins x samples
+expr &lt;- as.matrix(data_z)
+
+# metadata aligned to columns of expr
+meta &lt;- clin_z |&gt;
+  dplyr::distinct(Barcode, .keep_all = TRUE) |&gt;
+  dplyr::filter(Barcode %in% colnames(expr)) |&gt;
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+# variables for this model
+vars &lt;- c(&quot;Group&quot;, &quot;Age&quot;, &quot;Sex&quot;, &quot;Sample_age_days&quot;)
+meta &lt;- meta |&gt;
+  dplyr::mutate(
+    Group = factor(Group),
+    Sex   = factor(Sex)
+  )
+
+# keep complete cases for model variables
+n_before &lt;- nrow(meta)
+
+meta &lt;- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+n_after &lt;- nrow(meta)
+message(&quot;Zurich (all): &quot;, n_after, &quot; / &quot;, n_before, &quot; samples used&quot;)
+
+form &lt;- ~ Group + Age + Sex + Sample_age_days
+
+vp &lt;- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) &lt;- gsub(&quot;`&quot;, &quot;&quot;, colnames(vp))
+
+# quick summaries
+vp_mean &lt;- sort(colMeans(vp), decreasing = TRUE)
+df &lt;- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = &quot;Mean fraction of variance explained&quot;,
+       title = &quot;Zurich: all samples&quot;) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_z_all-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_z_all-2.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>expr &lt;- as.matrix(data_z)
+
+meta &lt;- clin_z |&gt;
+  dplyr::distinct(Barcode, .keep_all = TRUE) |&gt;
+  dplyr::filter(Barcode %in% colnames(expr)) |&gt;
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) |&gt;
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars &lt;- c(&quot;TAPSE_sPAP&quot;, &quot;Age&quot;, &quot;Sex&quot;)
+meta &lt;- meta |&gt;
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Age = as.numeric(Age),
+    Sex = factor(Sex)
+  )
+
+n_before &lt;- nrow(meta)
+
+meta &lt;- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+n_after &lt;- nrow(meta)
+message(&quot;SSc-PAH only: &quot;, n_after, &quot; / &quot;, n_before, &quot; samples used&quot;)
+
+form &lt;- ~ TAPSE_sPAP + Age + Sex 
+
+vp &lt;- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) &lt;- gsub(&quot;`&quot;, &quot;&quot;, colnames(vp))
+
+vp_mean &lt;- sort(colMeans(vp), decreasing = TRUE)
+df &lt;- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = &quot;Mean fraction of variance explained&quot;,
+       title = &quot;Zurich: SSc-PAH only&quot;) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_z_pah-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_z_pah-2.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(variancePartition)
+
+expr &lt;- as.matrix(data_p)
+
+meta &lt;- clin_p |&gt;
+  dplyr::distinct(Barcode, .keep_all = TRUE) |&gt;
+  dplyr::filter(Barcode %in% colnames(expr)) |&gt;
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars &lt;- c(&quot;Group&quot;, &quot;Age&quot;, &quot;Sex&quot;, &quot;Sample_age&quot;)
+meta &lt;- meta |&gt;
+  dplyr::mutate(
+    Group  = factor(Group),
+    Sex    = factor(Sex),
+  )
+
+n_before &lt;- nrow(meta)
+
+meta &lt;- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+n_after &lt;- nrow(meta)
+message(&quot;Poland (all): &quot;, n_after, &quot; / &quot;, n_before, &quot; samples used&quot;)
+
+
+form &lt;- ~ Group + Age + Sex + Sample_age
+
+vp &lt;- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) &lt;- gsub(&quot;`&quot;, &quot;&quot;, colnames(vp))
+
+vp_mean &lt;- sort(colMeans(vp), decreasing = TRUE)
+df &lt;- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = &quot;Mean fraction of variance explained&quot;,
+       title = &quot;Poland: all samples&quot;) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_p_all-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_p_all-2.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(variancePartition)
+
+expr &lt;- as.matrix(data_p)
+
+meta &lt;- clin_p |&gt;
+  dplyr::distinct(Barcode, .keep_all = TRUE) |&gt;
+  dplyr::filter(Barcode %in% colnames(expr)) |&gt;
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) |&gt;
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars &lt;- c(&quot;TAPSE_sPAP&quot;, &quot;Age&quot;, &quot;Sex&quot;)
+meta &lt;- meta |&gt;
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Age = as.numeric(Age),
+    Sex = factor(Sex)
+  )
+
+n_before &lt;- nrow(meta)
+
+meta &lt;- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr &lt;- expr[, rownames(meta), drop = FALSE]
+
+n_after &lt;- nrow(meta)
+message(&quot;SSc-PAH only: &quot;, n_after, &quot; / &quot;, n_before, &quot; samples used&quot;)
+
+form &lt;- ~ TAPSE_sPAP + Age + Sex
+
+vp &lt;- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) &lt;- gsub(&quot;`&quot;, &quot;&quot;, colnames(vp))
+
+vp_mean &lt;- sort(colMeans(vp), decreasing = TRUE)
+df &lt;- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = &quot;Mean fraction of variance explained&quot;,
+       title = &quot;Poland: SSc-PAH only&quot;) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_p_pah-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/vp_p_pah-2.png" width="1950" style="display: block; margin: auto;" /></p>
+</div>
+<div id="differential-expression-analysis" class="section level2">
+<h2>Differential expression analysis</h2>
+<pre class="r"><code># --- prepare metadata aligned to expression ---
+meta_z_de &lt;- clin_z %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z)) %&gt;%
+  dplyr::mutate(
+    Group = factor(Group, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;)),
+    Sex   = factor(Sex),
+    Age   = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+# keep only complete cases for model variables
+meta_z_de &lt;- meta_z_de[complete.cases(meta_z_de[, c(&quot;Group&quot;, &quot;Age&quot;, &quot;Sex&quot;)]), , drop = FALSE]
+
+expr_z_de &lt;- as.matrix(data_z[, rownames(meta_z_de), drop = FALSE])
+
+# --- design: Group + Age + Sex ---
+design_z &lt;- model.matrix(~ Group + Age + Sex, data = meta_z_de)
+
+# rescale numeric covariate(s) like in your code
+if (&quot;Age&quot; %in% colnames(design_z)) design_z[, &quot;Age&quot;] &lt;- rescale(design_z[, &quot;Age&quot;])
+
+# --- fit limma ---
+fit_z &lt;- lmFit(expr_z_de, design_z)
+fit_z &lt;- eBayes(fit_z)
+
+# coefficient name for GroupSSc-PAH (vs reference SSc-noPAH)
+coef_group_z &lt;- grep(&quot;^Group&quot;, colnames(design_z), value = TRUE)[1]
+
+DE_z &lt;- topTable(fit_z, coef = coef_group_z, number = Inf, adjust.method = &quot;BH&quot;)
+DE_z$Gene &lt;- rownames(DE_z)
+
+DE_z_signif &lt;- DE_z %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+# write outputs (same style as your loop, but single comparison)
+write.csv(DE_z,
+          file = here::here(output_dir_data, &quot;DE_Results_Group_SScPAH_vs_noPAH_Zurich.csv&quot;),
+          quote = FALSE, row.names = FALSE)
+write.csv(DE_z_signif,
+          file = here::here(output_dir_data, &quot;DE_Significant_Group_SScPAH_vs_noPAH_Zurich.csv&quot;),
+          quote = FALSE, row.names = FALSE)
+
+# store for volcano chunk
+n_z &lt;- ncol(expr_z_de)</code></pre>
+<pre class="r"><code>meta_p_de &lt;- clin_p %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p)) %&gt;%
+  dplyr::mutate(
+    Group = factor(Group, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;)),
+    Sex   = factor(Sex),
+    Age   = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_p_de &lt;- meta_p_de[complete.cases(meta_p_de[, c(&quot;Group&quot;, &quot;Age&quot;, &quot;Sex&quot;)]), , drop = FALSE]
+
+expr_p_de &lt;- as.matrix(data_p[, rownames(meta_p_de), drop = FALSE])
+
+design_p &lt;- model.matrix(~ Group + Age + Sex, data = meta_p_de)
+if (&quot;Age&quot; %in% colnames(design_p)) design_p[, &quot;Age&quot;] &lt;- rescale(design_p[, &quot;Age&quot;])
+
+fit_p &lt;- lmFit(expr_p_de, design_p)
+fit_p &lt;- eBayes(fit_p)
+
+coef_group_p &lt;- grep(&quot;^Group&quot;, colnames(design_p), value = TRUE)[1]
+
+DE_p &lt;- topTable(fit_p, coef = coef_group_p, number = Inf, adjust.method = &quot;BH&quot;)
+DE_p$Gene &lt;- rownames(DE_p)
+
+DE_p_signif &lt;- DE_p %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+write.csv(DE_p,
+          file = here::here(output_dir_data, &quot;DE_Results_Group_SScPAH_vs_noPAH_Poland.csv&quot;),
+          quote = FALSE, row.names = FALSE)
+write.csv(DE_p_signif,
+          file = here::here(output_dir_data, &quot;DE_Significant_Group_SScPAH_vs_noPAH_Poland.csv&quot;),
+          quote = FALSE, row.names = FALSE)
+
+n_p &lt;- ncol(expr_p_de)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_z))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_z))
+
+keyvals[DE_z$logFC &gt; 0.5 &amp; DE_z$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Increased&quot;
+
+keyvals[DE_z$logFC &lt; -0.5 &amp; DE_z$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Decreased&quot;
+
+volcano_z &lt;- EnhancedVolcano(
+  DE_z,
+  lab = rownames(DE_z),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Zurich cohort\nSSc-PAH vs SSc-noPAH\nn = &quot;, n_z)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_z</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-3-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_p))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_p))
+
+keyvals[DE_p$logFC &gt; 0.5 &amp; DE_p$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Increased&quot;
+
+keyvals[DE_p$logFC &lt; -0.5 &amp; DE_p$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Decreased&quot;
+
+volcano_p &lt;- EnhancedVolcano(
+  DE_p,
+  lab = rownames(DE_p),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Poland cohort\nSSc-PAH vs SSc-noPAH\nn = &quot;, n_p)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_p</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-4-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>meta_z_de &lt;- clin_z %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    Sex = factor(Sex),
+    Age = as.numeric(Age),
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_z_de &lt;- meta_z_de[
+  complete.cases(meta_z_de[, c(&quot;TAPSE_sPAP&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_z_de &lt;- as.matrix(data_z[, rownames(meta_z_de), drop = FALSE])
+
+design_z &lt;- model.matrix(~ TAPSE_sPAP + Age + Sex, data = meta_z_de)
+
+design_z[, &quot;TAPSE_sPAP&quot;] &lt;- rescale(design_z[, &quot;TAPSE_sPAP&quot;])
+design_z[, &quot;Age&quot;]        &lt;- rescale(design_z[, &quot;Age&quot;])
+
+fit_z &lt;- lmFit(expr_z_de, design_z)
+fit_z &lt;- eBayes(fit_z)
+
+DE_z_TAPSE &lt;- topTable(
+  fit_z,
+  coef = &quot;TAPSE_sPAP&quot;,
+  number = Inf,
+  adjust.method = &quot;BH&quot;
+)
+
+DE_z_TAPSE$Gene &lt;- rownames(DE_z_TAPSE)
+
+DE_z_TAPSE_signif &lt;- DE_z_TAPSE %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+write.csv(
+  DE_z_TAPSE,
+  file = here::here(output_dir_data, &quot;DE_TAPSE_sPAP_SScPAH_Zurich.csv&quot;),
+  quote = FALSE, row.names = FALSE
+)
+
+write.csv(
+  DE_z_TAPSE_signif,
+  file = here::here(output_dir_data, &quot;DE_TAPSE_sPAP_SScPAH_Zurich_significant.csv&quot;),
+  quote = FALSE, row.names = FALSE
+)
+
+n_z_TAPSE &lt;- ncol(expr_z_de)</code></pre>
+<pre class="r"><code>meta_p_de &lt;- clin_p %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    Sex = factor(Sex),
+    Age = as.numeric(Age),
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_p_de &lt;- meta_p_de[
+  complete.cases(meta_p_de[, c(&quot;TAPSE_sPAP&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_p_de &lt;- as.matrix(data_p[, rownames(meta_p_de), drop = FALSE])
+
+design_p &lt;- model.matrix(~ TAPSE_sPAP + Age + Sex, data = meta_p_de)
+
+design_p[, &quot;TAPSE_sPAP&quot;] &lt;- rescale(design_p[, &quot;TAPSE_sPAP&quot;])
+design_p[, &quot;Age&quot;]        &lt;- rescale(design_p[, &quot;Age&quot;])
+
+fit_p &lt;- lmFit(expr_p_de, design_p)
+fit_p &lt;- eBayes(fit_p)
+
+DE_p_TAPSE &lt;- topTable(
+  fit_p,
+  coef = &quot;TAPSE_sPAP&quot;,
+  number = Inf,
+  adjust.method = &quot;BH&quot;
+)
+
+DE_p_TAPSE$Gene &lt;- rownames(DE_p_TAPSE)
+
+DE_p_TAPSE_signif &lt;- DE_p_TAPSE %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+write.csv(
+  DE_p_TAPSE,
+  file = here::here(output_dir_data, &quot;DE_TAPSE_sPAP_SScPAH_Poland.csv&quot;),
+  quote = FALSE, row.names = FALSE
+)
+
+write.csv(
+  DE_p_TAPSE_signif,
+  file = here::here(output_dir_data, &quot;DE_TAPSE_sPAP_SScPAH_Poland_significant.csv&quot;),
+  quote = FALSE, row.names = FALSE
+)
+
+n_p_TAPSE &lt;- ncol(expr_p_de)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_z_TAPSE))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_z_TAPSE))
+
+keyvals[DE_z_TAPSE$logFC &gt; 0.5 &amp; DE_z_TAPSE$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Increased&quot;
+
+keyvals[DE_z_TAPSE$logFC &lt; -0.5 &amp; DE_z_TAPSE$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Decreased&quot;
+
+volcano_z_TAPSE &lt;- EnhancedVolcano(
+  DE_z_TAPSE,
+  lab = rownames(DE_z_TAPSE),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Zurich cohort SSc-PAH\nTAPSE_sPAP\nn = &quot;, n_z_TAPSE)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_z_TAPSE</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-5-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_p_TAPSE))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_p_TAPSE))
+
+keyvals[DE_p_TAPSE$logFC &gt; 0.5 &amp; DE_p_TAPSE$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Increased&quot;
+
+keyvals[DE_p_TAPSE$logFC &lt; -0.5 &amp; DE_p_TAPSE$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Decreased&quot;
+
+volcano_p_TAPSE &lt;- EnhancedVolcano(
+  DE_p_TAPSE,
+  lab = rownames(DE_p_TAPSE),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Poland cohort SSc-PAH\nTAPSE_sPAP\nn = &quot;, n_p_TAPSE)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_p_TAPSE</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-6-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>meta_z_bin &lt;- clin_z %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = ifelse(TAPSE_sPAP &lt; 0.32, &quot;Low&quot;, &quot;High&quot;),
+    TAPSE_group = factor(TAPSE_group, levels = c(&quot;High&quot;, &quot;Low&quot;)),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_z_bin &lt;- meta_z_bin[
+  complete.cases(meta_z_bin[, c(&quot;TAPSE_group&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_z_bin &lt;- as.matrix(data_z[, rownames(meta_z_bin), drop = FALSE])
+
+design_z_bin &lt;- model.matrix(~ TAPSE_group + Age + Sex, data = meta_z_bin)
+design_z_bin[, &quot;Age&quot;] &lt;- rescale(design_z_bin[, &quot;Age&quot;])
+
+fit_z_bin &lt;- lmFit(expr_z_bin, design_z_bin)
+fit_z_bin &lt;- eBayes(fit_z_bin)
+
+coef_bin_z &lt;- grep(&quot;^TAPSE_group&quot;, colnames(design_z_bin), value = TRUE)[1]
+
+DE_z_bin &lt;- topTable(fit_z_bin, coef = coef_bin_z, number = Inf, adjust.method = &quot;BH&quot;)
+DE_z_bin$Gene &lt;- rownames(DE_z_bin)
+
+DE_z_bin_signif &lt;- DE_z_bin %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+n_z_bin &lt;- ncol(expr_z_bin)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_z_bin))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_z_bin))
+
+keyvals[DE_z_bin$logFC &gt; 0.5 &amp; DE_z_bin$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Higher in Low TAPSE_sPAP&quot;
+
+keyvals[DE_z_bin$logFC &lt; -0.5 &amp; DE_z_bin$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Higher in High TAPSE_sPAP&quot;
+
+volcano_z_bin &lt;- EnhancedVolcano(
+  DE_z_bin,
+  lab = rownames(DE_z_bin),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Zurich cohort SSc-PAH\nTAPSE/sPAP&lt;0.32 vs ≥0.32\nn = &quot;, n_z_bin)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_z_bin</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-8-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>meta_p_bin &lt;- clin_p %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = ifelse(TAPSE_sPAP &lt; 0.32, &quot;Low&quot;, &quot;High&quot;),
+    TAPSE_group = factor(TAPSE_group, levels = c(&quot;High&quot;, &quot;Low&quot;)),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_p_bin &lt;- meta_p_bin[
+  complete.cases(meta_p_bin[, c(&quot;TAPSE_group&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_p_bin &lt;- as.matrix(data_p[, rownames(meta_p_bin), drop = FALSE])
+
+design_p_bin &lt;- model.matrix(~ TAPSE_group + Age + Sex, data = meta_p_bin)
+design_p_bin[, &quot;Age&quot;] &lt;- rescale(design_p_bin[, &quot;Age&quot;])
+
+fit_p_bin &lt;- lmFit(expr_p_bin, design_p_bin)
+fit_p_bin &lt;- eBayes(fit_p_bin)
+
+coef_bin_p &lt;- grep(&quot;^TAPSE_group&quot;, colnames(design_p_bin), value = TRUE)[1]
+
+DE_p_bin &lt;- topTable(fit_p_bin, coef = coef_bin_p, number = Inf, adjust.method = &quot;BH&quot;)
+DE_p_bin$Gene &lt;- rownames(DE_p_bin)
+
+DE_p_bin_signif &lt;- DE_p_bin %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+n_p_bin &lt;- ncol(expr_p_bin)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_p_bin))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_p_bin))
+
+keyvals[DE_p_bin$logFC &gt; 0.5 &amp; DE_p_bin$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Higher in Low TAPSE_sPAP&quot;
+
+keyvals[DE_p_bin$logFC &lt; -0.5 &amp; DE_p_bin$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Higher in High TAPSE_sPAP&quot;
+
+volcano_p_bin &lt;- EnhancedVolcano(
+  DE_p_bin,
+  lab = rownames(DE_p_bin),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Poland cohort SSc-PAH\nTAPSE/sPAP&lt;0.32 vs ≥0.32\nn = &quot;, n_p_bin)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_p_bin</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-10-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>meta_z_comp &lt;- clin_z %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    COMPERA_number = as.numeric(COMPERA_number),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_z_comp &lt;- meta_z_comp[
+  complete.cases(meta_z_comp[, c(&quot;COMPERA_number&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_z_comp &lt;- as.matrix(data_z[, rownames(meta_z_comp), drop = FALSE])
+
+design_z_comp &lt;- model.matrix(~ COMPERA_number + Age + Sex, data = meta_z_comp)
+
+design_z_comp[, &quot;COMPERA_number&quot;] &lt;- rescale(design_z_comp[, &quot;COMPERA_number&quot;])
+design_z_comp[, &quot;Age&quot;]            &lt;- rescale(design_z_comp[, &quot;Age&quot;])
+
+fit_z_comp &lt;- lmFit(expr_z_comp, design_z_comp)
+fit_z_comp &lt;- eBayes(fit_z_comp)
+
+DE_z_comp &lt;- topTable(
+  fit_z_comp,
+  coef = &quot;COMPERA_number&quot;,
+  number = Inf,
+  adjust.method = &quot;BH&quot;
+)
+
+DE_z_comp$Gene &lt;- rownames(DE_z_comp)
+
+DE_z_comp_signif &lt;- DE_z_comp %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+n_z_comp &lt;- ncol(expr_z_comp)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_z_comp))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_z_comp))
+
+keyvals[DE_z_comp$logFC &gt; 0.5 &amp; DE_z_comp$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Positive association&quot;
+
+keyvals[DE_z_comp$logFC &lt; -0.5 &amp; DE_z_comp$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Negative association&quot;
+
+volcano_z_comp &lt;- EnhancedVolcano(
+  DE_z_comp,
+  lab = rownames(DE_z_comp),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Zurich cohort SSc-PAH\nCOMPERA_number\nn = &quot;, n_z_comp)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_z_comp</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-12-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>meta_p_comp &lt;- clin_p %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::mutate(
+    Compera_number = as.numeric(Compera_number),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %&gt;%
+  tibble::column_to_rownames(&quot;Barcode&quot;)
+
+meta_p_comp &lt;- meta_p_comp[
+  complete.cases(meta_p_comp[, c(&quot;Compera_number&quot;, &quot;Age&quot;, &quot;Sex&quot;)]),
+  , drop = FALSE
+]
+
+expr_p_comp &lt;- as.matrix(data_p[, rownames(meta_p_comp), drop = FALSE])
+
+design_p_comp &lt;- model.matrix(~ Compera_number + Age + Sex, data = meta_p_comp)
+
+design_p_comp[, &quot;Compera_number&quot;] &lt;- rescale(design_p_comp[, &quot;Compera_number&quot;])
+design_p_comp[, &quot;Age&quot;]            &lt;- rescale(design_p_comp[, &quot;Age&quot;])
+
+fit_p_comp &lt;- lmFit(expr_p_comp, design_p_comp)
+fit_p_comp &lt;- eBayes(fit_p_comp)
+
+DE_p_comp &lt;- topTable(
+  fit_p_comp,
+  coef = &quot;Compera_number&quot;,
+  number = Inf,
+  adjust.method = &quot;BH&quot;
+)
+
+DE_p_comp$Gene &lt;- rownames(DE_p_comp)
+
+DE_p_comp_signif &lt;- DE_p_comp %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.1, abs(logFC) &gt; 0.5) %&gt;%
+  dplyr::arrange(P.Value)
+
+n_p_comp &lt;- ncol(expr_p_comp)</code></pre>
+<pre class="r"><code>keyvals &lt;- rep(&quot;grey&quot;, nrow(DE_p_comp))
+names(keyvals) &lt;- rep(&quot;Not significant&quot;, nrow(DE_p_comp))
+
+keyvals[DE_p_comp$logFC &gt; 0.5 &amp; DE_p_comp$adj.P.Val &lt; 0.1] &lt;- &quot;#A63A2A&quot;
+names(keyvals)[keyvals == &quot;#A63A2A&quot;] &lt;- &quot;Positive association&quot;
+
+keyvals[DE_p_comp$logFC &lt; -0.5 &amp; DE_p_comp$adj.P.Val &lt; 0.1] &lt;- &quot;#004C8C&quot;
+names(keyvals)[keyvals == &quot;#004C8C&quot;] &lt;- &quot;Negative association&quot;
+
+volcano_p_comp &lt;- EnhancedVolcano(
+  DE_p_comp,
+  lab = rownames(DE_p_comp),
+  x = &quot;logFC&quot;,
+  y = &quot;adj.P.Val&quot;,
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0(&quot;Poland cohort\nSSc-PAH only\nCOMPERA_number\nn = &quot;, n_p_comp)
+) +
+  theme(legend.position = &quot;none&quot;)
+
+volcano_p_comp</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/unnamed-chunk-14-1.png" width="1050" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_group &lt;- dplyr::inner_join(
+  DE_z[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  DE_p[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  by = &quot;Gene&quot;,
+  suffix = c(&quot;_z&quot;, &quot;_p&quot;)
+)
+
+cor_group &lt;- cor(df_group$logFC_z, df_group$logFC_p)
+
+ggplot(df_group, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.6) +
+  labs(
+    x = &quot;Zurich logFC&quot;,
+    y = &quot;Poland logFC&quot;,
+    title = paste0(&quot;SSc-PAH vs SSc-noPAH\nr = &quot;, round(cor_group, 2))
+  ) +
+  theme_classic()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/cor_group-1.png" width="1200" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_tapse &lt;- dplyr::inner_join(
+  DE_z_TAPSE[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  DE_p_TAPSE[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  by = &quot;Gene&quot;,
+  suffix = c(&quot;_z&quot;, &quot;_p&quot;)
+)
+
+cor_tapse &lt;- cor(df_tapse$logFC_z, df_tapse$logFC_p)
+
+ggplot(df_tapse, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.6) +
+  labs(
+    x = &quot;Zurich logFC&quot;,
+    y = &quot;Poland logFC&quot;,
+    title = paste0(&quot;TAPSE_sPAP (continuous)\nr = &quot;, round(cor_tapse, 2))
+  ) +
+  theme_classic()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/cor_tapse_cont-1.png" width="1200" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_tapse_bin &lt;- dplyr::inner_join(
+  DE_z_bin[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  DE_p_bin[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  by = &quot;Gene&quot;,
+  suffix = c(&quot;_z&quot;, &quot;_p&quot;)
+)
+
+cor_tapse_bin &lt;- cor(df_tapse_bin$logFC_z, df_tapse_bin$logFC_p)
+
+ggplot(df_tapse_bin, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.6) +
+  labs(
+    x = &quot;Zurich logFC&quot;,
+    y = &quot;Poland logFC&quot;,
+    title = paste0(&quot;TAPSE/sPAP groups (&lt;0.32 vs ≥0.32)\nr = &quot;, round(cor_tapse_bin, 2))
+  ) +
+  theme_classic()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/cor_tapse_binary-1.png" width="1200" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df_comp &lt;- dplyr::inner_join(
+  DE_z_comp[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  DE_p_comp[, c(&quot;Gene&quot;, &quot;logFC&quot;)],
+  by = &quot;Gene&quot;,
+  suffix = c(&quot;_z&quot;, &quot;_p&quot;)
+)
+
+cor_comp &lt;- cor(df_comp$logFC_z, df_comp$logFC_p)
+
+ggplot(df_comp, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.6) +
+  labs(
+    x = &quot;Zurich logFC&quot;,
+    y = &quot;Poland logFC&quot;,
+    title = paste0(&quot;COMPERA_number\nr = &quot;, round(cor_comp, 2))
+  ) +
+  theme_classic()</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/cor_compera-1.png" width="1200" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># score for ranking (for GSEA later)
+add_score &lt;- function(de) {
+  de$score &lt;- de$logFC * (-log10(de$P.Value))
+  de
+}
+
+# heatmap: top20 up/down by score
+plot_top_score_heatmap &lt;- function(expr, clin, de, samples, ha, title_text) {
+  de &lt;- add_score(de)
+
+  de_sub &lt;- de[match(rownames(expr), de$Gene), ]
+  rownames(de_sub) &lt;- de_sub$Gene
+
+  up   &lt;- de_sub[order(de_sub$score, decreasing = TRUE), , drop = FALSE]
+  down &lt;- de_sub[order(de_sub$score, decreasing = FALSE), , drop = FALSE]
+
+  top_up   &lt;- rownames(up)[1:20]
+  top_down &lt;- rownames(down)[1:20]
+
+  genes_use &lt;- c(top_up, top_down)
+
+  mat &lt;- as.matrix(expr[genes_use, samples, drop = FALSE])
+
+  # z-score per protein (row), same as your heatmaps
+  matz &lt;- t(scale(t(mat)))
+  matz[is.nan(matz)] &lt;- 0
+
+  hm_cols &lt;- colorRamp2(c(-2, 0, 2), c(&quot;#2166AC&quot;, &quot;white&quot;, &quot;#B2182B&quot;))
+
+  Heatmap(
+    matz,
+    name = &quot;Z-score&quot;,
+    col = hm_cols,
+    top_annotation = ha,
+    cluster_rows = FALSE,
+    cluster_columns = TRUE,
+    show_row_names = TRUE,
+    row_names_gp = gpar(fontsize = 13),
+    show_column_names = TRUE,
+    column_names_gp = gpar(fontsize = 8),
+    row_title = title_text,
+    column_title = NULL,
+    height = unit(nrow(matz) * 5, &quot;mm&quot;)
+  ) |&gt;
+    draw(heatmap_legend_side = &quot;right&quot;, annotation_legend_side = &quot;right&quot;)
+}</code></pre>
+<pre class="r"><code>clin_z &lt;- clin_z %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = dplyr::case_when(
+      is.na(TAPSE_sPAP)      ~ NA_character_,
+      TAPSE_sPAP &lt; 0.32      ~ &quot;&lt;0.32&quot;,
+      TAPSE_sPAP &gt;= 0.32     ~ &quot;≥0.32&quot;
+    ),
+    TAPSE_group = factor(TAPSE_group, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;))
+  )
+
+clin_p &lt;- clin_p %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = dplyr::case_when(
+      is.na(TAPSE_sPAP)      ~ NA_character_,
+      TAPSE_sPAP &lt; 0.32      ~ &quot;&lt;0.32&quot;,
+      TAPSE_sPAP &gt;= 0.32     ~ &quot;≥0.32&quot;
+    ),
+    TAPSE_group = factor(TAPSE_group, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;))
+  )</code></pre>
+<pre class="r"><code># ---- add TAPSE/sPAP group to clin_z once ----
+clin_z &lt;- clin_z %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    `TAPSE/sPAP` = dplyr::case_when(
+      is.na(TAPSE_sPAP)  ~ NA_character_,
+      TAPSE_sPAP &lt; 0.32  ~ &quot;&lt;0.32&quot;,
+      TRUE               ~ &quot;≥0.32&quot;
+    ),
+    `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;))
+  )
+
+# ---- colors (same palette logic) ----
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;high&quot;              = &quot;#A63A2A&quot;
+)
+cols_tapse_spap &lt;- c(&quot;≥0.32&quot; = &quot;#9CA3AF&quot;, &quot;&lt;0.32&quot; = &quot;#A63A2A&quot;)
+
+# 1) SSc-PAH vs SSc-noPAH
+samples &lt;- intersect(colnames(data_z), clin_z$Barcode)
+meta_hm &lt;- clin_z[match(samples, clin_z$Barcode), ]
+
+ha &lt;- HeatmapAnnotation(
+  Group        = meta_hm$Group,
+  COMPERA      = factor(meta_hm$COMPERA_4strata, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;)),
+  `TAPSE/sPAP` = meta_hm$`TAPSE/sPAP`,
+  col = list(Group = cols_group, COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z,
+  samples = samples,
+  ha = ha,
+  title_text = &quot;Zurich: top20 up/down by score\nSSc-PAH vs SSc-noPAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_zurich_tapseGroup-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2) TAPSE_sPAP (continuous), SSc-PAH only
+meta2 &lt;- clin_z %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples2 &lt;- meta2$Barcode
+
+ha2 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta2$COMPERA_4strata, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;)),
+  `TAPSE/sPAP` = meta2$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_TAPSE,
+  samples = samples2,
+  ha = ha2,
+  title_text = &quot;Zurich: top20 up/down by score\nTAPSE_sPAP (continuous), SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_zurich_tapseGroup-2.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 3) TAPSE_sPAP groups (&lt;0.32 vs ≥0.32), SSc-PAH only
+meta3 &lt;- clin_z %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples3 &lt;- meta3$Barcode
+
+ha3 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta3$COMPERA_4strata, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;)),
+  `TAPSE/sPAP` = meta3$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_bin,
+  samples = samples3,
+  ha = ha3,
+  title_text = &quot;Zurich: top20 up/down by score\nTAPSE_sPAP &lt;0.32 vs ≥0.32, SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_zurich_tapseGroup-3.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 4) COMPERA_number (continuous), SSc-PAH only
+meta4 &lt;- clin_z %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(COMPERA_number), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples4 &lt;- meta4$Barcode
+
+ha4 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta4$COMPERA_4strata, levels = c(&quot;low&quot;,&quot;intermediate-low&quot;,&quot;intermediate-high&quot;,&quot;high&quot;)),
+  `TAPSE/sPAP` = meta4$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_comp,
+  samples = samples4,
+  ha = ha4,
+  title_text = &quot;Zurich: top20 up/down by score\nCOMPERA_number (continuous), SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_zurich_tapseGroup-4.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># ---- add TAPSE/sPAP group to clin_p once ----
+clin_p &lt;- clin_p %&gt;%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    `TAPSE/sPAP` = dplyr::case_when(
+      is.na(TAPSE_sPAP)  ~ NA_character_,
+      TAPSE_sPAP &lt; 0.32  ~ &quot;&lt;0.32&quot;,
+      TRUE               ~ &quot;≥0.32&quot;
+    ),
+    `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;))
+  )
+
+# ---- colors ----
+cols_group &lt;- c(&quot;SSc-noPAH&quot;=&quot;#004C8C&quot;, &quot;SSc-PAH&quot;=&quot;#A63A2A&quot;)
+cols_compera &lt;- c(
+  &quot;Low&quot;               = &quot;#9CA3AF&quot;,
+  &quot;Intermediate-low&quot;  = &quot;#DDB7B2&quot;,
+  &quot;Intermediate-high&quot; = &quot;#C7685F&quot;,
+  &quot;High&quot;              = &quot;#A63A2A&quot;
+)
+cols_tapse_spap &lt;- c(&quot;≥0.32&quot; = &quot;#9CA3AF&quot;, &quot;&lt;0.32&quot; = &quot;#A63A2A&quot;)
+
+# 1) SSc-PAH vs SSc-noPAH
+samples &lt;- intersect(colnames(data_p), clin_p$Barcode)
+meta_hm &lt;- clin_p[match(samples, clin_p$Barcode), ]
+
+ha &lt;- HeatmapAnnotation(
+  Group        = meta_hm$Group,
+  COMPERA      = factor(meta_hm$Compera_4strata, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;)),
+  `TAPSE/sPAP` = meta_hm$`TAPSE/sPAP`,
+  col = list(Group = cols_group, COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p,
+  samples = samples,
+  ha = ha,
+  title_text = &quot;Poland: top20 up/down by score\nSSc-PAH vs SSc-noPAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_poland_tapseGroup-1.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 2) TAPSE_sPAP (continuous), SSc-PAH only
+meta2 &lt;- clin_p %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples2 &lt;- meta2$Barcode
+
+ha2 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta2$Compera_4strata, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;)),
+  `TAPSE/sPAP` = meta2$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_TAPSE,
+  samples = samples2,
+  ha = ha2,
+  title_text = &quot;Poland: top20 up/down by score\nTAPSE_sPAP (continuous), SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_poland_tapseGroup-2.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 3) TAPSE_sPAP groups (&lt;0.32 vs ≥0.32), SSc-PAH only
+meta3 &lt;- clin_p %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples3 &lt;- meta3$Barcode
+
+ha3 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta3$Compera_4strata, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;)),
+  `TAPSE/sPAP` = meta3$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_bin,
+  samples = samples3,
+  ha = ha3,
+  title_text = &quot;Poland: top20 up/down by score\nTAPSE_sPAP &lt;0.32 vs ≥0.32, SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_poland_tapseGroup-3.png" width="3240" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># 4) Compera_number (continuous), SSc-PAH only
+meta4 &lt;- clin_p %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(Compera_number), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples4 &lt;- meta4$Barcode
+
+ha4 &lt;- HeatmapAnnotation(
+  COMPERA      = factor(meta4$Compera_4strata, levels = c(&quot;Low&quot;,&quot;Intermediate-low&quot;,&quot;Intermediate-high&quot;,&quot;High&quot;)),
+  `TAPSE/sPAP` = meta4$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = &quot;#E5E7EB&quot;
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_comp,
+  samples = samples4,
+  ha = ha4,
+  title_text = &quot;Poland: top20 up/down by score\nCOMPERA_number (continuous), SSc-PAH&quot;
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/heatmaps_scores_poland_tapseGroup-4.png" width="3240" style="display: block; margin: auto;" /></p>
+</div>
+<div id="check-age-and-sex-by-tapsespap-group" class="section level2">
+<h2>Check age and sex by TAPSE/sPAP group</h2>
+<pre class="r"><code>library(ggpubr)
+
+prepare_tapse_group_df &lt;- function(clin, cohort_label) {
+  clin %&gt;%
+    dplyr::mutate(
+      TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+      `TAPSE/sPAP` = dplyr::case_when(
+        is.na(TAPSE_sPAP) ~ NA_character_,
+        TAPSE_sPAP &lt; 0.32 ~ &quot;&lt;0.32&quot;,
+        TRUE ~ &quot;≥0.32&quot;
+      ),
+      `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;)),
+      Age = as.numeric(Age),
+      Sex = factor(Sex),
+      Cohort = cohort_label
+    ) %&gt;%
+    dplyr::filter(!is.na(`TAPSE/sPAP`))
+}
+
+age_test_tbl &lt;- function(df) {
+  df %&gt;%
+    dplyr::filter(!is.na(Age)) %&gt;%
+    dplyr::summarise(
+      n = dplyr::n(),
+      p_value = wilcox.test(Age ~ `TAPSE/sPAP`, data = dplyr::cur_data())$p.value,
+      .groups = &quot;drop&quot;
+    )
+}
+
+sex_test_tbl &lt;- function(df) {
+  tab &lt;- table(df$`TAPSE/sPAP`, df$Sex)
+  list(table = tab, fisher = fisher.test(tab))
+}
+
+plot_age_by_tapse &lt;- function(df, cohort_label) {
+  p_age &lt;- wilcox.test(Age ~ `TAPSE/sPAP`, data = df %&gt;% dplyr::filter(!is.na(Age)))$p.value
+
+  ggplot(df, aes(x = `TAPSE/sPAP`, y = Age, fill = `TAPSE/sPAP`)) +
+    geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+    geom_jitter(width = 0.1, size = 2, alpha = 0.7) +
+    annotate(
+      &quot;text&quot;, x = 1.5, y = Inf,
+      label = paste0(&quot;Wilcoxon p = &quot;, signif(p_age, 3)),
+      vjust = 1.4, size = 4
+    ) +
+    theme_classic() +
+    labs(
+      title = paste0(cohort_label, &quot; cohort: Age by TAPSE/sPAP group&quot;),
+      y = &quot;Age (years)&quot;,
+      x = &quot;TAPSE/sPAP group&quot;
+    ) +
+    theme(legend.position = &quot;none&quot;)
+}
+
+plot_sex_by_tapse &lt;- function(df, cohort_label) {
+  df %&gt;%
+    dplyr::filter(!is.na(Sex)) %&gt;%
+    ggplot(aes(x = `TAPSE/sPAP`, fill = Sex)) +
+    geom_bar(position = &quot;fill&quot;) +
+    theme_classic() +
+    labs(
+      title = paste0(cohort_label, &quot; cohort: Sex distribution by TAPSE/sPAP group&quot;),
+      y = &quot;Proportion&quot;,
+      x = &quot;TAPSE/sPAP group&quot;
+    )
+}
+
+clin_z_tapse &lt;- prepare_tapse_group_df(clin_z, &quot;Zurich&quot;)
+clin_p_tapse &lt;- prepare_tapse_group_df(clin_p, &quot;Poland&quot;)</code></pre>
+<pre class="r"><code>age_test_tbl(clin_p_tapse)</code></pre>
+<pre><code># A tibble: 1 × 2
+      n p_value
+  &lt;int&gt;   &lt;dbl&gt;
+1    69 0.00264</code></pre>
+<pre class="r"><code>sex_test_p &lt;- sex_test_tbl(clin_p_tapse)
+sex_test_p$table</code></pre>
+<pre><code>       
+         F  M
+  ≥0.32 31 14
+  &lt;0.32 15  9</code></pre>
+<pre class="r"><code>sex_test_p$fisher</code></pre>
+<pre><code>
+    Fisher&#39;s Exact Test for Count Data
+
+data:  tab
+p-value = 0.6031
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.406557 4.210445
+sample estimates:
+odds ratio 
+   1.32299 </code></pre>
+<pre class="r"><code>plot_age_by_tapse(clin_p_tapse, &quot;Poland&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/age_sex_poland-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_sex_by_tapse(clin_p_tapse, &quot;Poland&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/age_sex_poland-2.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>age_test_tbl(clin_z_tapse)</code></pre>
+<pre><code># A tibble: 1 × 2
+      n p_value
+  &lt;int&gt;   &lt;dbl&gt;
+1    61   0.102</code></pre>
+<pre class="r"><code>sex_test_z &lt;- sex_test_tbl(clin_z_tapse)
+sex_test_z$table</code></pre>
+<pre><code>       
+         F  M
+  ≥0.32 46  9
+  &lt;0.32  5  1</code></pre>
+<pre class="r"><code>sex_test_z$fisher</code></pre>
+<pre><code>
+    Fisher&#39;s Exact Test for Count Data
+
+data:  tab
+p-value = 1
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  0.01947567 10.89926746
+sample estimates:
+odds ratio 
+  1.021853 </code></pre>
+<pre class="r"><code>plot_age_by_tapse(clin_z_tapse, &quot;Zurich&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/age_sex_zurich-1.png" width="1950" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_sex_by_tapse(clin_z_tapse, &quot;Zurich&quot;)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/age_sex_zurich-2.png" width="1950" style="display: block; margin: auto;" /></p>
+</div>
+<div id="final-lasso" class="section level1">
+<h1>Final lasso</h1>
+<pre class="r"><code>library(glmnet)
+library(pROC)
+library(Matrix)
+
+# SSc-PAH only for the training/testing task.
+# Outcome: 1 = low TAPSE/sPAP (&lt;0.32), 0 = preserved TAPSE/sPAP (≥0.32).
+train_p &lt;- clin_p %&gt;%
+  dplyr::mutate(TAPSE_sPAP = as.numeric(TAPSE_sPAP), Age = as.numeric(Age), Sex = factor(Sex)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+test_z &lt;- clin_z %&gt;%
+  dplyr::mutate(TAPSE_sPAP = as.numeric(TAPSE_sPAP), Age = as.numeric(Age), Sex = factor(Sex)) %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+y_p &lt;- ifelse(train_p$TAPSE_sPAP &lt; 0.32, 1, 0)
+y_z &lt;- ifelse(test_z$TAPSE_sPAP &lt; 0.32, 1, 0)
+
+make_design &lt;- function(expr_mat, clin_df, include_age = TRUE, include_sex = TRUE){
+  X_prot &lt;- t(expr_mat[, clin_df$Barcode, drop = FALSE])
+
+  cov_parts &lt;- list()
+  if (include_age) cov_parts$Age &lt;- as.numeric(clin_df$Age)
+  if (include_sex) cov_parts$Sex &lt;- factor(clin_df$Sex)
+
+  if (length(cov_parts) == 0) {
+    X &lt;- X_prot
+    pf &lt;- rep(1, ncol(X))
+    cov_names &lt;- character(0)
+  } else {
+    X_cov &lt;- model.matrix(~ ., data = as.data.frame(cov_parts))[, -1, drop = FALSE]
+    X &lt;- cbind(X_cov, X_prot)
+    pf &lt;- c(rep(0, ncol(X_cov)), rep(1, ncol(X_prot)))
+    cov_names &lt;- colnames(X_cov)
+  }
+
+  list(X = X, pf = pf, cov_names = cov_names, prot_names = colnames(X_prot))
+}
+
+choose_lambda_by_protein_count &lt;- function(cvfit, prot_names, min_prot = 3, max_prot = 15){
+  lambdas &lt;- cvfit$glmnet.fit$lambda
+  beta_mat &lt;- as.matrix(coef(cvfit$glmnet.fit, s = lambdas))
+  prot_idx &lt;- which(rownames(beta_mat) %in% prot_names)
+  nprot &lt;- apply(beta_mat[prot_idx, , drop = FALSE] != 0, 2, sum)
+
+  ok &lt;- which(nprot &gt;= min_prot &amp; nprot &lt;= max_prot)
+  if (length(ok) &gt; 0) {
+    return(lambdas[ok[which.min(cvfit$cvm[match(lambdas[ok], cvfit$lambda)])]])
+  }
+
+  target &lt;- round((min_prot + max_prot) / 2)
+  lambdas[which.min(abs(nprot - target))]
+}
+
+bootstrap_stability_lasso &lt;- function(expr_mat, clin_df, y,
+                                      B = 500,
+                                      include_age = TRUE,
+                                      include_sex = TRUE,
+                                      alpha = 1,
+                                      nfolds = 5,
+                                      min_prot = 3,
+                                      max_prot = 15,
+                                      seed = 1){
+  set.seed(seed)
+  stopifnot(all(clin_df$Barcode %in% colnames(expr_mat)))
+
+  expr_mat &lt;- expr_mat[, clin_df$Barcode, drop = FALSE]
+  y &lt;- as.numeric(y)
+
+  des &lt;- make_design(expr_mat, clin_df, include_age, include_sex)
+  X_full &lt;- des$X
+  pf &lt;- des$pf
+  all_prots &lt;- des$prot_names
+  n &lt;- nrow(X_full)
+
+  sel_list &lt;- vector(&quot;list&quot;, B)
+  coef_list &lt;- vector(&quot;list&quot;, B)
+  auc_oob &lt;- rep(NA_real_, B)
+  lambda_used &lt;- rep(NA_real_, B)
+
+  for (b in seq_len(B)) {
+    idx_boot &lt;- sample(seq_len(n), size = n, replace = TRUE)
+    idx_oob &lt;- setdiff(seq_len(n), unique(idx_boot))
+
+    Xb &lt;- X_full[idx_boot, , drop = FALSE]
+    yb &lt;- y[idx_boot]
+
+    cvfit &lt;- glmnet::cv.glmnet(
+      x = Xb, y = yb, family = &quot;binomial&quot;, alpha = alpha,
+      penalty.factor = pf, standardize = TRUE, nfolds = nfolds,
+      type.measure = &quot;auc&quot;
+    )
+
+    lam &lt;- choose_lambda_by_protein_count(cvfit, prot_names = all_prots,
+                                          min_prot = min_prot, max_prot = max_prot)
+    lambda_used[b] &lt;- lam
+
+    beta &lt;- as.matrix(coef(cvfit$glmnet.fit, s = lam))[, 1]
+    names(beta) &lt;- rownames(as.matrix(coef(cvfit$glmnet.fit, s = lam)))
+
+    sel_prot &lt;- intersect(names(beta)[beta != 0], all_prots)
+    sel_list[[b]] &lt;- sel_prot
+    coef_list[[b]] &lt;- beta
+
+    if (length(idx_oob) &gt;= 8 &amp;&amp; length(unique(y[idx_oob])) == 2) {
+      fitb &lt;- glmnet::glmnet(
+        x = Xb, y = yb, family = &quot;binomial&quot;, alpha = alpha,
+        penalty.factor = pf, standardize = TRUE, lambda = lam
+      )
+      p_oob &lt;- as.numeric(predict(fitb, newx = X_full[idx_oob, , drop = FALSE], type = &quot;response&quot;))
+      auc_oob[b] &lt;- as.numeric(pROC::auc(pROC::roc(y[idx_oob], p_oob, quiet = TRUE)))
+    }
+  }
+
+  sel_counts &lt;- table(unlist(sel_list))
+  freq &lt;- as.numeric(sel_counts[all_prots])
+  freq[is.na(freq)] &lt;- 0
+  freq &lt;- freq / B
+
+  sign_pos &lt;- rep(NA_real_, length(all_prots))
+  names(sign_pos) &lt;- all_prots
+
+  for (p in all_prots) {
+    signs &lt;- c()
+    for (b in seq_len(B)) {
+      beta &lt;- coef_list[[b]]
+      if (!is.null(beta) &amp;&amp; p %in% names(beta) &amp;&amp; beta[p] != 0) {
+        signs &lt;- c(signs, sign(beta[p]))
+      }
+    }
+    if (length(signs) &gt; 0) sign_pos[p] &lt;- mean(signs &gt; 0)
+  }
+
+  summary &lt;- data.frame(
+    protein = all_prots,
+    select_freq = freq,
+    sign_pos_frac = sign_pos,
+    stringsAsFactors = FALSE
+  ) %&gt;%
+    dplyr::arrange(dplyr::desc(select_freq))
+
+  list(
+    summary = summary,
+    sel_list = sel_list,
+    coef_list = coef_list,
+    auc_oob = auc_oob,
+    lambda_used = lambda_used,
+    settings = list(B = B, include_age = include_age, include_sex = include_sex,
+                    alpha = alpha, nfolds = nfolds, min_prot = min_prot, max_prot = max_prot)
+  )
+}
+
+get_scaler &lt;- function(expr_mat, proteins){
+  m &lt;- rowMeans(expr_mat[proteins, , drop = FALSE], na.rm = TRUE)
+  s &lt;- apply(expr_mat[proteins, , drop = FALSE], 1, sd, na.rm = TRUE)
+  s[s == 0 | is.na(s)] &lt;- 1
+  list(mu = m, sd = s)
+}
+
+apply_scaler &lt;- function(expr_mat, proteins, scaler){
+  Z &lt;- expr_mat[proteins, , drop = FALSE]
+  Z &lt;- sweep(Z, 1, scaler$mu, &quot;-&quot;)
+  Z &lt;- sweep(Z, 1, scaler$sd, &quot;/&quot;)
+  Z[is.na(Z)] &lt;- 0
+  Z
+}
+
+fit_logistic_refit &lt;- function(expr_mat, clin_df, proteins, cutoff = 0.32,
+                               include_age = TRUE, include_sex = TRUE){
+  df &lt;- clin_df %&gt;% dplyr::mutate(y = ifelse(TAPSE_sPAP &lt; cutoff, 1, 0))
+  stopifnot(all(df$Barcode %in% colnames(expr_mat)))
+
+  scaler &lt;- get_scaler(expr_mat[, df$Barcode, drop = FALSE], proteins)
+  Z &lt;- t(apply_scaler(expr_mat[, df$Barcode, drop = FALSE], proteins, scaler)) %&gt;% as.data.frame()
+  Z$Barcode &lt;- df$Barcode
+
+  dd &lt;- df %&gt;% dplyr::select(Barcode, y, Age, Sex) %&gt;% dplyr::left_join(Z, by = &quot;Barcode&quot;)
+
+  rhs &lt;- c(if (include_age) &quot;Age&quot;, if (include_sex) &quot;Sex&quot;, proteins)
+  fml &lt;- as.formula(paste(&quot;y ~&quot;, paste(rhs, collapse = &quot; + &quot;)))
+
+  m &lt;- glm(fml, data = dd, family = binomial())
+  list(model = m, scaler = scaler, proteins = proteins, include_age = include_age, include_sex = include_sex)
+}
+
+predict_logistic_refit &lt;- function(fit, expr_mat, clin_df){
+  df &lt;- clin_df
+  stopifnot(all(df$Barcode %in% colnames(expr_mat)))
+
+  Z &lt;- t(apply_scaler(expr_mat[, df$Barcode, drop = FALSE], fit$proteins, fit$scaler)) %&gt;% as.data.frame()
+  Z$Barcode &lt;- df$Barcode
+
+  keep_cols &lt;- intersect(c(&quot;Barcode&quot;, &quot;Age&quot;, &quot;Sex&quot;, &quot;TAPSE_sPAP&quot;, &quot;TAPSE_group&quot;, &quot;Group&quot;), colnames(df))
+  dd &lt;- df %&gt;% dplyr::select(dplyr::all_of(keep_cols)) %&gt;% dplyr::left_join(Z, by = &quot;Barcode&quot;)
+
+  dd$score_eta &lt;- as.numeric(predict(fit$model, newdata = dd, type = &quot;link&quot;))
+  dd$score_p &lt;- as.numeric(predict(fit$model, newdata = dd, type = &quot;response&quot;))
+  dd
+}
+
+signed_mean_score &lt;- function(expr_mat, clin_df, proteins, sign_map, scaler){
+  stopifnot(all(names(sign_map) %in% proteins))
+  Z &lt;- apply_scaler(expr_mat[, clin_df$Barcode, drop = FALSE], proteins, scaler)
+  Zs &lt;- sweep(Z, 1, sign_map[proteins], &quot;*&quot;)
+  score &lt;- colMeans(Zs, na.rm = TRUE)
+
+  out &lt;- clin_df %&gt;% dplyr::select(dplyr::any_of(c(&quot;Barcode&quot;, &quot;Age&quot;, &quot;Sex&quot;, &quot;TAPSE_sPAP&quot;, &quot;TAPSE_group&quot;, &quot;Group&quot;)))
+  out$score_signed &lt;- as.numeric(score[match(out$Barcode, names(score))])
+  out
+}</code></pre>
+<pre class="r"><code>library(limma)
+library(dplyr)
+
+# Poland samples for DE (PAH vs noPAH)
+de_meta_p &lt;- clin_p %&gt;%
+  filter(Group %in% c(&quot;SSc-PAH&quot;, &quot;SSc-noPAH&quot;)) %&gt;%
+  filter(!is.na(Age), !is.na(Sex)) %&gt;%
+  filter(Barcode %in% colnames(data_p))
+
+X_de &lt;- as.matrix(data_p[, de_meta_p$Barcode, drop = FALSE])
+
+# Design: Group + Age + Sex
+de_meta_p$Group &lt;- factor(de_meta_p$Group, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;))
+de_meta_p$Sex   &lt;- factor(de_meta_p$Sex)
+
+design &lt;- model.matrix(~ Group + Age + Sex, data = de_meta_p)
+
+fit &lt;- lmFit(X_de, design)
+fit &lt;- eBayes(fit)
+
+DE_pah_vs_nopah &lt;- topTable(fit, coef = &quot;GroupSSc-PAH&quot;, number = Inf, adjust.method = &quot;BH&quot;)
+DE_pah_vs_nopah$protein &lt;- rownames(DE_pah_vs_nopah)
+
+# Choose your filter (match your original logic)
+# Example: adj.P.Val &lt; 0.05 (optionally add |logFC| cutoff)
+preselect_proteins &lt;- DE_pah_vs_nopah %&gt;%
+  dplyr::filter(adj.P.Val &lt; 0.05) %&gt;%
+ # dplyr::filter(protein %in% dplyr::filter(DE_p_bin, P.Value &lt; 0.05)$Gene) %&gt;%
+  pull(protein)
+
+length(preselect_proteins)</code></pre>
+<pre><code>[1] 60</code></pre>
+<pre class="r"><code>head(preselect_proteins)</code></pre>
+<pre><code>[1] &quot;ADM&quot;   &quot;ACE2&quot;  &quot;PRELP&quot; &quot;TAFA5&quot; &quot;CFC1&quot;  &quot;FGF23&quot;</code></pre>
+<pre class="r"><code>qs2::qs_save(DE_pah_vs_nopah, here::here(output_dir_data, &quot;DE_Poland_SScPAH_vs_SScnoPAH_AgeSex.qs2&quot;))
+qs2::qs_save(preselect_proteins, here::here(output_dir_data, &quot;preselect_proteins_DEadjP005.qs2&quot;))</code></pre>
+<div id="stability-selection-lasso-after-protein-preselection"
+class="section level2">
+<h2>Stability-selection lasso after protein preselection</h2>
+<pre class="r"><code># Intersect with proteins available in BOTH cohorts
+common_preselect &lt;- intersect(preselect_proteins, intersect(rownames(data_p), rownames(data_z)))
+length(common_preselect)</code></pre>
+<pre><code>[1] 58</code></pre>
+<pre class="r"><code># Build training/test expression matrices for LASSO (proteins x samples)
+expr_p_tr_pre &lt;- as.matrix(data_p[common_preselect, train_p$Barcode, drop = FALSE])
+expr_z_te_pre &lt;- as.matrix(data_z[common_preselect, test_z$Barcode, drop = FALSE])
+
+# Run bootstrap stability selection on the preselected feature space
+B &lt;- 500
+stab_pre &lt;- bootstrap_stability_lasso(
+  expr_mat = expr_p_tr_pre,
+  clin_df  = train_p,
+  y        = y_p,
+  B = B,
+  include_age = TRUE,
+  include_sex = TRUE,    # or FALSE if you want Age-only adjustment
+  alpha = 1,
+  nfolds = 5,
+  min_prot = 3,
+  max_prot = 100,
+  seed = 1
+)
+
+qs2::qs_save(stab_pre, here::here(output_dir_data, paste0(&quot;stability_lasso_preselected_B&quot;, B, &quot;_AgeSex.qs2&quot;)))
+head(stab_pre$summary, 20)</code></pre>
+<pre><code>            protein select_freq sign_pos_frac
+CLSTN2       CLSTN2       0.890    1.00000000
+SIGLEC8     SIGLEC8       0.500    1.00000000
+LRRN1         LRRN1       0.484    0.00000000
+CXCL17       CXCL17       0.480    1.00000000
+IL15           IL15       0.386    1.00000000
+RSPO1         RSPO1       0.366    1.00000000
+LCN15         LCN15       0.276    0.00000000
+SCARB2       SCARB2       0.276    1.00000000
+CALCB         CALCB       0.254    1.00000000
+PTPRN2       PTPRN2       0.246    0.99186992
+ADM             ADM       0.232    1.00000000
+LAG3           LAG3       0.226    1.00000000
+MEP1A         MEP1A       0.216    0.00000000
+NPTXR         NPTXR       0.194    0.03092784
+EGFLAM       EGFLAM       0.184    1.00000000
+TNFRSF10B TNFRSF10B       0.172    1.00000000
+PTK7           PTK7       0.160    0.72500000
+TAFA5         TAFA5       0.158    1.00000000
+SCG2           SCG2       0.156    0.00000000
+CD302         CD302       0.140    1.00000000</code></pre>
+<hr />
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+
+# number of proteins selected per bootstrap
+panel_sizes &lt;- sapply(stab_pre$sel_list, length)
+
+df_sizes &lt;- data.frame(size = panel_sizes)
+
+p_size &lt;- ggplot(df_sizes, aes(x = size)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = sort(unique(panel_sizes))) +
+  labs(
+    x = &quot;Number of proteins selected (per bootstrap)&quot;,
+    y = &quot;Count&quot;,
+    title = &quot;Stability selection: distribution of panel sizes&quot;
+  ) +
+  theme_classic(base_size = 12)
+
+p_size</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/stability_panel_size_distribution-1.png" width="2100" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, paste0(&quot;stability_panel_size_distribution_B&quot;, stab_pre$settings$B, &quot;.png&quot;)),
+       p_size, width = 6, height = 4.2, dpi = 300)
+
+summary(panel_sizes)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.000   6.000   8.000   7.652   9.000  15.000 </code></pre>
+<pre class="r"><code>table(panel_sizes)</code></pre>
+<pre><code>panel_sizes
+ 3  4  5  6  7  8  9 10 11 12 13 14 15 
+39 33 34 42 75 81 79 59 31 16  7  3  1 </code></pre>
+<hr />
+</div>
+<div id="most-frequent-combination-top-recurring-panels"
+class="section level2">
+<h2>2) “Most frequent combination” (top recurring panels)</h2>
+<p>This is useful, but usually you’ll see many singletons unless you
+restrict to a manageable feature universe. So we compute frequency of
+<strong>exact sets</strong>.</p>
+<pre class="r"><code>library(tibble)
+
+panel_keys &lt;- sapply(stab_pre$sel_list, function(v){
+  if (length(v) == 0) return(NA_character_)
+  paste(sort(v), collapse = &quot; | &quot;)
+})
+
+panel_tab &lt;- sort(table(panel_keys), decreasing = TRUE)
+panel_df &lt;- data.frame(
+  panel = names(panel_tab),
+  n = as.integer(panel_tab),
+  freq = as.integer(panel_tab) / length(stab_pre$sel_list),
+  stringsAsFactors = FALSE
+) %&gt;% 
+  filter(!is.na(panel))
+
+head(panel_df, 20)</code></pre>
+<pre><code>                                                                                                           panel
+1                                                                                         CLSTN2 | CXCL17 | LAG3
+2                                                                                        CLSTN2 | CXCL17 | LCN15
+3                                                                                       CLSTN2 | CXCL17 | PTPRN2
+4                                                                                           CLSTN2 | HRC | RSPO1
+5                                ACE2 | ACVRL1 | CLSTN2 | LAG3 | LRRN1 | NEFL | NPTXR | SCARB2 | SIGLEC8 | TAFA5
+6                        ACE2 | ADAMTSL4 | ADM | CALCB | CLSTN2 | IL15 | LRRN1 | NEFL | RSPO1 | SCARB2 | SIGLEC8
+7  ACE2 | ADAMTSL4 | ADM | CLSTN2 | CPVL | CXCL17 | LCN15 | LRRN1 | NEFL | OCLN | RSPO1 | SCG2 | SIGLEC8 | TAFA5
+8                                         ACE2 | ADAMTSL4 | CD38 | CLSTN2 | HRC | LRRN1 | NEFL | SIGLEC8 | TAFA5
+9                                                            ACE2 | ADAMTSL4 | CLSTN2 | CXCL17 | LRRN1 | SIGLEC8
+10               ACE2 | ADAMTSL4 | CLSTN2 | GPR37 | IL15 | LCN15 | LPO | LRRN1 | NEFL | NPTXR | SCARB2 | SIGLEC8
+11                                ACE2 | ADAMTSL4 | CLSTN2 | LAG3 | LPO | LRRN1 | MEP1A | NEFL | SIGLEC8 | TAFA5
+12                                            ACE2 | ADM | CALCB | CLSTN2 | CPE | LRRN1 | OCLN | RSPO1 | SIGLEC8
+13                                          ACE2 | ADM | CALCB | CLSTN2 | LAG3 | LCN15 | NPTXR | PTPRN2 | SFTPA2
+14                                             ACE2 | ADM | CLSTN2 | IL15 | LPO | LRRN1 | NEFL | SIGLEC8 | VEGFD
+15                        ACE2 | ADM | CPVL | IL15 | LCN15 | LRRN1 | NEFL | RSPO1 | SCARB2 | SIGLEC8 | TNFRSF10B
+16  ACE2 | CD302 | CLSTN2 | CXADR | CXCL17 | IL15 | LRRN1 | MEP1A | NPTXR | PALM2 | SCARB2 | SIGLEC8 | TNFRSF10B
+17                                        ACE2 | CD302 | CLSTN2 | EGFLAM | IL15 | LCN15 | LRRN1 | RTBDN | SCARB2
+18                                                  ACE2 | CLSTN2 | EGFLAM | IL15 | LPO | LRRN1 | NPTXR | SCARB2
+19                                                                        ACE2 | CLSTN2 | IL15 | NPTXR | SIGLEC8
+20                                                   ACE2 | CLSTN2 | LPO | LRRN1 | NPTXR | RET | SIGLEC8 | TAFA5
+   n  freq
+1  2 0.004
+2  2 0.004
+3  2 0.004
+4  2 0.004
+5  1 0.002
+6  1 0.002
+7  1 0.002
+8  1 0.002
+9  1 0.002
+10 1 0.002
+11 1 0.002
+12 1 0.002
+13 1 0.002
+14 1 0.002
+15 1 0.002
+16 1 0.002
+17 1 0.002
+18 1 0.002
+19 1 0.002
+20 1 0.002</code></pre>
+<p><strong>Optional plot (top 10 panels):</strong></p>
+<pre class="r"><code>topM &lt;- 10
+p_panels &lt;- panel_df %&gt;%
+  slice_head(n = topM) %&gt;%
+  mutate(panel = factor(panel, levels = rev(panel))) %&gt;%
+  ggplot(aes(x = panel, y = freq)) +
+  geom_col() +
+  coord_flip() +
+  labs(x = NULL, y = &quot;Frequency&quot;, title = paste0(&quot;Top &quot;, topM, &quot; most frequent exact panels&quot;)) +
+  theme_classic(base_size = 12)
+
+p_panels</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/stability_most_frequent_panels_plot-1.png" width="3600" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, paste0(&quot;stability_top&quot;, topM, &quot;_panels_B&quot;, stab_pre$settings$B, &quot;.png&quot;)),
+       p_panels, width = 9, height = 4.5, dpi = 300)</code></pre>
+<hr />
+</div>
+<div id="co-selection-heatmap-which-proteins-tend-to-appear-together"
+class="section level2">
+<h2>3) Co-selection heatmap (which proteins tend to appear
+together)</h2>
+<p>This is <em>often more informative</em> than exact combinations.</p>
+<pre class="r"><code>library(Matrix)
+
+# pick a manageable set (e.g. top 30 by selection freq)
+topK &lt;- 30
+top_prots &lt;- stab_pre$summary %&gt;% slice_head(n = topK) %&gt;% pull(protein)
+
+# build co-selection matrix
+M &lt;- matrix(0, nrow = topK, ncol = topK, dimnames = list(top_prots, top_prots))
+
+for (sel in stab_pre$sel_list) {
+  sel &lt;- intersect(sel, top_prots)
+  if (length(sel) &gt;= 2) {
+    idx &lt;- match(sel, top_prots)
+    M[idx, idx] &lt;- M[idx, idx] + 1
+  } else if (length(sel) == 1) {
+    i &lt;- match(sel, top_prots)
+    M[i, i] &lt;- M[i, i] + 1
+  }
+}
+
+# convert to frequency
+M_freq &lt;- M / length(stab_pre$sel_list)
+
+# quick base heatmap
+heatmap(M_freq, symm = TRUE, margins = c(8, 8),
+        main = paste0(&quot;Co-selection frequency (top &quot;, topK, &quot; proteins)&quot;))</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/stability_co_selection_heatmap-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="build-final-panel-and-scores" class="section level2">
+<h2>Build final panel and scores</h2>
+<pre class="r"><code>stab_df &lt;- stab_pre$summary
+
+# pick your panel
+panel_size &lt;- 5
+panel_prots &lt;- stab_df %&gt;% slice_head(n = panel_size) %&gt;% pull(protein)
+panel_prots</code></pre>
+<pre><code>[1] &quot;CLSTN2&quot;  &quot;SIGLEC8&quot; &quot;LRRN1&quot;   &quot;CXCL17&quot;  &quot;IL15&quot;   </code></pre>
+<pre class="r"><code># sign map from bootstrap
+sign_map &lt;- stab_df %&gt;%
+  filter(protein %in% panel_prots) %&gt;%
+  mutate(sign = ifelse(sign_pos_frac &gt;= 0.5, 1, -1)) %&gt;%
+  dplyr::select(protein, sign) %&gt;%
+  tibble::deframe()
+
+# IMPORTANT: refit/scores must use the FULL cohort matrices (data_p/data_z)
+# but only these proteins
+refit_pre &lt;- fit_logistic_refit(
+  expr_mat = as.matrix(data_p),  # proteins x samples
+  clin_df  = train_p,
+  proteins = panel_prots,
+  cutoff = 0.32,
+  include_age = TRUE,
+  include_sex = TRUE
+)
+
+pred_p &lt;- predict_logistic_refit(refit_pre, as.matrix(data_p), train_p)
+pred_z &lt;- predict_logistic_refit(refit_pre, as.matrix(data_z), test_z)
+
+signed_p &lt;- signed_mean_score(as.matrix(data_p), train_p, panel_prots, sign_map, refit_pre$scaler)
+signed_z &lt;- signed_mean_score(as.matrix(data_z), test_z, panel_prots, sign_map, refit_pre$scaler)</code></pre>
+<hr />
+</div>
+<div id="final-lasso-performance-and-score-plots"
+class="section level2">
+<h2>Final lasso performance and score plots</h2>
+<div id="roc-with-auc-confidence-intervals" class="section level3">
+<h3>ROC with AUC confidence intervals</h3>
+<pre class="r"><code>y_tr &lt;- ifelse(pred_p$TAPSE_sPAP &lt; 0.32, 1, 0)
+y_te &lt;- ifelse(pred_z$TAPSE_sPAP &lt; 0.32, 1, 0)
+
+roc_tr &lt;- pROC::roc(y_tr, pred_p$score_p, quiet = TRUE, ci = TRUE, direction = &quot;&lt;&quot;)
+roc_te &lt;- pROC::roc(y_te, pred_z$score_p, quiet = TRUE, ci = TRUE, direction = &quot;&lt;&quot;)
+
+auc_tr &lt;- as.numeric(pROC::auc(roc_tr))
+auc_te &lt;- as.numeric(pROC::auc(roc_te))
+ci_auc_tr &lt;- as.numeric(pROC::ci.auc(roc_tr))
+ci_auc_te &lt;- as.numeric(pROC::ci.auc(roc_te))
+
+# 95% ROC-curve confidence bands
+set.seed(1)
+ci_se_tr &lt;- pROC::ci.se(
+  roc_tr,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = &quot;none&quot;
+)
+ci_se_te &lt;- pROC::ci.se(
+  roc_te,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = &quot;none&quot;
+)
+
+plot(
+  roc_tr,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = &quot;red&quot;,
+  lwd = 2,
+  xlab = &quot;1 - Specificity&quot;,
+  ylab = &quot;Sensitivity&quot;,
+  main = paste0(
+    &quot;Stable panel refit-logistic
+&quot;,
+    &quot;Poland AUC=&quot;, sprintf(&quot;%.2f&quot;, auc_tr),
+    &quot; | Zurich AUC=&quot;, sprintf(&quot;%.2f&quot;, auc_te)
+  )
+)
+
+plot(
+  ci_se_tr,
+  type = &quot;shape&quot;,
+  col = adjustcolor(&quot;red&quot;, alpha.f = 0.20),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+plot(
+  ci_se_te,
+  type = &quot;shape&quot;,
+  col = adjustcolor(&quot;black&quot;, alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(roc_tr, legacy.axes = TRUE, identity = FALSE, col = &quot;red&quot;, lwd = 2, add = TRUE)
+plot(roc_te, legacy.axes = TRUE, identity = FALSE, col = &quot;black&quot;, lwd = 2, add = TRUE)
+
+legend(
+  &quot;bottomright&quot;,
+  inset = 0.02,
+  legend = c(
+    paste0(
+      &quot;Poland (train): AUC &quot;, sprintf(&quot;%.2f&quot;, auc_tr),
+      &quot; [&quot;, sprintf(&quot;%.2f&quot;, ci_auc_tr[1]), &quot;, &quot;, sprintf(&quot;%.2f&quot;, ci_auc_tr[3]), &quot;]&quot;
+    ),
+    paste0(
+      &quot;Zurich (test): AUC &quot;, sprintf(&quot;%.2f&quot;, auc_te),
+      &quot; [&quot;, sprintf(&quot;%.2f&quot;, ci_auc_te[1]), &quot;, &quot;, sprintf(&quot;%.2f&quot;, ci_auc_te[3]), &quot;]&quot;
+    )
+  ),
+  col = c(&quot;red&quot;, &quot;black&quot;),
+  lwd = 2,
+  bty = &quot;n&quot;,
+  cex = 0.99,
+  seg.len = 2.3
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/roc_refit_preselected-1.png" width="1500" style="display: block; margin: auto;" /></p>
+</div>
+<div id="three-group-score-plot" class="section level3">
+<h3>Three-group score plot</h3>
+<pre class="r"><code>library(ggpubr)
+
+make_3groups &lt;- function(clin_df){
+  clin_df %&gt;%
+    mutate(
+      group3 = case_when(
+        Group == &quot;SSc-noPAH&quot; ~ &quot;SSc-noPAH&quot;,
+        Group == &quot;SSc-PAH&quot; &amp; TAPSE_sPAP &gt;= 0.32 ~ &quot;SSc-PAH≥0.32&quot;,
+        Group == &quot;SSc-PAH&quot; &amp; TAPSE_sPAP &lt; 0.32  ~ &quot;SSc-PAH&lt;0.32&quot;,
+        TRUE ~ NA_character_
+      ),
+      group3 = factor(group3, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH≥0.32&quot;, &quot;SSc-PAH&lt;0.32&quot;))
+    )
+}
+
+# score ALL subjects to visualize, but plot ETA
+clin_p_all &lt;- clin_p %&gt;% filter(Barcode %in% colnames(data_p), !is.na(Age), !is.na(Sex))
+clin_z_all &lt;- clin_z %&gt;% filter(Barcode %in% colnames(data_z), !is.na(Age), !is.na(Sex))
+
+pred_p_all &lt;- predict_logistic_refit(refit_pre, as.matrix(data_p), clin_p_all) %&gt;% make_3groups()
+pred_z_all &lt;- predict_logistic_refit(refit_pre, as.matrix(data_z), clin_z_all) %&gt;% make_3groups()
+
+df_plot &lt;- bind_rows(
+  pred_p_all %&gt;% mutate(Cohort = &quot;Poland&quot;),
+  pred_z_all %&gt;% mutate(Cohort = &quot;Zurich&quot;)
+) %&gt;% filter(!is.na(group3))
+
+p &lt;- ggplot(df_plot, aes(x = group3, y = score_eta)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, size = 1.3, alpha = 0.7) +
+  facet_wrap(~Cohort, scales = &quot;free_x&quot;) +
+  labs(x = NULL, y = &quot;Score (log-odds; linear predictor)&quot;,
+       title = paste0(&quot;Stable panel refit-logistic score (&quot;, length(panel_prots), &quot; proteins)&quot;)) +
+  theme_classic(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+p</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/boxplot_eta_preselected-1.png" width="2700" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="correlations" class="section level2">
+<h2>Correlations</h2>
+<pre class="r"><code>panel_prots &lt;- refit_pre$proteins
+
+# helper to build a long dataframe for correlations
+make_corr_df &lt;- function(clin_df, data_mat, cohort_label, score_df = NULL,
+                         score_var = c(&quot;score_eta&quot;,&quot;score_p&quot;,&quot;score_signed&quot;)) {
+  score_var &lt;- match.arg(score_var)
+
+  # subset to SSc-PAH with TAPSE/sPAP
+  cc &lt;- clin_df %&gt;%
+    filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+    filter(!is.na(TAPSE_sPAP)) %&gt;%
+    filter(Barcode %in% colnames(data_mat))
+
+  # protein values (wide)
+  prot_wide &lt;- t(as.matrix(data_mat[panel_prots, cc$Barcode, drop = FALSE])) %&gt;%
+    as.data.frame()
+  prot_wide$Barcode &lt;- cc$Barcode
+
+  out &lt;- cc %&gt;%
+    dplyr::select(Barcode, TAPSE_sPAP) %&gt;%
+    left_join(prot_wide, by = &quot;Barcode&quot;) %&gt;%
+    mutate(Cohort = cohort_label)
+
+  # attach score if provided
+  if (!is.null(score_df)) {
+    out &lt;- out %&gt;%
+      left_join(score_df %&gt;% dplyr::select(Barcode, all_of(score_var)), by = &quot;Barcode&quot;) %&gt;%
+      rename(Score = all_of(score_var))
+  } else {
+    out$Score &lt;- NA_real_
+  }
+
+  out
+}
+
+# Use your previously created score data frames:
+# pred_p, pred_z contain score_eta and score_p for SSc-PAH train/test
+# signed_p, signed_z contain score_signed if you want that too
+
+df_corr_p &lt;- make_corr_df(train_p, data_p, &quot;Poland&quot;, score_df = pred_p, score_var = &quot;score_eta&quot;)
+df_corr_z &lt;- make_corr_df(test_z,  data_z, &quot;Zurich&quot;, score_df = pred_z, score_var = &quot;score_eta&quot;)
+
+# Combine
+df_corr &lt;- bind_rows(df_corr_p, df_corr_z)
+
+# quick sanity check
+df_corr %&gt;% group_by(Cohort) %&gt;% summarise(n = n())</code></pre>
+<pre><code># A tibble: 2 × 2
+  Cohort     n
+  &lt;chr&gt;  &lt;int&gt;
+1 Poland    38
+2 Zurich    26</code></pre>
+<pre class="r"><code>cor_spearman &lt;- function(x, y) {
+  ok &lt;- is.finite(x) &amp; is.finite(y)
+  if (sum(ok) &lt; 5) return(c(rho = NA_real_, p = NA_real_, n = sum(ok)))
+  ct &lt;- suppressWarnings(cor.test(x[ok], y[ok], method = &quot;spearman&quot;, exact = FALSE))
+  c(rho = unname(ct$estimate), p = ct$p.value, n = sum(ok))
+}
+
+features &lt;- c(panel_prots, &quot;Score&quot;)
+
+corr_tbl &lt;- df_corr %&gt;%
+  pivot_longer(cols = all_of(panel_prots), names_to = &quot;Feature&quot;, values_to = &quot;Value&quot;) %&gt;%
+  # add Score as another feature
+  bind_rows(
+    df_corr %&gt;% transmute(Cohort, Barcode, TAPSE_sPAP, Feature = &quot;Score&quot;, Value = Score)
+  ) %&gt;%
+  group_by(Cohort, Feature) %&gt;%
+  summarise(
+    rho = cor_spearman(Value, TAPSE_sPAP)[&quot;rho&quot;],
+    p   = cor_spearman(Value, TAPSE_sPAP)[&quot;p&quot;],
+    n   = cor_spearman(Value, TAPSE_sPAP)[&quot;n&quot;],
+    .groups = &quot;drop&quot;
+  ) %&gt;%
+  group_by(Cohort) %&gt;%
+  mutate(p_adj = p.adjust(p, method = &quot;BH&quot;)) %&gt;%
+  ungroup() %&gt;%
+  arrange(Cohort, p_adj)
+
+corr_tbl</code></pre>
+<pre><code># A tibble: 12 × 6
+   Cohort Feature    rho          p     n     p_adj
+   &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+ 1 Poland Score   -0.685 0.00000208    38 0.0000125
+ 2 Poland SIGLEC8 -0.534 0.000560      38 0.00168  
+ 3 Poland CLSTN2  -0.401 0.0126        38 0.0190   
+ 4 Poland CXCL17  -0.401 0.0127        38 0.0190   
+ 5 Poland IL15    -0.283 0.0854        38 0.102    
+ 6 Poland LRRN1    0.157 0.346         38 0.346    
+ 7 Zurich CXCL17  -0.507 0.00824       26 0.0495   
+ 8 Zurich Score   -0.405 0.0402        26 0.121    
+ 9 Zurich CLSTN2  -0.284 0.159         26 0.238    
+10 Zurich LRRN1    0.306 0.128         26 0.238    
+11 Zurich IL15    -0.181 0.376         26 0.407    
+12 Zurich SIGLEC8 -0.170 0.407         26 0.407    </code></pre>
+<pre class="r"><code>qs2::qs_save(corr_tbl, here::here(output_dir_data, &quot;corr_TAPSEsPAP_panelProteins_and_score_Spearman.qs2&quot;))
+write.csv(corr_tbl, here::here(output_dir_data, &quot;corr_TAPSEsPAP_panelProteins_and_score_Spearman.csv&quot;),
+          row.names = FALSE)</code></pre>
+<pre class="r"><code># pull rho/p for annotation
+ann_score &lt;- corr_tbl %&gt;% filter(Feature == &quot;Score&quot;) %&gt;% dplyr::select(Cohort, rho, p, p_adj)
+
+df_score &lt;- df_corr %&gt;%
+  filter(!is.na(Score)) %&gt;%
+  left_join(ann_score, by = &quot;Cohort&quot;)
+
+p_score &lt;- ggplot(df_score, aes(x = TAPSE_sPAP, y = Score)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  facet_wrap(~Cohort, scales = &quot;free_y&quot;) +
+  labs(
+    x = &quot;TAPSE/sPAP&quot;,
+    y = &quot;Score (linear predictor, log-odds)&quot;,
+    title = &quot;Score vs TAPSE/sPAP in SSc-PAH&quot;
+  ) +
+  theme_classic(base_size = 12)
+
+# Add annotation per facet (simple approach)
+p_score &lt;- p_score +
+  geom_text(
+    data = df_score %&gt;% distinct(Cohort, rho, p, p_adj),
+    aes(x = -Inf, y = Inf,
+        label = paste0(&quot;Spearman ρ=&quot;, round(rho, 2),
+                       &quot;\np=&quot;, signif(p, 2))),
+    hjust = -1, vjust = 1.1,
+    inherit.aes = FALSE
+  )
+
+p_score</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/corr_plot_score_vs_tapse-1.png" width="2250" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;corr_score_vs_TAPSEsPAP_SScPAH.png&quot;),
+       p_score, width = 7.5, height = 3.8, dpi = 300)</code></pre>
+<pre class="r"><code># prepare long data for plotting
+df_long &lt;- df_corr %&gt;%
+  pivot_longer(cols = all_of(panel_prots), names_to = &quot;Protein&quot;, values_to = &quot;NPX&quot;) %&gt;%
+  left_join(
+    corr_tbl %&gt;% filter(Feature %in% panel_prots) %&gt;%
+      rename(Protein = Feature) %&gt;%
+      dplyr::select(Cohort, Protein, rho, p, p_adj),
+    by = c(&quot;Cohort&quot;, &quot;Protein&quot;)
+  )
+
+p_prot &lt;- ggplot(df_long, aes(x = TAPSE_sPAP, y = NPX)) +
+  geom_point(size = 1.4, alpha = 0.8) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  facet_grid(Cohort ~ Protein, scales = &quot;free_y&quot;) +
+  labs(
+    x = &quot;TAPSE/sPAP&quot;,
+    y = &quot;Protein NPX&quot;,
+    title = &quot;Individual proteins vs TAPSE/sPAP in SSc-PAH&quot;
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    strip.text.x = element_text(size = 10),
+    strip.text.y = element_text(size = 10)
+  )
+
+# annotate each facet with rho and FDR
+ann_df &lt;- df_long %&gt;%
+  distinct(Cohort, Protein, rho, p_adj, p)
+
+p_prot &lt;- p_prot +
+  geom_text(
+    data = ann_df,
+    aes(x = -Inf, y = Inf,
+        label = paste0(&quot;ρ=&quot;, round(rho, 2), &quot;\np=&quot;, signif(p, 2))),
+    hjust = -1, vjust = 1.1,
+    inherit.aes = FALSE,
+    size = 3
+  )
+
+p_prot</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/corr_plot_proteins_vs_tapse_faceted-1.png" width="3150" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;corr_proteins_vs_TAPSEsPAP_SScPAH_faceted.png&quot;),
+       p_prot, width = 10.5, height = 7.5, dpi = 300)</code></pre>
+<pre class="r"><code>library(dplyr)
+library(pROC)
+
+panel_prots &lt;- refit_pre$proteins
+
+# Zurich SSc-PAH only
+z_pah &lt;- clin_z %&gt;%
+  dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::filter(!is.na(TAPSE_sPAP)) %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+# Outcome: 1 = low TAPSE/sPAP, 0 = preserved TAPSE/sPAP
+y_z &lt;- ifelse(z_pah$TAPSE_sPAP &lt; 0.32, 1, 0)
+
+# Protein matrix: proteins x samples
+Zmat &lt;- as.matrix(data_z[panel_prots, z_pah$Barcode, drop = FALSE])
+
+# Zurich-within-cohort z-score per protein
+mu_z &lt;- rowMeans(Zmat, na.rm = TRUE)
+sd_z &lt;- apply(Zmat, 1, sd, na.rm = TRUE)
+sd_z[sd_z == 0 | is.na(sd_z)] &lt;- 1
+
+Zz &lt;- sweep(Zmat, 1, mu_z, &quot;-&quot;)
+Zz &lt;- sweep(Zz, 1, sd_z, &quot;/&quot;)
+Zz[is.na(Zz)] &lt;- 0
+
+# Signed mean z-score
+s &lt;- sign_map[panel_prots]
+Zsigned &lt;- sweep(Zz, 1, s, &quot;*&quot;)
+score_withinZ &lt;- colMeans(Zsigned, na.rm = TRUE)
+
+# ROC / AUC with CI
+roc_withinZ &lt;- pROC::roc(
+  y_z,
+  as.numeric(score_withinZ),
+  quiet = TRUE,
+  ci = TRUE,
+  direction = &quot;&lt;&quot;
+)
+
+auc_withinZ &lt;- as.numeric(pROC::auc(roc_withinZ))
+ci_auc_withinZ &lt;- as.numeric(pROC::ci.auc(roc_withinZ))
+
+# 95% ROC-curve confidence band
+set.seed(1)
+ci_se_withinZ &lt;- pROC::ci.se(
+  roc_withinZ,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = &quot;none&quot;
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = &quot;black&quot;,
+  lwd = 2,
+  xlab = &quot;1 - Specificity&quot;,
+  ylab = &quot;Sensitivity&quot;,
+  main = paste0(
+    &quot;Zurich within-cohort scaled signed score\n&quot;,
+    &quot;Zurich AUC=&quot;, sprintf(&quot;%.2f&quot;, auc_withinZ)
+  )
+)
+
+plot(
+  ci_se_withinZ,
+  type = &quot;shape&quot;,
+  col = adjustcolor(&quot;black&quot;, alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = &quot;black&quot;,
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  &quot;bottomright&quot;,
+  inset = 0.02,
+  legend = paste0(
+    &quot;Zurich: AUC &quot;, sprintf(&quot;%.2f&quot;, auc_withinZ),
+    &quot; [&quot;, sprintf(&quot;%.2f&quot;, ci_auc_withinZ[1]), &quot;, &quot;,
+    sprintf(&quot;%.2f&quot;, ci_auc_withinZ[3]), &quot;]&quot;
+  ),
+  col = &quot;black&quot;,
+  lwd = 2,
+  bty = &quot;n&quot;,
+  cex = 0.99,
+  seg.len = 2.3
+)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/zurich_withincohort_scaling_auc-1.png" width="1500" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Save base R plot
+png(
+  filename = here::here(output_dir_figs, &quot;AUC_Zurich_withinCohortScaling_signedScore.png&quot;),
+  width = 5,
+  height = 4.5,
+  units = &quot;in&quot;,
+  res = 300
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = &quot;black&quot;,
+  lwd = 2,
+  xlab = &quot;1 - Specificity&quot;,
+  ylab = &quot;Sensitivity&quot;,
+  main = paste0(
+    &quot;Zurich within-cohort scaled signed score\n&quot;,
+    &quot;Zurich AUC=&quot;, sprintf(&quot;%.2f&quot;, auc_withinZ)
+  )
+)
+
+plot(
+  ci_se_withinZ,
+  type = &quot;shape&quot;,
+  col = adjustcolor(&quot;black&quot;, alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = &quot;black&quot;,
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  &quot;bottomright&quot;,
+  inset = 0.02,
+  legend = paste0(
+    &quot;Zurich: AUC &quot;, sprintf(&quot;%.2f&quot;, auc_withinZ),
+    &quot; [&quot;, sprintf(&quot;%.2f&quot;, ci_auc_withinZ[1]), &quot;, &quot;,
+    sprintf(&quot;%.2f&quot;, ci_auc_withinZ[3]), &quot;]&quot;
+  ),
+  col = &quot;black&quot;,
+  lwd = 2,
+  bty = &quot;n&quot;,
+  cex = 0.99,
+  seg.len = 2.3
+)
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+</div>
+<div id="cox-regression" class="section level2">
+<h2>COX regression</h2>
+<pre class="r"><code>library(dplyr)
+library(survival)
+
+# -------------------------------
+# 0) Choose which score to use
+# -------------------------------
+score_z &lt;- pred_z %&gt;%
+  dplyr::select(Barcode, eta = score_eta)   # use linear predictor (recommended)
+
+# -------------------------------
+# 1) Robust survival column picker
+# -------------------------------
+pick_first_existing &lt;- function(df, candidates) {
+  hit &lt;- candidates[candidates %in% colnames(df)]
+  if (length(hit) == 0) return(NA_character_)
+  hit[1]
+}
+
+# Try to guess your column names (adjust here if needed)
+time_col  &lt;- pick_first_existing(clin_z, c(&quot;DeathDAYS&quot;,&quot;death_days&quot;,&quot;FU_DAYS&quot;,&quot;followup_days&quot;,&quot;time_days&quot;,&quot;TimeDAYS&quot;,&quot;Time_days&quot;))
+event_col &lt;- pick_first_existing(clin_z, c(&quot;Death&quot;,&quot;death&quot;,&quot;Death_event&quot;,&quot;event&quot;,&quot;Event&quot;,&quot;status&quot;,&quot;Status&quot;))
+
+# COMPERA numeric column (you mentioned COMPERA_number)
+compera_col &lt;- pick_first_existing(clin_z, c(&quot;COMPERA_number&quot;,&quot;COMPERA&quot;,&quot;COMPERA_num&quot;,&quot;COMPERA_score&quot;))
+
+cat(&quot;Using time_col =&quot;, time_col, &quot;\n&quot;)</code></pre>
+<pre><code>Using time_col = DeathDAYS </code></pre>
+<pre class="r"><code>cat(&quot;Using event_col =&quot;, event_col, &quot;\n&quot;)</code></pre>
+<pre><code>Using event_col = Death </code></pre>
+<pre class="r"><code>cat(&quot;Using compera_col =&quot;, compera_col, &quot;\n&quot;)</code></pre>
+<pre><code>Using compera_col = COMPERA_number </code></pre>
+<pre class="r"><code># If any are NA, set them manually like:
+# time_col &lt;- &quot;DeathDAYS&quot;
+# event_col &lt;- &quot;Death&quot;
+# compera_col &lt;- &quot;COMPERA_number&quot;
+
+stopifnot(!is.na(time_col), !is.na(event_col), !is.na(compera_col))
+
+# -------------------------------
+# 2) Build Zurich SSc-PAH survival dataframe
+# -------------------------------
+df_surv_z &lt;- clin_z %&gt;%
+  filter(Group == &quot;SSc-PAH&quot;) %&gt;%
+  dplyr::select(Barcode, all_of(compera_col), all_of(time_col), all_of(event_col)) %&gt;%
+  left_join(score_z, by = &quot;Barcode&quot;) %&gt;%
+  mutate(
+    # numeric COMPERA
+    COMPERA_number = as.numeric(.data[[compera_col]]),
+
+    # time in days
+    time_days = as.numeric(.data[[time_col]]),
+
+    # event coding: try to handle yes/no, TRUE/FALSE, 1/0
+    event_raw = .data[[event_col]],
+    event = case_when(
+      is.numeric(event_raw) ~ ifelse(event_raw &gt; 0, 1, 0),
+      is.logical(event_raw) ~ ifelse(event_raw, 1, 0),
+      tolower(as.character(event_raw)) %in% c(&quot;yes&quot;,&quot;y&quot;,&quot;true&quot;,&quot;1&quot;,&quot;dead&quot;,&quot;death&quot;) ~ 1,
+      tolower(as.character(event_raw)) %in% c(&quot;no&quot;,&quot;n&quot;,&quot;false&quot;,&quot;0&quot;,&quot;alive&quot;) ~ 0,
+      TRUE ~ NA_real_
+    )
+  ) %&gt;%
+  filter(!is.na(time_days), !is.na(event), !is.na(COMPERA_number), !is.na(eta))
+
+# quick check
+df_surv_z %&gt;% summarise(n=n(), events=sum(event), median_time=median(time_days))</code></pre>
+<pre><code># A tibble: 1 × 3
+      n events median_time
+  &lt;int&gt;  &lt;dbl&gt;       &lt;dbl&gt;
+1    25      8        1419</code></pre>
+<pre class="r"><code>table(df_surv_z$event)</code></pre>
+<pre><code>
+ 0  1 
+17  8 </code></pre>
+<hr />
+</div>
+<div id="chunk-2-cox-models-c-index-table-lrt" class="section level2">
+<h2>Chunk 2 — Cox models + c-index table (+ LRT)</h2>
+<pre class="r"><code>library(dplyr)
+library(survival)
+
+m0 &lt;- coxph(Surv(time_days, event) ~ COMPERA_number, data = df_surv_z, x = TRUE)
+m1 &lt;- coxph(Surv(time_days, event) ~ eta,            data = df_surv_z, x = TRUE)
+m2 &lt;- coxph(Surv(time_days, event) ~ COMPERA_number + eta, data = df_surv_z, x = TRUE)
+
+c0 &lt;- unname(summary(m0)$concordance[1])
+c1 &lt;- unname(summary(m1)$concordance[1])
+c2 &lt;- unname(summary(m2)$concordance[1])
+
+cindex_tbl &lt;- data.frame(
+  model   = c(&quot;COMPERA&quot;, &quot;Score&quot;, &quot;COMPERA + score&quot;),
+  c_index = c(c0, c1, c2)
+)
+
+cindex_tbl</code></pre>
+<pre><code>            model   c_index
+1         COMPERA 0.7892562
+2           Score 0.7685950
+3 COMPERA + score 0.8512397</code></pre>
+<pre class="r"><code># Likelihood ratio test: does adding score improve COMPERA?
+lrt &lt;- anova(m0, m2, test = &quot;LRT&quot;)
+lrt</code></pre>
+<pre><code>Analysis of Deviance Table
+ Cox model: response is  Surv(time_days, event)
+ Model 1: ~ COMPERA_number
+ Model 2: ~ COMPERA_number + eta
+   loglik  Chisq Df Pr(&gt;|Chi|)  
+1 -18.038                       
+2 -16.178 3.7195  1    0.05378 .
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>This gives you exactly the table format you showed (just with “Score”
+instead of “LASSO score” — rename if you want).</p>
+<hr />
+</div>
+<div
+id="optional-recommended-bootstrap-ci-for-c-index-difference-compera-vs-comperascore"
+class="section level2">
+<h2>Optional (recommended) — bootstrap CI for c-index difference
+(COMPERA vs COMPERA+score)</h2>
+<p>With small cohorts/events, c-index can be noisy. This gives you a
+quick sense of stability.</p>
+<pre class="r"><code>set.seed(1)
+B &lt;- 500
+
+boot_delta &lt;- replicate(B, {
+  idx &lt;- sample(seq_len(nrow(df_surv_z)), replace = TRUE)
+  d &lt;- df_surv_z[idx, , drop = FALSE]
+
+  # handle rare bootstrap samples with 0 events
+  if (length(unique(d$event)) &lt; 2) return(NA_real_)
+
+  m0b &lt;- coxph(Surv(time_days, event) ~ COMPERA_number, data = d)
+  m2b &lt;- coxph(Surv(time_days, event) ~ COMPERA_number + eta, data = d)
+
+  c0b &lt;- unname(summary(m0b)$concordance[1])
+  c2b &lt;- unname(summary(m2b)$concordance[1])
+  c2b - c0b
+})
+
+boot_delta &lt;- boot_delta[is.finite(boot_delta)]
+quantile(boot_delta, c(0.025, 0.5, 0.975))</code></pre>
+<pre><code>       2.5%         50%       97.5% 
+-0.01532813  0.05311117  0.21000000 </code></pre>
+<pre class="r"><code>mean(boot_delta)</code></pre>
+<pre><code>[1] 0.06417841</code></pre>
+<hr />
+</div>
+<div id="optional-model-summary-table-hrs" class="section level2">
+<h2>Optional — model summary table (HRs)</h2>
+<p>If you want a quick HR table for the combined model:</p>
+<pre class="r"><code>library(broom)
+
+tidy(m2, exponentiate = TRUE, conf.int = TRUE) %&gt;%
+  dplyr::select(term, estimate, conf.low, conf.high, p.value)</code></pre>
+<pre><code># A tibble: 2 × 5
+  term           estimate conf.low conf.high p.value
+  &lt;chr&gt;             &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 COMPERA_number     2.05    0.931      4.49  0.0748
+2 eta                1.09    0.999      1.20  0.0538</code></pre>
+<pre class="r"><code>library(ggplot2)
+df_bd &lt;- data.frame(delta_c = boot_delta)
+
+ggplot(df_bd, aes(x = delta_c)) +
+  geom_histogram(bins = 30) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  labs(x = &quot;Δ C-index (COMPERA+score − COMPERA)&quot;,
+       y = &quot;Count&quot;,
+       title = &quot;Bootstrap distribution of c-index improvement&quot;) +
+  theme_classic(base_size = 12)</code></pre>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/plot_boot_delta-1.png" width="1650" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cox.zph(m2)</code></pre>
+<pre><code>                chisq df    p
+COMPERA_number 0.0382  1 0.84
+eta            1.8971  1 0.17
+GLOBAL         2.4555  2 0.29</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Etc/UTC
+tzcode source: system (glibc)
+
+attached base packages:
+[1] grid      stats4    stats     graphics  grDevices datasets  utils    
+[8] methods   base     
+
+other attached packages:
+ [1] pROC_1.19.0.1               glmnet_4.1-10              
+ [3] variancePartition_1.40.1    BiocParallel_1.44.0        
+ [5] circlize_0.4.16             broom_1.0.11               
+ [7] survival_3.8-3              ComplexHeatmap_2.26.0      
+ [9] ReactomePA_1.54.0           AnnotationHub_4.0.0        
+[11] BiocFileCache_3.0.0         dbplyr_2.5.1               
+[13] org.Hs.eg.db_3.22.0         AnnotationDbi_1.72.0       
+[15] clusterProfiler_4.18.2      gprofiler2_0.2.4           
+[17] DESeq2_1.50.2               ggpubr_0.6.2               
+[19] igraph_2.2.1                limma_3.66.0               
+[21] UpSetR_1.4.0                reactable_0.4.5            
+[23] rtracklayer_1.70.0          qs2_0.1.7                  
+[25] statmod_1.5.1               patchwork_1.3.2            
+[27] scater_1.38.0               scuttle_1.20.0             
+[29] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+[31] Biobase_2.70.0              GenomicRanges_1.62.0       
+[33] Seqinfo_1.0.0               IRanges_2.44.0             
+[35] MatrixGenerics_1.22.0       matrixStats_1.5.0          
+[37] Matrix.utils_0.9.7          RColorBrewer_1.1-3         
+[39] scales_1.4.0                gridExtra_2.3              
+[41] png_0.1-8                   pheatmap_1.0.13            
+[43] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+[45] generics_0.1.4              reshape2_1.4.5             
+[47] lubridate_1.9.4             forcats_1.0.1              
+[49] stringr_1.6.0               purrr_1.2.0                
+[51] tidyr_1.3.1                 tibble_3.3.0               
+[53] tidyverse_2.0.0             magrittr_2.0.4             
+[55] dplyr_1.1.4                 Matrix_1.6-5               
+[57] readxl_1.4.5                readr_2.1.6                
+[59] enrichplot_1.30.4           here_1.0.2                 
+[61] EnhancedVolcano_1.29.1      ggrepel_0.9.6              
+[63] ggplot2_4.0.1              
+
+loaded via a namespace (and not attached):
+  [1] R.methodsS3_1.8.2        Biostrings_2.78.0        vctrs_0.6.5             
+  [4] ggtangle_0.0.9           digest_0.6.39            corpcor_1.6.10          
+  [7] shape_1.4.6.1            git2r_0.36.2             renv_1.1.5              
+ [10] MASS_7.3-65              fontLiberation_0.1.0     httpuv_1.6.16           
+ [13] foreach_1.5.2            qvalue_2.42.0            withr_3.0.2             
+ [16] xfun_0.56                ggfun_0.2.0              memoise_2.0.1           
+ [19] ggbeeswarm_0.7.3         gson_0.1.0               systemfonts_1.3.1       
+ [22] ragg_1.5.0               tidytree_0.4.6           GlobalOptions_0.1.3     
+ [25] gtools_3.9.5             R.oo_1.27.1              Formula_1.2-5           
+ [28] KEGGREST_1.50.0          promises_1.5.0           otel_0.2.0              
+ [31] httr_1.4.7               rstatix_0.7.3            restfulr_0.0.16         
+ [34] stringfish_0.18.0        rstudioapi_0.17.1        DOSE_4.4.0              
+ [37] reactome.db_1.94.0       curl_7.0.0               ScaledMatrix_1.18.0     
+ [40] ggraph_2.2.2             polyclip_1.10-7          SparseArray_1.10.4      
+ [43] doParallel_1.0.17        evaluate_1.0.5           S4Arrays_1.10.1         
+ [46] hms_1.1.4                irlba_2.3.5.1            colorspace_2.1-2        
+ [49] filelock_1.0.3           later_1.4.4              viridis_0.6.5           
+ [52] ggtree_4.0.1             lattice_0.22-7           XML_3.99-0.20           
+ [55] cowplot_1.2.0            pillar_1.11.1            nlme_3.1-168            
+ [58] iterators_1.0.14         caTools_1.18.3           compiler_4.5.2          
+ [61] beachmat_2.26.0          stringi_1.8.7            minqa_1.2.8             
+ [64] GenomicAlignments_1.46.0 plyr_1.8.9               crayon_1.5.3            
+ [67] abind_1.4-8              BiocIO_1.20.0            gridGraphics_0.5-1      
+ [70] locfit_1.5-9.12          graphlayouts_1.2.2       bit_4.6.0               
+ [73] fastmatch_1.1-6          whisker_0.4.1            textshaping_1.0.4       
+ [76] codetools_0.2-20         BiocSingular_1.26.1      bslib_0.9.0             
+ [79] GetoptLong_1.1.0         plotly_4.11.0            remaCor_0.0.20          
+ [82] splines_4.5.2            Rcpp_1.1.0               tidydr_0.0.6            
+ [85] cellranger_1.1.0         utf8_1.2.6               grr_0.9.5               
+ [88] knitr_1.50               blob_1.2.4               clue_0.3-66             
+ [91] BiocVersion_3.22.0       lme4_1.1-38              fs_1.6.6                
+ [94] Rdpack_2.6.4             ggsignif_0.6.4           ggplotify_0.1.3         
+ [97] tzdb_0.5.0               fANCOVA_0.6-1            tweenr_2.0.3            
+[100] pkgconfig_2.0.3          tools_4.5.2              cachem_1.1.0            
+[103] RhpcBLASctl_0.23-42      rbibutils_2.4            cigarillo_1.0.0         
+[106] RSQLite_2.4.5            viridisLite_0.4.2        DBI_1.2.3               
+[109] numDeriv_2016.8-1.1      graphite_1.56.0          fastmap_1.2.0           
+[112] rmarkdown_2.30           Rsamtools_2.26.0         sass_0.4.10             
+[115] BiocManager_1.30.27      graph_1.88.0             carData_3.0-5           
+[118] farver_2.1.2             reformulas_0.4.2         mgcv_1.9-3              
+[121] aod_1.3.3                tidygraph_1.3.1          scatterpie_0.2.6        
+[124] yaml_2.3.11              workflowr_1.7.2          cli_3.6.5               
+[127] lifecycle_1.0.4          mvtnorm_1.3-3            backports_1.5.0         
+[130] timechange_0.3.0         gtable_0.3.6             rjson_0.2.23            
+[133] parallel_4.5.2           ape_5.8-1                jsonlite_2.0.0          
+[136] bitops_1.0-9             bit64_4.6.0-1            yulab.utils_0.2.2       
+[139] BiocNeighbors_2.4.0      RcppParallel_5.1.11-1    jquerylib_0.1.4         
+[142] GOSemSim_2.36.0          R.utils_2.13.0           pbkrtest_0.5.5          
+[145] lazyeval_0.2.2           htmltools_0.5.9          GO.db_3.22.0            
+[148] rappdirs_0.3.3           glue_1.8.0               httr2_1.2.1             
+[151] XVector_0.50.0           gdtools_0.4.4            RCurl_1.98-1.17         
+[154] rprojroot_2.1.1          treeio_1.34.0            EnvStats_3.1.0          
+[157] boot_1.3-32              R6_2.6.1                 ggiraph_0.9.2           
+[160] gplots_3.3.0             labeling_0.4.3           cluster_2.1.8.1         
+[163] aplot_0.2.9              nloptr_2.2.1             DelayedArray_0.36.0     
+[166] tidyselect_1.2.1         vipor_0.4.7              ggforce_0.5.0           
+[169] fontBitstreamVera_0.1.1  car_3.1-3                rsvd_1.0.5              
+[172] KernSmooth_2.23-26       S7_0.2.1                 fontquiver_0.2.1        
+[175] data.table_1.17.8        htmlwidgets_1.6.4        fgsea_1.36.0            
+[178] rlang_1.1.6              lmerTest_3.2-0           Cairo_1.7-0             
+[181] ggnewscale_0.5.2         beeswarm_0.4.0          </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
