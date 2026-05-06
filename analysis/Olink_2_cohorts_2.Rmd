@@ -1,0 +1,2880 @@
+---
+title: "Olink_2_cohorts_2"
+author: "GinoBonazza (ginoandrea.bonazza@usz.ch)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r knitr config, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+
+knitr::opts_chunk$set(message = FALSE)
+
+knitr::opts_chunk$set(cache = FALSE)
+
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+```
+
+## Setup
+
+```{r setup, class.source = "fold-hide"}
+# Get current file name to make folder
+current_file <- "Olink_2_cohorts_2"
+
+# Load libraries
+library(EnhancedVolcano)
+library(here)
+library(enrichplot)
+library(readr)
+library(readxl)
+library(Matrix)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(tidyverse)
+library(reshape2)
+library(S4Vectors)
+library(pheatmap)
+library(png)
+library(gridExtra)
+library(scales)
+library(RColorBrewer)
+library(Matrix.utils)
+library(tibble)
+library(ggplot2)
+library(scater)
+library(patchwork)
+library(statmod)
+library(qs2)
+library(statmod)
+library(rtracklayer)
+library(png)
+library(reactable)
+library(UpSetR)
+library(limma)
+library(igraph)
+library(gridExtra) 
+library(ggpubr)
+library(DESeq2)
+library(gprofiler2)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(AnnotationHub)
+library(ReactomePA)
+library(UpSetR)
+library(ComplexHeatmap)
+library(survival)
+library(broom)
+library(circlize)
+library(variancePartition)
+
+#Output paths
+output_dir_data <- here::here("output", current_file)
+if (!dir.exists(output_dir_data)) dir.create(output_dir_data)
+
+if (!dir.exists(here::here("docs", "figure"))) dir.create(here::here("docs", "figure"))
+
+output_dir_figs <- here::here("docs", "figure", paste0(current_file, ".Rmd"))
+if (!dir.exists(output_dir_figs)) dir.create(output_dir_figs)
+```
+
+## Import data
+
+Olink data Zurich and Poland
+
+```{r read data}
+data_z <- qs_read(here::here("data", "o37198_2025-02-27_olink_SummarizedExperiment.qs2"))
+
+clin_z <- read_excel(here::here("data", "Metadata_Olink_analysis.xlsx"))
+
+meta_z <- colData(data_z) %>% data.frame()
+isOutlierColumn <- meta_z$Plate == "P0194" & meta_z$Col %in% c("3", "4")
+table(isOutlierColumn)
+use <- meta_z$SampleType %in% c("Serum") & meta_z$Group %in% c("SSc-PAH", "SSc-noPAH") & !isOutlierColumn
+table(use)
+data_z <- data_z[ , use]
+meta_z <- meta_z[use, ]
+rownames(meta_z) <- gsub("_P0194", "", rownames(meta_z))
+meta_z$Barcode <- rownames(meta_z)
+rownames(data_z) <- data_z@elementMetadata@listData[["Gene"]]
+rownames(data_z@assays@data@listData[["npx"]]) <- data_z@elementMetadata@listData[["Gene"]]
+data_z <- assay(data_z, "npx")
+data_z <- as.data.frame(data_z[-c(1:3), ])
+colnames(data_z) <- rownames(meta_z)
+
+clin_z <- clin_z %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+dim(data_z)
+table(clin_z$Group)
+
+
+data_p <- read.delim(here::here("data", "OLINK_PL", "quant.xls"), sep = "\t", check.names = FALSE)
+
+clin_p <- read_excel(here::here("data", "OLINK_PL", "Metadata_Olink_PL.xlsx"))
+
+rownames(data_p) <- sub("_.*", "", data_p$SampleID)
+data_p <- data_p[, -1]
+keep <- intersect(colnames(data_p), clin_p$Barcode)
+data_p <- data_p[, keep, drop = FALSE]
+dim(data_p)
+table(clin_p$Group)
+```
+
+```{r, fig.height=8, fig.width=10.8}
+barcodes <- colnames(data_z)
+
+grp <- clin_z$Group[match(barcodes, clin_z$Barcode)]
+cmp <- clin_z$COMPERA_4strata[match(barcodes, clin_z$Barcode)]
+cmp <- factor(cmp, levels = c("low","intermediate-low","intermediate-high","high"))
+sex <- clin_z$Sex[match(barcodes, clin_z$Barcode)]
+
+# --- colors ---
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "low"               = "#9CA3AF",   # grey
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+cols_sex <- c("F"="green4", "M"="yellow2")
+
+# --- z-score per protein (row) ---
+matz <- t(scale(t(data_z)))
+matz[is.nan(matz)] <- 0
+
+# heatmap colors
+hm_cols <- colorRamp2(c(-2, 0, 2), c("#2166AC", "white", "#B2182B"))
+
+# column annotations (COMPERA NAs shown as light grey)
+ha <- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = "#E5E7EB",
+  annotation_legend_param = list(
+    Group   = list(title = "Group"),
+    COMPERA = list(title = "Risk (COMPERA)"),
+    Sex   = list(title = "Sex")
+  )
+)
+
+# --- draw (all proteins, no row names, default clustering, no group split) ---
+Heatmap(
+  matz,
+  name = "Z-score",
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 9),
+  row_title = NULL,
+  column_title = NULL
+) |>
+  draw(heatmap_legend_side = "right", annotation_legend_side = "right")
+```
+
+```{r, fig.height=8, fig.width=10.8}
+barcodes <- colnames(data_p)
+
+grp <- clin_p$Group[match(barcodes, clin_p$Barcode)]
+cmp <- clin_p$Compera_4strata[match(barcodes, clin_p$Barcode)]
+cmp <- factor(cmp, levels = c("Low","Intermediate-low","Intermediate-high","High"))
+sex <- clin_p$Sex[match(barcodes, clin_p$Barcode)]
+
+# --- colors ---
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "Low"               = "#9CA3AF",   # grey
+  "Intermediate-low"  = "#DDB7B2",
+  "Intermediate-high" = "#C7685F",
+  "High"              = "#A63A2A"
+)
+cols_sex <- c("F"="green4", "M"="yellow2")
+
+# --- z-score per protein (row) ---
+matz <- t(scale(t(data_p)))
+matz[is.nan(matz)] <- 0
+
+# heatmap colors
+hm_cols <- colorRamp2(c(-2, 0, 2), c("#2166AC", "white", "#B2182B"))
+
+# column annotations (COMPERA NAs shown as light grey)
+ha <- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = "#E5E7EB",
+  annotation_legend_param = list(
+    Group   = list(title = "Group"),
+    COMPERA = list(title = "Risk (COMPERA)"),
+    Sex   = list(title = "Sex")
+  )
+)
+
+# --- draw (all proteins, no row names, default clustering, no group split) ---
+Heatmap(
+  matz,
+  name = "Z-score",
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 9),
+  row_title = NULL,
+  column_title = NULL
+) |>
+  draw(heatmap_legend_side = "right", annotation_legend_side = "right")
+```
+
+```{r heatmap_z_top100var, fig.height=10.8, fig.width=10.8}
+barcodes <- colnames(data_z)
+
+grp <- clin_z$Group[match(barcodes, clin_z$Barcode)]
+cmp <- clin_z$COMPERA_4strata[match(barcodes, clin_z$Barcode)]
+cmp <- factor(cmp, levels = c("low","intermediate-low","intermediate-high","high"))
+sex <- clin_z$Sex[match(barcodes, clin_z$Barcode)]
+
+# --- colors ---
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "low"               = "#9CA3AF",
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+cols_sex <- c("F"="green4", "M"="yellow2")
+
+# --- pick top 100 variable proteins (rows) ---
+vars <- apply(data_z, 1, var, na.rm = TRUE)
+top100 <- names(sort(vars, decreasing = TRUE))[1:100]
+mat_top <- as.matrix(data_z[top100, , drop = FALSE])
+
+# --- z-score per protein (row) ---
+matz <- t(scale(t(mat_top)))
+matz[is.nan(matz)] <- 0
+
+hm_cols <- colorRamp2(c(-2, 0, 2), c("#2166AC", "white", "#B2182B"))
+
+ha <- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex     = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = "#E5E7EB",
+  annotation_legend_param = list(
+    Group   = list(title = "Group"),
+    COMPERA = list(title = "Risk (COMPERA)"),
+    Sex     = list(title = "Sex")
+  )
+)
+
+Heatmap(
+  matz,
+  name = "Z-score",
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = TRUE,              
+  row_names_gp = gpar(fontsize = 7),
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 8.5),
+  row_title = "Top 100 variable proteins",
+  column_title = NULL
+) |>
+  draw(heatmap_legend_side = "right", annotation_legend_side = "right")
+```
+
+```{r heatmap_p_top100var, fig.height=10.88, fig.width=10.8}
+stopifnot(exists("data_p"), exists("clin_p"))
+
+barcodes <- colnames(data_p)
+
+grp <- clin_p$Group[match(barcodes, clin_p$Barcode)]
+cmp <- clin_p$Compera_4strata[match(barcodes, clin_p$Barcode)]
+cmp <- factor(cmp, levels = c("Low","Intermediate-low","Intermediate-high","High"))
+sex <- clin_p$Sex[match(barcodes, clin_p$Barcode)]
+
+# --- colors ---
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "Low"               = "#9CA3AF",
+  "Intermediate-low"  = "#DDB7B2",
+  "Intermediate-high" = "#C7685F",
+  "High"              = "#A63A2A"
+)
+cols_sex <- c("F"="green4", "M"="yellow2")
+
+# --- pick top 100 variable proteins (rows) ---
+vars <- apply(data_p, 1, var, na.rm = TRUE)
+top100 <- names(sort(vars, decreasing = TRUE))[1:100]
+mat_top <- as.matrix(data_p[top100, , drop = FALSE])
+
+# --- z-score per protein (row) ---
+matz <- t(scale(t(mat_top)))
+matz[is.nan(matz)] <- 0
+
+hm_cols <- colorRamp2(c(-2, 0, 2), c("#2166AC", "white", "#B2182B"))
+
+ha <- HeatmapAnnotation(
+  Group   = grp,
+  COMPERA = cmp,
+  Sex     = sex,
+  col = list(Group = cols_group, COMPERA = cols_compera, Sex = cols_sex),
+  na_col = "#E5E7EB",
+  annotation_legend_param = list(
+    Group   = list(title = "Group"),
+    COMPERA = list(title = "Risk (COMPERA)"),
+    Sex     = list(title = "Sex")
+  )
+)
+
+Heatmap(
+  matz,
+  name = "Z-score",
+  col = hm_cols,
+  top_annotation = ha,
+  show_row_names = TRUE,              # set FALSE if you want to hide protein names
+  row_names_gp = gpar(fontsize = 7),
+  show_column_names = TRUE,
+  column_names_gp = gpar(fontsize = 8.5),
+  row_title = "Top 100 variable proteins",
+  column_title = NULL
+) |>
+  draw(heatmap_legend_side = "right", annotation_legend_side = "right")
+```
+```{r pca_z_group, fig.height=3.5, fig.width=5.4}
+# PCA (samples as rows)
+pca <- prcomp(t(as.matrix(data_z)), scale. = TRUE)
+pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df <- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  Group = clin_z$Group[match(rownames(pca$x), clin_z$Barcode)]
+)
+
+cols_group <- c("SSc-noPAH" = "#004C8C", "SSc-PAH" = "#A63A2A")
+
+ggplot(df, aes(PC1, PC2, color = Group)) +
+  stat_ellipse(aes(fill = Group), type = "norm", level = 0.95,
+               geom = "polygon", alpha = 0.10, color = NA) +
+  stat_ellipse(type = "norm", level = 0.95, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_group) +
+  scale_fill_manual(values = cols_group) +
+  labs(
+    x = paste0("PC1 (", round(pvar[1], 1), "%)"),
+    y = paste0("PC2 (", round(pvar[2], 1), "%)")
+  ) +
+  theme_minimal()
+```
+
+```{r pca_z_compera, fig.height=3.5, fig.width=5.4}
+# --- subset to SSc-PAH only ---
+keep <- clin_z$Group == "SSc-PAH"
+barcodes_keep <- clin_z$Barcode[keep]
+
+data_sub <- data_z[, colnames(data_z) %in% barcodes_keep, drop = FALSE]
+clin_sub <- clin_z[match(colnames(data_sub), clin_z$Barcode), ]
+
+# PCA
+pca <- prcomp(t(as.matrix(data_sub)), scale. = TRUE)
+pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df <- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  COMPERA = factor(
+    clin_sub$COMPERA_4strata,
+    levels = c("low","intermediate-low","intermediate-high","high")
+  )
+)
+
+cols_compera_z <- c(
+  "low"               = "#9CA3AF",
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+
+ggplot(df, aes(PC1, PC2, color = COMPERA)) +
+  stat_ellipse(aes(fill = COMPERA), type = "norm", level = 0.90,
+               geom = "polygon", alpha = 0.10, color = NA) +
+  stat_ellipse(type = "norm", level = 0.90, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_compera_z, name = "Risk (COMPERA)") +
+  scale_fill_manual(values = cols_compera_z,  name = "Risk (COMPERA)") +
+  labs(
+    x = paste0("PC1 (", round(pvar[1], 1), "%)"),
+    y = paste0("PC2 (", round(pvar[2], 1), "%)")
+  ) +
+  theme_minimal() +
+  guides(fill = "none")
+```
+
+```{r pca_p_group, fig.height=3.5, fig.width=5.4}
+pca <- prcomp(t(as.matrix(data_p)), scale. = TRUE)
+pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df <- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  Group = clin_p$Group[match(rownames(pca$x), clin_p$Barcode)]
+)
+
+cols_group <- c("SSc-noPAH" = "#004C8C", "SSc-PAH" = "#A63A2A")
+
+ggplot(df, aes(PC1, PC2, color = Group)) +
+  stat_ellipse(aes(fill = Group), type = "norm", level = 0.95,
+               geom = "polygon", alpha = 0.10, color = NA) +
+  stat_ellipse(type = "norm", level = 0.95, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_group) +
+  scale_fill_manual(values = cols_group) +
+  labs(
+    x = paste0("PC1 (", round(pvar[1], 1), "%)"),
+    y = paste0("PC2 (", round(pvar[2], 1), "%)")
+  ) +
+  theme_minimal()
+```
+
+```{r pca_p_compera, fig.height=3.5, fig.width=5.4}
+# --- subset to SSc-PAH only ---
+keep <- clin_p$Group == "SSc-PAH"
+barcodes_keep <- clin_p$Barcode[keep]
+
+data_sub <- data_p[, colnames(data_p) %in% barcodes_keep, drop = FALSE]
+clin_sub <- clin_p[match(colnames(data_sub), clin_p$Barcode), ]
+
+# PCA
+pca <- prcomp(t(as.matrix(data_sub)), scale. = TRUE)
+pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
+
+df <- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  COMPERA = factor(
+    clin_sub$Compera_4strata,
+    levels = c("Low","Intermediate-low","Intermediate-high","High")
+  )
+)
+
+cols_compera_p <- c(
+  "Low"               = "#9CA3AF",
+  "Intermediate-low"  = "#DDB7B2",
+  "Intermediate-high" = "#C7685F",
+  "High"              = "#A63A2A"
+)
+
+ggplot(df, aes(PC1, PC2, color = COMPERA)) +
+  stat_ellipse(aes(fill = COMPERA), type = "norm", level = 0.90,
+               geom = "polygon", alpha = 0.10, color = NA) +
+  stat_ellipse(type = "norm", level = 0.90, linewidth = 0.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = cols_compera_p, name = "Risk (COMPERA)") +
+  scale_fill_manual(values = cols_compera_p,  name = "Risk (COMPERA)") +
+  labs(
+    x = paste0("PC1 (", round(pvar[1], 1), "%)"),
+    y = paste0("PC2 (", round(pvar[2], 1), "%)")
+  ) +
+  theme_minimal() +
+  guides(fill = "none")
+```
+
+## Variance partitioning
+
+```{r vp_z_all, fig.height=4.5, fig.width=6.5}
+# expression: proteins x samples
+expr <- as.matrix(data_z)
+
+# metadata aligned to columns of expr
+meta <- clin_z |>
+  dplyr::distinct(Barcode, .keep_all = TRUE) |>
+  dplyr::filter(Barcode %in% colnames(expr)) |>
+  tibble::column_to_rownames("Barcode")
+
+expr <- expr[, rownames(meta), drop = FALSE]
+
+# variables for this model
+vars <- c("Group", "Age", "Sex", "Sample_age_days")
+meta <- meta |>
+  dplyr::mutate(
+    Group = factor(Group),
+    Sex   = factor(Sex)
+  )
+
+# keep complete cases for model variables
+n_before <- nrow(meta)
+
+meta <- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr <- expr[, rownames(meta), drop = FALSE]
+
+n_after <- nrow(meta)
+message("Zurich (all): ", n_after, " / ", n_before, " samples used")
+
+form <- ~ Group + Age + Sex + Sample_age_days
+
+vp <- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) <- gsub("`", "", colnames(vp))
+
+# quick summaries
+vp_mean <- sort(colMeans(vp), decreasing = TRUE)
+df <- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = "Mean fraction of variance explained",
+       title = "Zurich: all samples") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r vp_z_pah, fig.height=4.5, fig.width=6.5}
+expr <- as.matrix(data_z)
+
+meta <- clin_z |>
+  dplyr::distinct(Barcode, .keep_all = TRUE) |>
+  dplyr::filter(Barcode %in% colnames(expr)) |>
+  dplyr::filter(Group == "SSc-PAH") |>
+  tibble::column_to_rownames("Barcode")
+
+expr <- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars <- c("TAPSE_sPAP", "Age", "Sex")
+meta <- meta |>
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Age = as.numeric(Age),
+    Sex = factor(Sex)
+  )
+
+n_before <- nrow(meta)
+
+meta <- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr <- expr[, rownames(meta), drop = FALSE]
+
+n_after <- nrow(meta)
+message("SSc-PAH only: ", n_after, " / ", n_before, " samples used")
+
+form <- ~ TAPSE_sPAP + Age + Sex 
+
+vp <- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) <- gsub("`", "", colnames(vp))
+
+vp_mean <- sort(colMeans(vp), decreasing = TRUE)
+df <- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = "Mean fraction of variance explained",
+       title = "Zurich: SSc-PAH only") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r vp_p_all, fig.height=4.5, fig.width=6.5}
+library(variancePartition)
+
+expr <- as.matrix(data_p)
+
+meta <- clin_p |>
+  dplyr::distinct(Barcode, .keep_all = TRUE) |>
+  dplyr::filter(Barcode %in% colnames(expr)) |>
+  tibble::column_to_rownames("Barcode")
+
+expr <- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars <- c("Group", "Age", "Sex", "Sample_age")
+meta <- meta |>
+  dplyr::mutate(
+    Group  = factor(Group),
+    Sex    = factor(Sex),
+  )
+
+n_before <- nrow(meta)
+
+meta <- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr <- expr[, rownames(meta), drop = FALSE]
+
+n_after <- nrow(meta)
+message("Poland (all): ", n_after, " / ", n_before, " samples used")
+
+
+form <- ~ Group + Age + Sex + Sample_age
+
+vp <- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) <- gsub("`", "", colnames(vp))
+
+vp_mean <- sort(colMeans(vp), decreasing = TRUE)
+df <- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = "Mean fraction of variance explained",
+       title = "Poland: all samples") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r vp_p_pah, fig.height=4.5, fig.width=6.5}
+library(variancePartition)
+
+expr <- as.matrix(data_p)
+
+meta <- clin_p |>
+  dplyr::distinct(Barcode, .keep_all = TRUE) |>
+  dplyr::filter(Barcode %in% colnames(expr)) |>
+  dplyr::filter(Group == "SSc-PAH") |>
+  tibble::column_to_rownames("Barcode")
+
+expr <- expr[, rownames(meta), drop = FALSE]
+
+# requested covariates
+vars <- c("TAPSE_sPAP", "Age", "Sex")
+meta <- meta |>
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Age = as.numeric(Age),
+    Sex = factor(Sex)
+  )
+
+n_before <- nrow(meta)
+
+meta <- meta[complete.cases(meta[, vars]), , drop = FALSE]
+expr <- expr[, rownames(meta), drop = FALSE]
+
+n_after <- nrow(meta)
+message("SSc-PAH only: ", n_after, " / ", n_before, " samples used")
+
+form <- ~ TAPSE_sPAP + Age + Sex
+
+vp <- fitExtractVarPartModel(expr, form, meta)
+colnames(vp) <- gsub("`", "", colnames(vp))
+
+vp_mean <- sort(colMeans(vp), decreasing = TRUE)
+df <- data.frame(variable = names(vp_mean), value = vp_mean)
+
+ggplot(df, aes(x = reorder(variable, -value), y = value)) +
+  geom_col() +
+  labs(x = NULL, y = "Mean fraction of variance explained",
+       title = "Poland: SSc-PAH only") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plotVarPart(vp) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+## Differential expression analysis
+
+```{r de_group_zurich}
+# --- prepare metadata aligned to expression ---
+meta_z_de <- clin_z %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_z)) %>%
+  dplyr::mutate(
+    Group = factor(Group, levels = c("SSc-noPAH", "SSc-PAH")),
+    Sex   = factor(Sex),
+    Age   = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+# keep only complete cases for model variables
+meta_z_de <- meta_z_de[complete.cases(meta_z_de[, c("Group", "Age", "Sex")]), , drop = FALSE]
+
+expr_z_de <- as.matrix(data_z[, rownames(meta_z_de), drop = FALSE])
+
+# --- design: Group + Age + Sex ---
+design_z <- model.matrix(~ Group + Age + Sex, data = meta_z_de)
+
+# rescale numeric covariate(s) like in your code
+if ("Age" %in% colnames(design_z)) design_z[, "Age"] <- rescale(design_z[, "Age"])
+
+# --- fit limma ---
+fit_z <- lmFit(expr_z_de, design_z)
+fit_z <- eBayes(fit_z)
+
+# coefficient name for GroupSSc-PAH (vs reference SSc-noPAH)
+coef_group_z <- grep("^Group", colnames(design_z), value = TRUE)[1]
+
+DE_z <- topTable(fit_z, coef = coef_group_z, number = Inf, adjust.method = "BH")
+DE_z$Gene <- rownames(DE_z)
+
+DE_z_signif <- DE_z %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+# write outputs (same style as your loop, but single comparison)
+write.csv(DE_z,
+          file = here::here(output_dir_data, "DE_Results_Group_SScPAH_vs_noPAH_Zurich.csv"),
+          quote = FALSE, row.names = FALSE)
+write.csv(DE_z_signif,
+          file = here::here(output_dir_data, "DE_Significant_Group_SScPAH_vs_noPAH_Zurich.csv"),
+          quote = FALSE, row.names = FALSE)
+
+# store for volcano chunk
+n_z <- ncol(expr_z_de)
+```
+
+```{r de_group_poland}
+meta_p_de <- clin_p %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_p)) %>%
+  dplyr::mutate(
+    Group = factor(Group, levels = c("SSc-noPAH", "SSc-PAH")),
+    Sex   = factor(Sex),
+    Age   = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_p_de <- meta_p_de[complete.cases(meta_p_de[, c("Group", "Age", "Sex")]), , drop = FALSE]
+
+expr_p_de <- as.matrix(data_p[, rownames(meta_p_de), drop = FALSE])
+
+design_p <- model.matrix(~ Group + Age + Sex, data = meta_p_de)
+if ("Age" %in% colnames(design_p)) design_p[, "Age"] <- rescale(design_p[, "Age"])
+
+fit_p <- lmFit(expr_p_de, design_p)
+fit_p <- eBayes(fit_p)
+
+coef_group_p <- grep("^Group", colnames(design_p), value = TRUE)[1]
+
+DE_p <- topTable(fit_p, coef = coef_group_p, number = Inf, adjust.method = "BH")
+DE_p$Gene <- rownames(DE_p)
+
+DE_p_signif <- DE_p %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+write.csv(DE_p,
+          file = here::here(output_dir_data, "DE_Results_Group_SScPAH_vs_noPAH_Poland.csv"),
+          quote = FALSE, row.names = FALSE)
+write.csv(DE_p_signif,
+          file = here::here(output_dir_data, "DE_Significant_Group_SScPAH_vs_noPAH_Poland.csv"),
+          quote = FALSE, row.names = FALSE)
+
+n_p <- ncol(expr_p_de)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_z))
+names(keyvals) <- rep("Not significant", nrow(DE_z))
+
+keyvals[DE_z$logFC > 0.5 & DE_z$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Increased"
+
+keyvals[DE_z$logFC < -0.5 & DE_z$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Decreased"
+
+volcano_z <- EnhancedVolcano(
+  DE_z,
+  lab = rownames(DE_z),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Zurich cohort\nSSc-PAH vs SSc-noPAH\nn = ", n_z)
+) +
+  theme(legend.position = "none")
+
+volcano_z
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_p))
+names(keyvals) <- rep("Not significant", nrow(DE_p))
+
+keyvals[DE_p$logFC > 0.5 & DE_p$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Increased"
+
+keyvals[DE_p$logFC < -0.5 & DE_p$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Decreased"
+
+volcano_p <- EnhancedVolcano(
+  DE_p,
+  lab = rownames(DE_p),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Poland cohort\nSSc-PAH vs SSc-noPAH\nn = ", n_p)
+) +
+  theme(legend.position = "none")
+
+volcano_p
+```
+
+```{r de_tapse_zurich_pah}
+meta_z_de <- clin_z %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_z)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    Sex = factor(Sex),
+    Age = as.numeric(Age),
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_z_de <- meta_z_de[
+  complete.cases(meta_z_de[, c("TAPSE_sPAP", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_z_de <- as.matrix(data_z[, rownames(meta_z_de), drop = FALSE])
+
+design_z <- model.matrix(~ TAPSE_sPAP + Age + Sex, data = meta_z_de)
+
+design_z[, "TAPSE_sPAP"] <- rescale(design_z[, "TAPSE_sPAP"])
+design_z[, "Age"]        <- rescale(design_z[, "Age"])
+
+fit_z <- lmFit(expr_z_de, design_z)
+fit_z <- eBayes(fit_z)
+
+DE_z_TAPSE <- topTable(
+  fit_z,
+  coef = "TAPSE_sPAP",
+  number = Inf,
+  adjust.method = "BH"
+)
+
+DE_z_TAPSE$Gene <- rownames(DE_z_TAPSE)
+
+DE_z_TAPSE_signif <- DE_z_TAPSE %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+write.csv(
+  DE_z_TAPSE,
+  file = here::here(output_dir_data, "DE_TAPSE_sPAP_SScPAH_Zurich.csv"),
+  quote = FALSE, row.names = FALSE
+)
+
+write.csv(
+  DE_z_TAPSE_signif,
+  file = here::here(output_dir_data, "DE_TAPSE_sPAP_SScPAH_Zurich_significant.csv"),
+  quote = FALSE, row.names = FALSE
+)
+
+n_z_TAPSE <- ncol(expr_z_de)
+```
+
+```{r de_tapse_poland_pah}
+meta_p_de <- clin_p %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_p)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    Sex = factor(Sex),
+    Age = as.numeric(Age),
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_p_de <- meta_p_de[
+  complete.cases(meta_p_de[, c("TAPSE_sPAP", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_p_de <- as.matrix(data_p[, rownames(meta_p_de), drop = FALSE])
+
+design_p <- model.matrix(~ TAPSE_sPAP + Age + Sex, data = meta_p_de)
+
+design_p[, "TAPSE_sPAP"] <- rescale(design_p[, "TAPSE_sPAP"])
+design_p[, "Age"]        <- rescale(design_p[, "Age"])
+
+fit_p <- lmFit(expr_p_de, design_p)
+fit_p <- eBayes(fit_p)
+
+DE_p_TAPSE <- topTable(
+  fit_p,
+  coef = "TAPSE_sPAP",
+  number = Inf,
+  adjust.method = "BH"
+)
+
+DE_p_TAPSE$Gene <- rownames(DE_p_TAPSE)
+
+DE_p_TAPSE_signif <- DE_p_TAPSE %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+write.csv(
+  DE_p_TAPSE,
+  file = here::here(output_dir_data, "DE_TAPSE_sPAP_SScPAH_Poland.csv"),
+  quote = FALSE, row.names = FALSE
+)
+
+write.csv(
+  DE_p_TAPSE_signif,
+  file = here::here(output_dir_data, "DE_TAPSE_sPAP_SScPAH_Poland_significant.csv"),
+  quote = FALSE, row.names = FALSE
+)
+
+n_p_TAPSE <- ncol(expr_p_de)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_z_TAPSE))
+names(keyvals) <- rep("Not significant", nrow(DE_z_TAPSE))
+
+keyvals[DE_z_TAPSE$logFC > 0.5 & DE_z_TAPSE$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Increased"
+
+keyvals[DE_z_TAPSE$logFC < -0.5 & DE_z_TAPSE$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Decreased"
+
+volcano_z_TAPSE <- EnhancedVolcano(
+  DE_z_TAPSE,
+  lab = rownames(DE_z_TAPSE),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Zurich cohort SSc-PAH\nTAPSE_sPAP\nn = ", n_z_TAPSE)
+) +
+  theme(legend.position = "none")
+
+volcano_z_TAPSE
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_p_TAPSE))
+names(keyvals) <- rep("Not significant", nrow(DE_p_TAPSE))
+
+keyvals[DE_p_TAPSE$logFC > 0.5 & DE_p_TAPSE$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Increased"
+
+keyvals[DE_p_TAPSE$logFC < -0.5 & DE_p_TAPSE$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Decreased"
+
+volcano_p_TAPSE <- EnhancedVolcano(
+  DE_p_TAPSE,
+  lab = rownames(DE_p_TAPSE),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Poland cohort SSc-PAH\nTAPSE_sPAP\nn = ", n_p_TAPSE)
+) +
+  theme(legend.position = "none")
+
+volcano_p_TAPSE
+```
+
+```{r}
+meta_z_bin <- clin_z %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_z)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = ifelse(TAPSE_sPAP < 0.32, "Low", "High"),
+    TAPSE_group = factor(TAPSE_group, levels = c("High", "Low")),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_z_bin <- meta_z_bin[
+  complete.cases(meta_z_bin[, c("TAPSE_group", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_z_bin <- as.matrix(data_z[, rownames(meta_z_bin), drop = FALSE])
+
+design_z_bin <- model.matrix(~ TAPSE_group + Age + Sex, data = meta_z_bin)
+design_z_bin[, "Age"] <- rescale(design_z_bin[, "Age"])
+
+fit_z_bin <- lmFit(expr_z_bin, design_z_bin)
+fit_z_bin <- eBayes(fit_z_bin)
+
+coef_bin_z <- grep("^TAPSE_group", colnames(design_z_bin), value = TRUE)[1]
+
+DE_z_bin <- topTable(fit_z_bin, coef = coef_bin_z, number = Inf, adjust.method = "BH")
+DE_z_bin$Gene <- rownames(DE_z_bin)
+
+DE_z_bin_signif <- DE_z_bin %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+n_z_bin <- ncol(expr_z_bin)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_z_bin))
+names(keyvals) <- rep("Not significant", nrow(DE_z_bin))
+
+keyvals[DE_z_bin$logFC > 0.5 & DE_z_bin$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Higher in Low TAPSE_sPAP"
+
+keyvals[DE_z_bin$logFC < -0.5 & DE_z_bin$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Higher in High TAPSE_sPAP"
+
+volcano_z_bin <- EnhancedVolcano(
+  DE_z_bin,
+  lab = rownames(DE_z_bin),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Zurich cohort SSc-PAH\nTAPSE/sPAP<0.32 vs ≥0.32\nn = ", n_z_bin)
+) +
+  theme(legend.position = "none")
+
+volcano_z_bin
+```
+
+```{r}
+meta_p_bin <- clin_p %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_p)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = ifelse(TAPSE_sPAP < 0.32, "Low", "High"),
+    TAPSE_group = factor(TAPSE_group, levels = c("High", "Low")),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_p_bin <- meta_p_bin[
+  complete.cases(meta_p_bin[, c("TAPSE_group", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_p_bin <- as.matrix(data_p[, rownames(meta_p_bin), drop = FALSE])
+
+design_p_bin <- model.matrix(~ TAPSE_group + Age + Sex, data = meta_p_bin)
+design_p_bin[, "Age"] <- rescale(design_p_bin[, "Age"])
+
+fit_p_bin <- lmFit(expr_p_bin, design_p_bin)
+fit_p_bin <- eBayes(fit_p_bin)
+
+coef_bin_p <- grep("^TAPSE_group", colnames(design_p_bin), value = TRUE)[1]
+
+DE_p_bin <- topTable(fit_p_bin, coef = coef_bin_p, number = Inf, adjust.method = "BH")
+DE_p_bin$Gene <- rownames(DE_p_bin)
+
+DE_p_bin_signif <- DE_p_bin %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+n_p_bin <- ncol(expr_p_bin)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_p_bin))
+names(keyvals) <- rep("Not significant", nrow(DE_p_bin))
+
+keyvals[DE_p_bin$logFC > 0.5 & DE_p_bin$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Higher in Low TAPSE_sPAP"
+
+keyvals[DE_p_bin$logFC < -0.5 & DE_p_bin$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Higher in High TAPSE_sPAP"
+
+volcano_p_bin <- EnhancedVolcano(
+  DE_p_bin,
+  lab = rownames(DE_p_bin),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Poland cohort SSc-PAH\nTAPSE/sPAP<0.32 vs ≥0.32\nn = ", n_p_bin)
+) +
+  theme(legend.position = "none")
+
+volcano_p_bin
+```
+
+```{r}
+meta_z_comp <- clin_z %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_z)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    COMPERA_number = as.numeric(COMPERA_number),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_z_comp <- meta_z_comp[
+  complete.cases(meta_z_comp[, c("COMPERA_number", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_z_comp <- as.matrix(data_z[, rownames(meta_z_comp), drop = FALSE])
+
+design_z_comp <- model.matrix(~ COMPERA_number + Age + Sex, data = meta_z_comp)
+
+design_z_comp[, "COMPERA_number"] <- rescale(design_z_comp[, "COMPERA_number"])
+design_z_comp[, "Age"]            <- rescale(design_z_comp[, "Age"])
+
+fit_z_comp <- lmFit(expr_z_comp, design_z_comp)
+fit_z_comp <- eBayes(fit_z_comp)
+
+DE_z_comp <- topTable(
+  fit_z_comp,
+  coef = "COMPERA_number",
+  number = Inf,
+  adjust.method = "BH"
+)
+
+DE_z_comp$Gene <- rownames(DE_z_comp)
+
+DE_z_comp_signif <- DE_z_comp %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+n_z_comp <- ncol(expr_z_comp)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_z_comp))
+names(keyvals) <- rep("Not significant", nrow(DE_z_comp))
+
+keyvals[DE_z_comp$logFC > 0.5 & DE_z_comp$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Positive association"
+
+keyvals[DE_z_comp$logFC < -0.5 & DE_z_comp$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Negative association"
+
+volcano_z_comp <- EnhancedVolcano(
+  DE_z_comp,
+  lab = rownames(DE_z_comp),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Zurich cohort SSc-PAH\nCOMPERA_number\nn = ", n_z_comp)
+) +
+  theme(legend.position = "none")
+
+volcano_z_comp
+```
+
+```{r}
+meta_p_comp <- clin_p %>%
+  dplyr::distinct(Barcode, .keep_all = TRUE) %>%
+  dplyr::filter(Barcode %in% colnames(data_p)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::mutate(
+    Compera_number = as.numeric(Compera_number),
+    Sex = factor(Sex),
+    Age = as.numeric(Age)
+  ) %>%
+  tibble::column_to_rownames("Barcode")
+
+meta_p_comp <- meta_p_comp[
+  complete.cases(meta_p_comp[, c("Compera_number", "Age", "Sex")]),
+  , drop = FALSE
+]
+
+expr_p_comp <- as.matrix(data_p[, rownames(meta_p_comp), drop = FALSE])
+
+design_p_comp <- model.matrix(~ Compera_number + Age + Sex, data = meta_p_comp)
+
+design_p_comp[, "Compera_number"] <- rescale(design_p_comp[, "Compera_number"])
+design_p_comp[, "Age"]            <- rescale(design_p_comp[, "Age"])
+
+fit_p_comp <- lmFit(expr_p_comp, design_p_comp)
+fit_p_comp <- eBayes(fit_p_comp)
+
+DE_p_comp <- topTable(
+  fit_p_comp,
+  coef = "Compera_number",
+  number = Inf,
+  adjust.method = "BH"
+)
+
+DE_p_comp$Gene <- rownames(DE_p_comp)
+
+DE_p_comp_signif <- DE_p_comp %>%
+  dplyr::filter(adj.P.Val < 0.1, abs(logFC) > 0.5) %>%
+  dplyr::arrange(P.Value)
+
+n_p_comp <- ncol(expr_p_comp)
+```
+
+```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+keyvals <- rep("grey", nrow(DE_p_comp))
+names(keyvals) <- rep("Not significant", nrow(DE_p_comp))
+
+keyvals[DE_p_comp$logFC > 0.5 & DE_p_comp$adj.P.Val < 0.1] <- "#A63A2A"
+names(keyvals)[keyvals == "#A63A2A"] <- "Positive association"
+
+keyvals[DE_p_comp$logFC < -0.5 & DE_p_comp$adj.P.Val < 0.1] <- "#004C8C"
+names(keyvals)[keyvals == "#004C8C"] <- "Negative association"
+
+volcano_p_comp <- EnhancedVolcano(
+  DE_p_comp,
+  lab = rownames(DE_p_comp),
+  x = "logFC",
+  y = "adj.P.Val",
+  labSize = 0,
+  titleLabSize = 13,
+  subtitleLabSize = 14,
+  axisLabSize = 12,
+  captionLabSize = 0,
+  pointSize = 1,
+  FCcutoff = 0.5,
+  pCutoff  = 0.1,
+  ylim = c(0, 4),
+  colCustom = keyvals,
+  colAlpha = 1,
+  drawConnectors = FALSE,
+  subtitle = NULL,
+  title = paste0("Poland cohort\nSSc-PAH only\nCOMPERA_number\nn = ", n_p_comp)
+) +
+  theme(legend.position = "none")
+
+volcano_p_comp
+```
+
+```{r cor_group, fig.height=4, fig.width=4}
+df_group <- dplyr::inner_join(
+  DE_z[, c("Gene", "logFC")],
+  DE_p[, c("Gene", "logFC")],
+  by = "Gene",
+  suffix = c("_z", "_p")
+)
+
+cor_group <- cor(df_group$logFC_z, df_group$logFC_p)
+
+ggplot(df_group, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.6) +
+  labs(
+    x = "Zurich logFC",
+    y = "Poland logFC",
+    title = paste0("SSc-PAH vs SSc-noPAH\nr = ", round(cor_group, 2))
+  ) +
+  theme_classic()
+```
+
+```{r cor_tapse_cont, fig.height=4, fig.width=4}
+df_tapse <- dplyr::inner_join(
+  DE_z_TAPSE[, c("Gene", "logFC")],
+  DE_p_TAPSE[, c("Gene", "logFC")],
+  by = "Gene",
+  suffix = c("_z", "_p")
+)
+
+cor_tapse <- cor(df_tapse$logFC_z, df_tapse$logFC_p)
+
+ggplot(df_tapse, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.6) +
+  labs(
+    x = "Zurich logFC",
+    y = "Poland logFC",
+    title = paste0("TAPSE_sPAP (continuous)\nr = ", round(cor_tapse, 2))
+  ) +
+  theme_classic()
+```
+
+```{r cor_tapse_binary, fig.height=4, fig.width=4}
+df_tapse_bin <- dplyr::inner_join(
+  DE_z_bin[, c("Gene", "logFC")],
+  DE_p_bin[, c("Gene", "logFC")],
+  by = "Gene",
+  suffix = c("_z", "_p")
+)
+
+cor_tapse_bin <- cor(df_tapse_bin$logFC_z, df_tapse_bin$logFC_p)
+
+ggplot(df_tapse_bin, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.6) +
+  labs(
+    x = "Zurich logFC",
+    y = "Poland logFC",
+    title = paste0("TAPSE/sPAP groups (<0.32 vs ≥0.32)\nr = ", round(cor_tapse_bin, 2))
+  ) +
+  theme_classic()
+```
+
+```{r cor_compera, fig.height=4, fig.width=4}
+df_comp <- dplyr::inner_join(
+  DE_z_comp[, c("Gene", "logFC")],
+  DE_p_comp[, c("Gene", "logFC")],
+  by = "Gene",
+  suffix = c("_z", "_p")
+)
+
+cor_comp <- cor(df_comp$logFC_z, df_comp$logFC_p)
+
+ggplot(df_comp, aes(logFC_z, logFC_p)) +
+  geom_point(size = 1, alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.6) +
+  labs(
+    x = "Zurich logFC",
+    y = "Poland logFC",
+    title = paste0("COMPERA_number\nr = ", round(cor_comp, 2))
+  ) +
+  theme_classic()
+```
+
+```{r score_heatmap_helpers, message=FALSE, warning=FALSE}
+# score for ranking (for GSEA later)
+add_score <- function(de) {
+  de$score <- de$logFC * (-log10(de$P.Value))
+  de
+}
+
+# heatmap: top20 up/down by score
+plot_top_score_heatmap <- function(expr, clin, de, samples, ha, title_text) {
+  de <- add_score(de)
+
+  de_sub <- de[match(rownames(expr), de$Gene), ]
+  rownames(de_sub) <- de_sub$Gene
+
+  up   <- de_sub[order(de_sub$score, decreasing = TRUE), , drop = FALSE]
+  down <- de_sub[order(de_sub$score, decreasing = FALSE), , drop = FALSE]
+
+  top_up   <- rownames(up)[1:20]
+  top_down <- rownames(down)[1:20]
+
+  genes_use <- c(top_up, top_down)
+
+  mat <- as.matrix(expr[genes_use, samples, drop = FALSE])
+
+  # z-score per protein (row), same as your heatmaps
+  matz <- t(scale(t(mat)))
+  matz[is.nan(matz)] <- 0
+
+  hm_cols <- colorRamp2(c(-2, 0, 2), c("#2166AC", "white", "#B2182B"))
+
+  Heatmap(
+    matz,
+    name = "Z-score",
+    col = hm_cols,
+    top_annotation = ha,
+    cluster_rows = FALSE,
+    cluster_columns = TRUE,
+    show_row_names = TRUE,
+    row_names_gp = gpar(fontsize = 13),
+    show_column_names = TRUE,
+    column_names_gp = gpar(fontsize = 8),
+    row_title = title_text,
+    column_title = NULL,
+    height = unit(nrow(matz) * 5, "mm")
+  ) |>
+    draw(heatmap_legend_side = "right", annotation_legend_side = "right")
+}
+```
+
+```{r add_tapse_group}
+clin_z <- clin_z %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = dplyr::case_when(
+      is.na(TAPSE_sPAP)      ~ NA_character_,
+      TAPSE_sPAP < 0.32      ~ "<0.32",
+      TAPSE_sPAP >= 0.32     ~ "≥0.32"
+    ),
+    TAPSE_group = factor(TAPSE_group, levels = c("≥0.32", "<0.32"))
+  )
+
+clin_p <- clin_p %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    TAPSE_group = dplyr::case_when(
+      is.na(TAPSE_sPAP)      ~ NA_character_,
+      TAPSE_sPAP < 0.32      ~ "<0.32",
+      TAPSE_sPAP >= 0.32     ~ "≥0.32"
+    ),
+    TAPSE_group = factor(TAPSE_group, levels = c("≥0.32", "<0.32"))
+  )
+```
+
+```{r heatmaps_scores_zurich_tapseGroup, fig.height=10, fig.width=10.8}
+# ---- add TAPSE/sPAP group to clin_z once ----
+clin_z <- clin_z %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    `TAPSE/sPAP` = dplyr::case_when(
+      is.na(TAPSE_sPAP)  ~ NA_character_,
+      TAPSE_sPAP < 0.32  ~ "<0.32",
+      TRUE               ~ "≥0.32"
+    ),
+    `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c("≥0.32", "<0.32"))
+  )
+
+# ---- colors (same palette logic) ----
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "low"               = "#9CA3AF",
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+cols_tapse_spap <- c("≥0.32" = "#9CA3AF", "<0.32" = "#A63A2A")
+
+# 1) SSc-PAH vs SSc-noPAH
+samples <- intersect(colnames(data_z), clin_z$Barcode)
+meta_hm <- clin_z[match(samples, clin_z$Barcode), ]
+
+ha <- HeatmapAnnotation(
+  Group        = meta_hm$Group,
+  COMPERA      = factor(meta_hm$COMPERA_4strata, levels = c("low","intermediate-low","intermediate-high","high")),
+  `TAPSE/sPAP` = meta_hm$`TAPSE/sPAP`,
+  col = list(Group = cols_group, COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z,
+  samples = samples,
+  ha = ha,
+  title_text = "Zurich: top20 up/down by score\nSSc-PAH vs SSc-noPAH"
+)
+
+# 2) TAPSE_sPAP (continuous), SSc-PAH only
+meta2 <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples2 <- meta2$Barcode
+
+ha2 <- HeatmapAnnotation(
+  COMPERA      = factor(meta2$COMPERA_4strata, levels = c("low","intermediate-low","intermediate-high","high")),
+  `TAPSE/sPAP` = meta2$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_TAPSE,
+  samples = samples2,
+  ha = ha2,
+  title_text = "Zurich: top20 up/down by score\nTAPSE_sPAP (continuous), SSc-PAH"
+)
+
+# 3) TAPSE_sPAP groups (<0.32 vs ≥0.32), SSc-PAH only
+meta3 <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples3 <- meta3$Barcode
+
+ha3 <- HeatmapAnnotation(
+  COMPERA      = factor(meta3$COMPERA_4strata, levels = c("low","intermediate-low","intermediate-high","high")),
+  `TAPSE/sPAP` = meta3$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_bin,
+  samples = samples3,
+  ha = ha3,
+  title_text = "Zurich: top20 up/down by score\nTAPSE_sPAP <0.32 vs ≥0.32, SSc-PAH"
+)
+
+# 4) COMPERA_number (continuous), SSc-PAH only
+meta4 <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(COMPERA_number), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+samples4 <- meta4$Barcode
+
+ha4 <- HeatmapAnnotation(
+  COMPERA      = factor(meta4$COMPERA_4strata, levels = c("low","intermediate-low","intermediate-high","high")),
+  `TAPSE/sPAP` = meta4$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_z,
+  clin = clin_z,
+  de = DE_z_comp,
+  samples = samples4,
+  ha = ha4,
+  title_text = "Zurich: top20 up/down by score\nCOMPERA_number (continuous), SSc-PAH"
+)
+```
+
+```{r heatmaps_scores_poland_tapseGroup, fig.height=10, fig.width=10.8}
+# ---- add TAPSE/sPAP group to clin_p once ----
+clin_p <- clin_p %>%
+  dplyr::mutate(
+    TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    `TAPSE/sPAP` = dplyr::case_when(
+      is.na(TAPSE_sPAP)  ~ NA_character_,
+      TAPSE_sPAP < 0.32  ~ "<0.32",
+      TRUE               ~ "≥0.32"
+    ),
+    `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c("≥0.32", "<0.32"))
+  )
+
+# ---- colors ----
+cols_group <- c("SSc-noPAH"="#004C8C", "SSc-PAH"="#A63A2A")
+cols_compera <- c(
+  "Low"               = "#9CA3AF",
+  "Intermediate-low"  = "#DDB7B2",
+  "Intermediate-high" = "#C7685F",
+  "High"              = "#A63A2A"
+)
+cols_tapse_spap <- c("≥0.32" = "#9CA3AF", "<0.32" = "#A63A2A")
+
+# 1) SSc-PAH vs SSc-noPAH
+samples <- intersect(colnames(data_p), clin_p$Barcode)
+meta_hm <- clin_p[match(samples, clin_p$Barcode), ]
+
+ha <- HeatmapAnnotation(
+  Group        = meta_hm$Group,
+  COMPERA      = factor(meta_hm$Compera_4strata, levels = c("Low","Intermediate-low","Intermediate-high","High")),
+  `TAPSE/sPAP` = meta_hm$`TAPSE/sPAP`,
+  col = list(Group = cols_group, COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p,
+  samples = samples,
+  ha = ha,
+  title_text = "Poland: top20 up/down by score\nSSc-PAH vs SSc-noPAH"
+)
+
+# 2) TAPSE_sPAP (continuous), SSc-PAH only
+meta2 <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples2 <- meta2$Barcode
+
+ha2 <- HeatmapAnnotation(
+  COMPERA      = factor(meta2$Compera_4strata, levels = c("Low","Intermediate-low","Intermediate-high","High")),
+  `TAPSE/sPAP` = meta2$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_TAPSE,
+  samples = samples2,
+  ha = ha2,
+  title_text = "Poland: top20 up/down by score\nTAPSE_sPAP (continuous), SSc-PAH"
+)
+
+# 3) TAPSE_sPAP groups (<0.32 vs ≥0.32), SSc-PAH only
+meta3 <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples3 <- meta3$Barcode
+
+ha3 <- HeatmapAnnotation(
+  COMPERA      = factor(meta3$Compera_4strata, levels = c("Low","Intermediate-low","Intermediate-high","High")),
+  `TAPSE/sPAP` = meta3$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_bin,
+  samples = samples3,
+  ha = ha3,
+  title_text = "Poland: top20 up/down by score\nTAPSE_sPAP <0.32 vs ≥0.32, SSc-PAH"
+)
+
+# 4) Compera_number (continuous), SSc-PAH only
+meta4 <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(Compera_number), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+samples4 <- meta4$Barcode
+
+ha4 <- HeatmapAnnotation(
+  COMPERA      = factor(meta4$Compera_4strata, levels = c("Low","Intermediate-low","Intermediate-high","High")),
+  `TAPSE/sPAP` = meta4$`TAPSE/sPAP`,
+  col = list(COMPERA = cols_compera, `TAPSE/sPAP` = cols_tapse_spap),
+  na_col = "#E5E7EB"
+)
+
+plot_top_score_heatmap(
+  expr = data_p,
+  clin = clin_p,
+  de = DE_p_comp,
+  samples = samples4,
+  ha = ha4,
+  title_text = "Poland: top20 up/down by score\nCOMPERA_number (continuous), SSc-PAH"
+)
+```
+
+## Check age and sex by TAPSE/sPAP group
+
+```{r age_sex_tapse_helpers, message=FALSE, warning=FALSE}
+library(ggpubr)
+
+prepare_tapse_group_df <- function(clin, cohort_label) {
+  clin %>%
+    dplyr::mutate(
+      TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+      `TAPSE/sPAP` = dplyr::case_when(
+        is.na(TAPSE_sPAP) ~ NA_character_,
+        TAPSE_sPAP < 0.32 ~ "<0.32",
+        TRUE ~ "≥0.32"
+      ),
+      `TAPSE/sPAP` = factor(`TAPSE/sPAP`, levels = c("≥0.32", "<0.32")),
+      Age = as.numeric(Age),
+      Sex = factor(Sex),
+      Cohort = cohort_label
+    ) %>%
+    dplyr::filter(!is.na(`TAPSE/sPAP`))
+}
+
+age_test_tbl <- function(df) {
+  df %>%
+    dplyr::filter(!is.na(Age)) %>%
+    dplyr::summarise(
+      n = dplyr::n(),
+      p_value = wilcox.test(Age ~ `TAPSE/sPAP`, data = dplyr::cur_data())$p.value,
+      .groups = "drop"
+    )
+}
+
+sex_test_tbl <- function(df) {
+  tab <- table(df$`TAPSE/sPAP`, df$Sex)
+  list(table = tab, fisher = fisher.test(tab))
+}
+
+plot_age_by_tapse <- function(df, cohort_label) {
+  p_age <- wilcox.test(Age ~ `TAPSE/sPAP`, data = df %>% dplyr::filter(!is.na(Age)))$p.value
+
+  ggplot(df, aes(x = `TAPSE/sPAP`, y = Age, fill = `TAPSE/sPAP`)) +
+    geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+    geom_jitter(width = 0.1, size = 2, alpha = 0.7) +
+    annotate(
+      "text", x = 1.5, y = Inf,
+      label = paste0("Wilcoxon p = ", signif(p_age, 3)),
+      vjust = 1.4, size = 4
+    ) +
+    theme_classic() +
+    labs(
+      title = paste0(cohort_label, " cohort: Age by TAPSE/sPAP group"),
+      y = "Age (years)",
+      x = "TAPSE/sPAP group"
+    ) +
+    theme(legend.position = "none")
+}
+
+plot_sex_by_tapse <- function(df, cohort_label) {
+  df %>%
+    dplyr::filter(!is.na(Sex)) %>%
+    ggplot(aes(x = `TAPSE/sPAP`, fill = Sex)) +
+    geom_bar(position = "fill") +
+    theme_classic() +
+    labs(
+      title = paste0(cohort_label, " cohort: Sex distribution by TAPSE/sPAP group"),
+      y = "Proportion",
+      x = "TAPSE/sPAP group"
+    )
+}
+
+clin_z_tapse <- prepare_tapse_group_df(clin_z, "Zurich")
+clin_p_tapse <- prepare_tapse_group_df(clin_p, "Poland")
+```
+
+```{r age_sex_poland, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE}
+age_test_tbl(clin_p_tapse)
+sex_test_p <- sex_test_tbl(clin_p_tapse)
+sex_test_p$table
+sex_test_p$fisher
+
+plot_age_by_tapse(clin_p_tapse, "Poland")
+plot_sex_by_tapse(clin_p_tapse, "Poland")
+```
+
+```{r age_sex_zurich, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE}
+age_test_tbl(clin_z_tapse)
+sex_test_z <- sex_test_tbl(clin_z_tapse)
+sex_test_z$table
+sex_test_z$fisher
+
+plot_age_by_tapse(clin_z_tapse, "Zurich")
+plot_sex_by_tapse(clin_z_tapse, "Zurich")
+```
+
+# Final lasso
+
+```{r lasso_final_prepare_and_helpers, message=FALSE, warning=FALSE}
+library(glmnet)
+library(pROC)
+library(Matrix)
+
+# SSc-PAH only for the training/testing task.
+# Outcome: 1 = low TAPSE/sPAP (<0.32), 0 = preserved TAPSE/sPAP (≥0.32).
+train_p <- clin_p %>%
+  dplyr::mutate(TAPSE_sPAP = as.numeric(TAPSE_sPAP), Age = as.numeric(Age), Sex = factor(Sex)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_p))
+
+test_z <- clin_z %>%
+  dplyr::mutate(TAPSE_sPAP = as.numeric(TAPSE_sPAP), Age = as.numeric(Age), Sex = factor(Sex)) %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+y_p <- ifelse(train_p$TAPSE_sPAP < 0.32, 1, 0)
+y_z <- ifelse(test_z$TAPSE_sPAP < 0.32, 1, 0)
+
+make_design <- function(expr_mat, clin_df, include_age = TRUE, include_sex = TRUE){
+  X_prot <- t(expr_mat[, clin_df$Barcode, drop = FALSE])
+
+  cov_parts <- list()
+  if (include_age) cov_parts$Age <- as.numeric(clin_df$Age)
+  if (include_sex) cov_parts$Sex <- factor(clin_df$Sex)
+
+  if (length(cov_parts) == 0) {
+    X <- X_prot
+    pf <- rep(1, ncol(X))
+    cov_names <- character(0)
+  } else {
+    X_cov <- model.matrix(~ ., data = as.data.frame(cov_parts))[, -1, drop = FALSE]
+    X <- cbind(X_cov, X_prot)
+    pf <- c(rep(0, ncol(X_cov)), rep(1, ncol(X_prot)))
+    cov_names <- colnames(X_cov)
+  }
+
+  list(X = X, pf = pf, cov_names = cov_names, prot_names = colnames(X_prot))
+}
+
+choose_lambda_by_protein_count <- function(cvfit, prot_names, min_prot = 3, max_prot = 15){
+  lambdas <- cvfit$glmnet.fit$lambda
+  beta_mat <- as.matrix(coef(cvfit$glmnet.fit, s = lambdas))
+  prot_idx <- which(rownames(beta_mat) %in% prot_names)
+  nprot <- apply(beta_mat[prot_idx, , drop = FALSE] != 0, 2, sum)
+
+  ok <- which(nprot >= min_prot & nprot <= max_prot)
+  if (length(ok) > 0) {
+    return(lambdas[ok[which.min(cvfit$cvm[match(lambdas[ok], cvfit$lambda)])]])
+  }
+
+  target <- round((min_prot + max_prot) / 2)
+  lambdas[which.min(abs(nprot - target))]
+}
+
+bootstrap_stability_lasso <- function(expr_mat, clin_df, y,
+                                      B = 500,
+                                      include_age = TRUE,
+                                      include_sex = TRUE,
+                                      alpha = 1,
+                                      nfolds = 5,
+                                      min_prot = 3,
+                                      max_prot = 15,
+                                      seed = 1){
+  set.seed(seed)
+  stopifnot(all(clin_df$Barcode %in% colnames(expr_mat)))
+
+  expr_mat <- expr_mat[, clin_df$Barcode, drop = FALSE]
+  y <- as.numeric(y)
+
+  des <- make_design(expr_mat, clin_df, include_age, include_sex)
+  X_full <- des$X
+  pf <- des$pf
+  all_prots <- des$prot_names
+  n <- nrow(X_full)
+
+  sel_list <- vector("list", B)
+  coef_list <- vector("list", B)
+  auc_oob <- rep(NA_real_, B)
+  lambda_used <- rep(NA_real_, B)
+
+  for (b in seq_len(B)) {
+    idx_boot <- sample(seq_len(n), size = n, replace = TRUE)
+    idx_oob <- setdiff(seq_len(n), unique(idx_boot))
+
+    Xb <- X_full[idx_boot, , drop = FALSE]
+    yb <- y[idx_boot]
+
+    cvfit <- glmnet::cv.glmnet(
+      x = Xb, y = yb, family = "binomial", alpha = alpha,
+      penalty.factor = pf, standardize = TRUE, nfolds = nfolds,
+      type.measure = "auc"
+    )
+
+    lam <- choose_lambda_by_protein_count(cvfit, prot_names = all_prots,
+                                          min_prot = min_prot, max_prot = max_prot)
+    lambda_used[b] <- lam
+
+    beta <- as.matrix(coef(cvfit$glmnet.fit, s = lam))[, 1]
+    names(beta) <- rownames(as.matrix(coef(cvfit$glmnet.fit, s = lam)))
+
+    sel_prot <- intersect(names(beta)[beta != 0], all_prots)
+    sel_list[[b]] <- sel_prot
+    coef_list[[b]] <- beta
+
+    if (length(idx_oob) >= 8 && length(unique(y[idx_oob])) == 2) {
+      fitb <- glmnet::glmnet(
+        x = Xb, y = yb, family = "binomial", alpha = alpha,
+        penalty.factor = pf, standardize = TRUE, lambda = lam
+      )
+      p_oob <- as.numeric(predict(fitb, newx = X_full[idx_oob, , drop = FALSE], type = "response"))
+      auc_oob[b] <- as.numeric(pROC::auc(pROC::roc(y[idx_oob], p_oob, quiet = TRUE)))
+    }
+  }
+
+  sel_counts <- table(unlist(sel_list))
+  freq <- as.numeric(sel_counts[all_prots])
+  freq[is.na(freq)] <- 0
+  freq <- freq / B
+
+  sign_pos <- rep(NA_real_, length(all_prots))
+  names(sign_pos) <- all_prots
+
+  for (p in all_prots) {
+    signs <- c()
+    for (b in seq_len(B)) {
+      beta <- coef_list[[b]]
+      if (!is.null(beta) && p %in% names(beta) && beta[p] != 0) {
+        signs <- c(signs, sign(beta[p]))
+      }
+    }
+    if (length(signs) > 0) sign_pos[p] <- mean(signs > 0)
+  }
+
+  summary <- data.frame(
+    protein = all_prots,
+    select_freq = freq,
+    sign_pos_frac = sign_pos,
+    stringsAsFactors = FALSE
+  ) %>%
+    dplyr::arrange(dplyr::desc(select_freq))
+
+  list(
+    summary = summary,
+    sel_list = sel_list,
+    coef_list = coef_list,
+    auc_oob = auc_oob,
+    lambda_used = lambda_used,
+    settings = list(B = B, include_age = include_age, include_sex = include_sex,
+                    alpha = alpha, nfolds = nfolds, min_prot = min_prot, max_prot = max_prot)
+  )
+}
+
+get_scaler <- function(expr_mat, proteins){
+  m <- rowMeans(expr_mat[proteins, , drop = FALSE], na.rm = TRUE)
+  s <- apply(expr_mat[proteins, , drop = FALSE], 1, sd, na.rm = TRUE)
+  s[s == 0 | is.na(s)] <- 1
+  list(mu = m, sd = s)
+}
+
+apply_scaler <- function(expr_mat, proteins, scaler){
+  Z <- expr_mat[proteins, , drop = FALSE]
+  Z <- sweep(Z, 1, scaler$mu, "-")
+  Z <- sweep(Z, 1, scaler$sd, "/")
+  Z[is.na(Z)] <- 0
+  Z
+}
+
+fit_logistic_refit <- function(expr_mat, clin_df, proteins, cutoff = 0.32,
+                               include_age = TRUE, include_sex = TRUE){
+  df <- clin_df %>% dplyr::mutate(y = ifelse(TAPSE_sPAP < cutoff, 1, 0))
+  stopifnot(all(df$Barcode %in% colnames(expr_mat)))
+
+  scaler <- get_scaler(expr_mat[, df$Barcode, drop = FALSE], proteins)
+  Z <- t(apply_scaler(expr_mat[, df$Barcode, drop = FALSE], proteins, scaler)) %>% as.data.frame()
+  Z$Barcode <- df$Barcode
+
+  dd <- df %>% dplyr::select(Barcode, y, Age, Sex) %>% dplyr::left_join(Z, by = "Barcode")
+
+  rhs <- c(if (include_age) "Age", if (include_sex) "Sex", proteins)
+  fml <- as.formula(paste("y ~", paste(rhs, collapse = " + ")))
+
+  m <- glm(fml, data = dd, family = binomial())
+  list(model = m, scaler = scaler, proteins = proteins, include_age = include_age, include_sex = include_sex)
+}
+
+predict_logistic_refit <- function(fit, expr_mat, clin_df){
+  df <- clin_df
+  stopifnot(all(df$Barcode %in% colnames(expr_mat)))
+
+  Z <- t(apply_scaler(expr_mat[, df$Barcode, drop = FALSE], fit$proteins, fit$scaler)) %>% as.data.frame()
+  Z$Barcode <- df$Barcode
+
+  keep_cols <- intersect(c("Barcode", "Age", "Sex", "TAPSE_sPAP", "TAPSE_group", "Group"), colnames(df))
+  dd <- df %>% dplyr::select(dplyr::all_of(keep_cols)) %>% dplyr::left_join(Z, by = "Barcode")
+
+  dd$score_eta <- as.numeric(predict(fit$model, newdata = dd, type = "link"))
+  dd$score_p <- as.numeric(predict(fit$model, newdata = dd, type = "response"))
+  dd
+}
+
+signed_mean_score <- function(expr_mat, clin_df, proteins, sign_map, scaler){
+  stopifnot(all(names(sign_map) %in% proteins))
+  Z <- apply_scaler(expr_mat[, clin_df$Barcode, drop = FALSE], proteins, scaler)
+  Zs <- sweep(Z, 1, sign_map[proteins], "*")
+  score <- colMeans(Zs, na.rm = TRUE)
+
+  out <- clin_df %>% dplyr::select(dplyr::any_of(c("Barcode", "Age", "Sex", "TAPSE_sPAP", "TAPSE_group", "Group")))
+  out$score_signed <- as.numeric(score[match(out$Barcode, names(score))])
+  out
+}
+```
+
+```{r preselect_proteins_DE_Poland, message=FALSE, warning=FALSE}
+library(limma)
+library(dplyr)
+
+# Poland samples for DE (PAH vs noPAH)
+de_meta_p <- clin_p %>%
+  filter(Group %in% c("SSc-PAH", "SSc-noPAH")) %>%
+  filter(!is.na(Age), !is.na(Sex)) %>%
+  filter(Barcode %in% colnames(data_p))
+
+X_de <- as.matrix(data_p[, de_meta_p$Barcode, drop = FALSE])
+
+# Design: Group + Age + Sex
+de_meta_p$Group <- factor(de_meta_p$Group, levels = c("SSc-noPAH", "SSc-PAH"))
+de_meta_p$Sex   <- factor(de_meta_p$Sex)
+
+design <- model.matrix(~ Group + Age + Sex, data = de_meta_p)
+
+fit <- lmFit(X_de, design)
+fit <- eBayes(fit)
+
+DE_pah_vs_nopah <- topTable(fit, coef = "GroupSSc-PAH", number = Inf, adjust.method = "BH")
+DE_pah_vs_nopah$protein <- rownames(DE_pah_vs_nopah)
+
+# Choose your filter (match your original logic)
+# Example: adj.P.Val < 0.05 (optionally add |logFC| cutoff)
+preselect_proteins <- DE_pah_vs_nopah %>%
+  dplyr::filter(adj.P.Val < 0.05) %>%
+ # dplyr::filter(protein %in% dplyr::filter(DE_p_bin, P.Value < 0.05)$Gene) %>%
+  pull(protein)
+
+length(preselect_proteins)
+head(preselect_proteins)
+
+qs2::qs_save(DE_pah_vs_nopah, here::here(output_dir_data, "DE_Poland_SScPAH_vs_SScnoPAH_AgeSex.qs2"))
+qs2::qs_save(preselect_proteins, here::here(output_dir_data, "preselect_proteins_DEadjP005.qs2"))
+
+```
+
+
+## Stability-selection lasso after protein preselection
+
+```{r stability_lasso_with_preselection, message=FALSE, warning=FALSE}
+# Intersect with proteins available in BOTH cohorts
+common_preselect <- intersect(preselect_proteins, intersect(rownames(data_p), rownames(data_z)))
+length(common_preselect)
+
+# Build training/test expression matrices for LASSO (proteins x samples)
+expr_p_tr_pre <- as.matrix(data_p[common_preselect, train_p$Barcode, drop = FALSE])
+expr_z_te_pre <- as.matrix(data_z[common_preselect, test_z$Barcode, drop = FALSE])
+
+# Run bootstrap stability selection on the preselected feature space
+B <- 500
+stab_pre <- bootstrap_stability_lasso(
+  expr_mat = expr_p_tr_pre,
+  clin_df  = train_p,
+  y        = y_p,
+  B = B,
+  include_age = TRUE,
+  include_sex = TRUE,    # or FALSE if you want Age-only adjustment
+  alpha = 1,
+  nfolds = 5,
+  min_prot = 3,
+  max_prot = 100,
+  seed = 1
+)
+
+qs2::qs_save(stab_pre, here::here(output_dir_data, paste0("stability_lasso_preselected_B", B, "_AgeSex.qs2")))
+head(stab_pre$summary, 20)
+```
+
+
+---
+
+
+
+```{r stability_panel_size_distribution, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+
+# number of proteins selected per bootstrap
+panel_sizes <- sapply(stab_pre$sel_list, length)
+
+df_sizes <- data.frame(size = panel_sizes)
+
+p_size <- ggplot(df_sizes, aes(x = size)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = sort(unique(panel_sizes))) +
+  labs(
+    x = "Number of proteins selected (per bootstrap)",
+    y = "Count",
+    title = "Stability selection: distribution of panel sizes"
+  ) +
+  theme_classic(base_size = 12)
+
+p_size
+ggsave(here::here(output_dir_figs, paste0("stability_panel_size_distribution_B", stab_pre$settings$B, ".png")),
+       p_size, width = 6, height = 4.2, dpi = 300)
+
+summary(panel_sizes)
+table(panel_sizes)
+```
+
+
+---
+
+## 2) “Most frequent combination” (top recurring panels)
+This is useful, but usually you’ll see many singletons unless you restrict to a manageable feature universe. So we compute frequency of **exact sets**.
+
+```{r stability_most_frequent_panels, message=FALSE, warning=FALSE}
+library(tibble)
+
+panel_keys <- sapply(stab_pre$sel_list, function(v){
+  if (length(v) == 0) return(NA_character_)
+  paste(sort(v), collapse = " | ")
+})
+
+panel_tab <- sort(table(panel_keys), decreasing = TRUE)
+panel_df <- data.frame(
+  panel = names(panel_tab),
+  n = as.integer(panel_tab),
+  freq = as.integer(panel_tab) / length(stab_pre$sel_list),
+  stringsAsFactors = FALSE
+) %>% 
+  filter(!is.na(panel))
+
+head(panel_df, 20)
+```
+
+
+**Optional plot (top 10 panels):**
+```{r stability_most_frequent_panels_plot, fig.height=4.5, fig.width=12, message=FALSE, warning=FALSE}
+topM <- 10
+p_panels <- panel_df %>%
+  slice_head(n = topM) %>%
+  mutate(panel = factor(panel, levels = rev(panel))) %>%
+  ggplot(aes(x = panel, y = freq)) +
+  geom_col() +
+  coord_flip() +
+  labs(x = NULL, y = "Frequency", title = paste0("Top ", topM, " most frequent exact panels")) +
+  theme_classic(base_size = 12)
+
+p_panels
+ggsave(here::here(output_dir_figs, paste0("stability_top", topM, "_panels_B", stab_pre$settings$B, ".png")),
+       p_panels, width = 9, height = 4.5, dpi = 300)
+```
+
+
+---
+
+## 3) Co-selection heatmap (which proteins tend to appear together)
+This is *often more informative* than exact combinations.
+
+```{r stability_co_selection_heatmap, message=FALSE, warning=FALSE, fig.height=8, fig.width=8}
+library(Matrix)
+
+# pick a manageable set (e.g. top 30 by selection freq)
+topK <- 30
+top_prots <- stab_pre$summary %>% slice_head(n = topK) %>% pull(protein)
+
+# build co-selection matrix
+M <- matrix(0, nrow = topK, ncol = topK, dimnames = list(top_prots, top_prots))
+
+for (sel in stab_pre$sel_list) {
+  sel <- intersect(sel, top_prots)
+  if (length(sel) >= 2) {
+    idx <- match(sel, top_prots)
+    M[idx, idx] <- M[idx, idx] + 1
+  } else if (length(sel) == 1) {
+    i <- match(sel, top_prots)
+    M[i, i] <- M[i, i] + 1
+  }
+}
+
+# convert to frequency
+M_freq <- M / length(stab_pre$sel_list)
+
+# quick base heatmap
+heatmap(M_freq, symm = TRUE, margins = c(8, 8),
+        main = paste0("Co-selection frequency (top ", topK, " proteins)"))
+```
+        
+## Build final panel and scores
+
+```{r build_scores_from_stability_preselected, message=FALSE, warning=FALSE}
+stab_df <- stab_pre$summary
+
+# pick your panel
+panel_size <- 5
+panel_prots <- stab_df %>% slice_head(n = panel_size) %>% pull(protein)
+panel_prots
+
+# sign map from bootstrap
+sign_map <- stab_df %>%
+  filter(protein %in% panel_prots) %>%
+  mutate(sign = ifelse(sign_pos_frac >= 0.5, 1, -1)) %>%
+  dplyr::select(protein, sign) %>%
+  tibble::deframe()
+
+# IMPORTANT: refit/scores must use the FULL cohort matrices (data_p/data_z)
+# but only these proteins
+refit_pre <- fit_logistic_refit(
+  expr_mat = as.matrix(data_p),  # proteins x samples
+  clin_df  = train_p,
+  proteins = panel_prots,
+  cutoff = 0.32,
+  include_age = TRUE,
+  include_sex = TRUE
+)
+
+pred_p <- predict_logistic_refit(refit_pre, as.matrix(data_p), train_p)
+pred_z <- predict_logistic_refit(refit_pre, as.matrix(data_z), test_z)
+
+signed_p <- signed_mean_score(as.matrix(data_p), train_p, panel_prots, sign_map, refit_pre$scaler)
+signed_z <- signed_mean_score(as.matrix(data_z), test_z, panel_prots, sign_map, refit_pre$scaler)
+```
+
+
+---
+
+## Final lasso performance and score plots
+
+### ROC with AUC confidence intervals
+
+```{r roc_refit_preselected, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE}
+y_tr <- ifelse(pred_p$TAPSE_sPAP < 0.32, 1, 0)
+y_te <- ifelse(pred_z$TAPSE_sPAP < 0.32, 1, 0)
+
+roc_tr <- pROC::roc(y_tr, pred_p$score_p, quiet = TRUE, ci = TRUE, direction = "<")
+roc_te <- pROC::roc(y_te, pred_z$score_p, quiet = TRUE, ci = TRUE, direction = "<")
+
+auc_tr <- as.numeric(pROC::auc(roc_tr))
+auc_te <- as.numeric(pROC::auc(roc_te))
+ci_auc_tr <- as.numeric(pROC::ci.auc(roc_tr))
+ci_auc_te <- as.numeric(pROC::ci.auc(roc_te))
+
+# 95% ROC-curve confidence bands
+set.seed(1)
+ci_se_tr <- pROC::ci.se(
+  roc_tr,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = "none"
+)
+ci_se_te <- pROC::ci.se(
+  roc_te,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = "none"
+)
+
+plot(
+  roc_tr,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = "red",
+  lwd = 2,
+  xlab = "1 - Specificity",
+  ylab = "Sensitivity",
+  main = paste0(
+    "Stable panel refit-logistic
+",
+    "Poland AUC=", sprintf("%.2f", auc_tr),
+    " | Zurich AUC=", sprintf("%.2f", auc_te)
+  )
+)
+
+plot(
+  ci_se_tr,
+  type = "shape",
+  col = adjustcolor("red", alpha.f = 0.20),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+plot(
+  ci_se_te,
+  type = "shape",
+  col = adjustcolor("black", alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(roc_tr, legacy.axes = TRUE, identity = FALSE, col = "red", lwd = 2, add = TRUE)
+plot(roc_te, legacy.axes = TRUE, identity = FALSE, col = "black", lwd = 2, add = TRUE)
+
+legend(
+  "bottomright",
+  inset = 0.02,
+  legend = c(
+    paste0(
+      "Poland (train): AUC ", sprintf("%.2f", auc_tr),
+      " [", sprintf("%.2f", ci_auc_tr[1]), ", ", sprintf("%.2f", ci_auc_tr[3]), "]"
+    ),
+    paste0(
+      "Zurich (test): AUC ", sprintf("%.2f", auc_te),
+      " [", sprintf("%.2f", ci_auc_te[1]), ", ", sprintf("%.2f", ci_auc_te[3]), "]"
+    )
+  ),
+  col = c("red", "black"),
+  lwd = 2,
+  bty = "n",
+  cex = 0.99,
+  seg.len = 2.3
+)
+```
+
+
+### Three-group score plot
+
+```{r boxplot_eta_preselected, fig.height=4.8, fig.width=9, message=FALSE, warning=FALSE}
+library(ggpubr)
+
+make_3groups <- function(clin_df){
+  clin_df %>%
+    mutate(
+      group3 = case_when(
+        Group == "SSc-noPAH" ~ "SSc-noPAH",
+        Group == "SSc-PAH" & TAPSE_sPAP >= 0.32 ~ "SSc-PAH≥0.32",
+        Group == "SSc-PAH" & TAPSE_sPAP < 0.32  ~ "SSc-PAH<0.32",
+        TRUE ~ NA_character_
+      ),
+      group3 = factor(group3, levels = c("SSc-noPAH", "SSc-PAH≥0.32", "SSc-PAH<0.32"))
+    )
+}
+
+# score ALL subjects to visualize, but plot ETA
+clin_p_all <- clin_p %>% filter(Barcode %in% colnames(data_p), !is.na(Age), !is.na(Sex))
+clin_z_all <- clin_z %>% filter(Barcode %in% colnames(data_z), !is.na(Age), !is.na(Sex))
+
+pred_p_all <- predict_logistic_refit(refit_pre, as.matrix(data_p), clin_p_all) %>% make_3groups()
+pred_z_all <- predict_logistic_refit(refit_pre, as.matrix(data_z), clin_z_all) %>% make_3groups()
+
+df_plot <- bind_rows(
+  pred_p_all %>% mutate(Cohort = "Poland"),
+  pred_z_all %>% mutate(Cohort = "Zurich")
+) %>% filter(!is.na(group3))
+
+p <- ggplot(df_plot, aes(x = group3, y = score_eta)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, size = 1.3, alpha = 0.7) +
+  facet_wrap(~Cohort, scales = "free_x") +
+  labs(x = NULL, y = "Score (log-odds; linear predictor)",
+       title = paste0("Stable panel refit-logistic score (", length(panel_prots), " proteins)")) +
+  theme_classic(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+p
+```
+
+## Correlations
+
+```{r corr_prepare_pah_only, message=FALSE, warning=FALSE}
+
+panel_prots <- refit_pre$proteins
+
+# helper to build a long dataframe for correlations
+make_corr_df <- function(clin_df, data_mat, cohort_label, score_df = NULL,
+                         score_var = c("score_eta","score_p","score_signed")) {
+  score_var <- match.arg(score_var)
+
+  # subset to SSc-PAH with TAPSE/sPAP
+  cc <- clin_df %>%
+    filter(Group == "SSc-PAH") %>%
+    filter(!is.na(TAPSE_sPAP)) %>%
+    filter(Barcode %in% colnames(data_mat))
+
+  # protein values (wide)
+  prot_wide <- t(as.matrix(data_mat[panel_prots, cc$Barcode, drop = FALSE])) %>%
+    as.data.frame()
+  prot_wide$Barcode <- cc$Barcode
+
+  out <- cc %>%
+    dplyr::select(Barcode, TAPSE_sPAP) %>%
+    left_join(prot_wide, by = "Barcode") %>%
+    mutate(Cohort = cohort_label)
+
+  # attach score if provided
+  if (!is.null(score_df)) {
+    out <- out %>%
+      left_join(score_df %>% dplyr::select(Barcode, all_of(score_var)), by = "Barcode") %>%
+      rename(Score = all_of(score_var))
+  } else {
+    out$Score <- NA_real_
+  }
+
+  out
+}
+
+# Use your previously created score data frames:
+# pred_p, pred_z contain score_eta and score_p for SSc-PAH train/test
+# signed_p, signed_z contain score_signed if you want that too
+
+df_corr_p <- make_corr_df(train_p, data_p, "Poland", score_df = pred_p, score_var = "score_eta")
+df_corr_z <- make_corr_df(test_z,  data_z, "Zurich", score_df = pred_z, score_var = "score_eta")
+
+# Combine
+df_corr <- bind_rows(df_corr_p, df_corr_z)
+
+# quick sanity check
+df_corr %>% group_by(Cohort) %>% summarise(n = n())
+```
+
+```{r corr_table_proteins_and_score, message=FALSE, warning=FALSE}
+cor_spearman <- function(x, y) {
+  ok <- is.finite(x) & is.finite(y)
+  if (sum(ok) < 5) return(c(rho = NA_real_, p = NA_real_, n = sum(ok)))
+  ct <- suppressWarnings(cor.test(x[ok], y[ok], method = "spearman", exact = FALSE))
+  c(rho = unname(ct$estimate), p = ct$p.value, n = sum(ok))
+}
+
+features <- c(panel_prots, "Score")
+
+corr_tbl <- df_corr %>%
+  pivot_longer(cols = all_of(panel_prots), names_to = "Feature", values_to = "Value") %>%
+  # add Score as another feature
+  bind_rows(
+    df_corr %>% transmute(Cohort, Barcode, TAPSE_sPAP, Feature = "Score", Value = Score)
+  ) %>%
+  group_by(Cohort, Feature) %>%
+  summarise(
+    rho = cor_spearman(Value, TAPSE_sPAP)["rho"],
+    p   = cor_spearman(Value, TAPSE_sPAP)["p"],
+    n   = cor_spearman(Value, TAPSE_sPAP)["n"],
+    .groups = "drop"
+  ) %>%
+  group_by(Cohort) %>%
+  mutate(p_adj = p.adjust(p, method = "BH")) %>%
+  ungroup() %>%
+  arrange(Cohort, p_adj)
+
+corr_tbl
+qs2::qs_save(corr_tbl, here::here(output_dir_data, "corr_TAPSEsPAP_panelProteins_and_score_Spearman.qs2"))
+write.csv(corr_tbl, here::here(output_dir_data, "corr_TAPSEsPAP_panelProteins_and_score_Spearman.csv"),
+          row.names = FALSE)
+```
+
+```{r corr_plot_score_vs_tapse, fig.height=3.8, fig.width=7.5, message=FALSE, warning=FALSE}
+# pull rho/p for annotation
+ann_score <- corr_tbl %>% filter(Feature == "Score") %>% dplyr::select(Cohort, rho, p, p_adj)
+
+df_score <- df_corr %>%
+  filter(!is.na(Score)) %>%
+  left_join(ann_score, by = "Cohort")
+
+p_score <- ggplot(df_score, aes(x = TAPSE_sPAP, y = Score)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~Cohort, scales = "free_y") +
+  labs(
+    x = "TAPSE/sPAP",
+    y = "Score (linear predictor, log-odds)",
+    title = "Score vs TAPSE/sPAP in SSc-PAH"
+  ) +
+  theme_classic(base_size = 12)
+
+# Add annotation per facet (simple approach)
+p_score <- p_score +
+  geom_text(
+    data = df_score %>% distinct(Cohort, rho, p, p_adj),
+    aes(x = -Inf, y = Inf,
+        label = paste0("Spearman ρ=", round(rho, 2),
+                       "\np=", signif(p, 2))),
+    hjust = -1, vjust = 1.1,
+    inherit.aes = FALSE
+  )
+
+p_score
+ggsave(here::here(output_dir_figs, "corr_score_vs_TAPSEsPAP_SScPAH.png"),
+       p_score, width = 7.5, height = 3.8, dpi = 300)
+```
+
+```{r corr_plot_proteins_vs_tapse_faceted, fig.height=5, fig.width=10.5, message=FALSE, warning=FALSE}
+# prepare long data for plotting
+df_long <- df_corr %>%
+  pivot_longer(cols = all_of(panel_prots), names_to = "Protein", values_to = "NPX") %>%
+  left_join(
+    corr_tbl %>% filter(Feature %in% panel_prots) %>%
+      rename(Protein = Feature) %>%
+      dplyr::select(Cohort, Protein, rho, p, p_adj),
+    by = c("Cohort", "Protein")
+  )
+
+p_prot <- ggplot(df_long, aes(x = TAPSE_sPAP, y = NPX)) +
+  geom_point(size = 1.4, alpha = 0.8) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(Cohort ~ Protein, scales = "free_y") +
+  labs(
+    x = "TAPSE/sPAP",
+    y = "Protein NPX",
+    title = "Individual proteins vs TAPSE/sPAP in SSc-PAH"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    strip.text.x = element_text(size = 10),
+    strip.text.y = element_text(size = 10)
+  )
+
+# annotate each facet with rho and FDR
+ann_df <- df_long %>%
+  distinct(Cohort, Protein, rho, p_adj, p)
+
+p_prot <- p_prot +
+  geom_text(
+    data = ann_df,
+    aes(x = -Inf, y = Inf,
+        label = paste0("ρ=", round(rho, 2), "\np=", signif(p, 2))),
+    hjust = -1, vjust = 1.1,
+    inherit.aes = FALSE,
+    size = 3
+  )
+
+p_prot
+ggsave(here::here(output_dir_figs, "corr_proteins_vs_TAPSEsPAP_SScPAH_faceted.png"),
+       p_prot, width = 10.5, height = 7.5, dpi = 300)
+```
+
+
+```{r zurich_withincohort_scaling_auc, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE}
+library(dplyr)
+library(pROC)
+
+panel_prots <- refit_pre$proteins
+
+# Zurich SSc-PAH only
+z_pah <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::filter(!is.na(TAPSE_sPAP)) %>%
+  dplyr::filter(Barcode %in% colnames(data_z))
+
+# Outcome: 1 = low TAPSE/sPAP, 0 = preserved TAPSE/sPAP
+y_z <- ifelse(z_pah$TAPSE_sPAP < 0.32, 1, 0)
+
+# Protein matrix: proteins x samples
+Zmat <- as.matrix(data_z[panel_prots, z_pah$Barcode, drop = FALSE])
+
+# Zurich-within-cohort z-score per protein
+mu_z <- rowMeans(Zmat, na.rm = TRUE)
+sd_z <- apply(Zmat, 1, sd, na.rm = TRUE)
+sd_z[sd_z == 0 | is.na(sd_z)] <- 1
+
+Zz <- sweep(Zmat, 1, mu_z, "-")
+Zz <- sweep(Zz, 1, sd_z, "/")
+Zz[is.na(Zz)] <- 0
+
+# Signed mean z-score
+s <- sign_map[panel_prots]
+Zsigned <- sweep(Zz, 1, s, "*")
+score_withinZ <- colMeans(Zsigned, na.rm = TRUE)
+
+# ROC / AUC with CI
+roc_withinZ <- pROC::roc(
+  y_z,
+  as.numeric(score_withinZ),
+  quiet = TRUE,
+  ci = TRUE,
+  direction = "<"
+)
+
+auc_withinZ <- as.numeric(pROC::auc(roc_withinZ))
+ci_auc_withinZ <- as.numeric(pROC::ci.auc(roc_withinZ))
+
+# 95% ROC-curve confidence band
+set.seed(1)
+ci_se_withinZ <- pROC::ci.se(
+  roc_withinZ,
+  specificities = seq(0, 1, length.out = 101),
+  boot.n = 2000,
+  progress = "none"
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = "black",
+  lwd = 2,
+  xlab = "1 - Specificity",
+  ylab = "Sensitivity",
+  main = paste0(
+    "Zurich within-cohort scaled signed score\n",
+    "Zurich AUC=", sprintf("%.2f", auc_withinZ)
+  )
+)
+
+plot(
+  ci_se_withinZ,
+  type = "shape",
+  col = adjustcolor("black", alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = "black",
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  "bottomright",
+  inset = 0.02,
+  legend = paste0(
+    "Zurich: AUC ", sprintf("%.2f", auc_withinZ),
+    " [", sprintf("%.2f", ci_auc_withinZ[1]), ", ",
+    sprintf("%.2f", ci_auc_withinZ[3]), "]"
+  ),
+  col = "black",
+  lwd = 2,
+  bty = "n",
+  cex = 0.99,
+  seg.len = 2.3
+)
+
+# Save base R plot
+png(
+  filename = here::here(output_dir_figs, "AUC_Zurich_withinCohortScaling_signedScore.png"),
+  width = 5,
+  height = 4.5,
+  units = "in",
+  res = 300
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = "black",
+  lwd = 2,
+  xlab = "1 - Specificity",
+  ylab = "Sensitivity",
+  main = paste0(
+    "Zurich within-cohort scaled signed score\n",
+    "Zurich AUC=", sprintf("%.2f", auc_withinZ)
+  )
+)
+
+plot(
+  ci_se_withinZ,
+  type = "shape",
+  col = adjustcolor("black", alpha.f = 0.15),
+  border = NA,
+  no.roc = TRUE,
+  add = TRUE,
+  legacy.axes = TRUE
+)
+
+plot(
+  roc_withinZ,
+  legacy.axes = TRUE,
+  identity = FALSE,
+  col = "black",
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  "bottomright",
+  inset = 0.02,
+  legend = paste0(
+    "Zurich: AUC ", sprintf("%.2f", auc_withinZ),
+    " [", sprintf("%.2f", ci_auc_withinZ[1]), ", ",
+    sprintf("%.2f", ci_auc_withinZ[3]), "]"
+  ),
+  col = "black",
+  lwd = 2,
+  bty = "n",
+  cex = 0.99,
+  seg.len = 2.3
+)
+
+dev.off()
+```
+
+## COX regression
+
+```{r cox_prepare_surv_zurich, message=FALSE, warning=FALSE}
+library(dplyr)
+library(survival)
+
+# -------------------------------
+# 0) Choose which score to use
+# -------------------------------
+score_z <- pred_z %>%
+  dplyr::select(Barcode, eta = score_eta)   # use linear predictor (recommended)
+
+# -------------------------------
+# 1) Robust survival column picker
+# -------------------------------
+pick_first_existing <- function(df, candidates) {
+  hit <- candidates[candidates %in% colnames(df)]
+  if (length(hit) == 0) return(NA_character_)
+  hit[1]
+}
+
+# Try to guess your column names (adjust here if needed)
+time_col  <- pick_first_existing(clin_z, c("DeathDAYS","death_days","FU_DAYS","followup_days","time_days","TimeDAYS","Time_days"))
+event_col <- pick_first_existing(clin_z, c("Death","death","Death_event","event","Event","status","Status"))
+
+# COMPERA numeric column (you mentioned COMPERA_number)
+compera_col <- pick_first_existing(clin_z, c("COMPERA_number","COMPERA","COMPERA_num","COMPERA_score"))
+
+cat("Using time_col =", time_col, "\n")
+cat("Using event_col =", event_col, "\n")
+cat("Using compera_col =", compera_col, "\n")
+
+# If any are NA, set them manually like:
+# time_col <- "DeathDAYS"
+# event_col <- "Death"
+# compera_col <- "COMPERA_number"
+
+stopifnot(!is.na(time_col), !is.na(event_col), !is.na(compera_col))
+
+# -------------------------------
+# 2) Build Zurich SSc-PAH survival dataframe
+# -------------------------------
+df_surv_z <- clin_z %>%
+  filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, all_of(compera_col), all_of(time_col), all_of(event_col)) %>%
+  left_join(score_z, by = "Barcode") %>%
+  mutate(
+    # numeric COMPERA
+    COMPERA_number = as.numeric(.data[[compera_col]]),
+
+    # time in days
+    time_days = as.numeric(.data[[time_col]]),
+
+    # event coding: try to handle yes/no, TRUE/FALSE, 1/0
+    event_raw = .data[[event_col]],
+    event = case_when(
+      is.numeric(event_raw) ~ ifelse(event_raw > 0, 1, 0),
+      is.logical(event_raw) ~ ifelse(event_raw, 1, 0),
+      tolower(as.character(event_raw)) %in% c("yes","y","true","1","dead","death") ~ 1,
+      tolower(as.character(event_raw)) %in% c("no","n","false","0","alive") ~ 0,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  filter(!is.na(time_days), !is.na(event), !is.na(COMPERA_number), !is.na(eta))
+
+# quick check
+df_surv_z %>% summarise(n=n(), events=sum(event), median_time=median(time_days))
+table(df_surv_z$event)
+```
+
+
+---
+
+## Chunk 2 — Cox models + c-index table (+ LRT)
+
+```{r cox_zurich_cindex_table, message=FALSE, warning=FALSE}
+library(dplyr)
+library(survival)
+
+m0 <- coxph(Surv(time_days, event) ~ COMPERA_number, data = df_surv_z, x = TRUE)
+m1 <- coxph(Surv(time_days, event) ~ eta,            data = df_surv_z, x = TRUE)
+m2 <- coxph(Surv(time_days, event) ~ COMPERA_number + eta, data = df_surv_z, x = TRUE)
+
+c0 <- unname(summary(m0)$concordance[1])
+c1 <- unname(summary(m1)$concordance[1])
+c2 <- unname(summary(m2)$concordance[1])
+
+cindex_tbl <- data.frame(
+  model   = c("COMPERA", "Score", "COMPERA + score"),
+  c_index = c(c0, c1, c2)
+)
+
+cindex_tbl
+
+# Likelihood ratio test: does adding score improve COMPERA?
+lrt <- anova(m0, m2, test = "LRT")
+lrt
+```
+
+
+This gives you exactly the table format you showed (just with “Score” instead of “LASSO score” — rename if you want).
+
+---
+
+## Optional (recommended) — bootstrap CI for c-index difference (COMPERA vs COMPERA+score)
+
+With small cohorts/events, c-index can be noisy. This gives you a quick sense of stability.
+
+```{r cox_zurich_cindex_bootstrap, message=FALSE, warning=FALSE}
+set.seed(1)
+B <- 500
+
+boot_delta <- replicate(B, {
+  idx <- sample(seq_len(nrow(df_surv_z)), replace = TRUE)
+  d <- df_surv_z[idx, , drop = FALSE]
+
+  # handle rare bootstrap samples with 0 events
+  if (length(unique(d$event)) < 2) return(NA_real_)
+
+  m0b <- coxph(Surv(time_days, event) ~ COMPERA_number, data = d)
+  m2b <- coxph(Surv(time_days, event) ~ COMPERA_number + eta, data = d)
+
+  c0b <- unname(summary(m0b)$concordance[1])
+  c2b <- unname(summary(m2b)$concordance[1])
+  c2b - c0b
+})
+
+boot_delta <- boot_delta[is.finite(boot_delta)]
+quantile(boot_delta, c(0.025, 0.5, 0.975))
+mean(boot_delta)
+```
+
+
+---
+
+## Optional — model summary table (HRs)
+If you want a quick HR table for the combined model:
+
+```{r cox_zurich_hr_table, message=FALSE, warning=FALSE}
+library(broom)
+
+tidy(m2, exponentiate = TRUE, conf.int = TRUE) %>%
+  dplyr::select(term, estimate, conf.low, conf.high, p.value)
+```
+
+```{r plot_boot_delta, fig.height=3.6, fig.width=5.5}
+library(ggplot2)
+df_bd <- data.frame(delta_c = boot_delta)
+
+ggplot(df_bd, aes(x = delta_c)) +
+  geom_histogram(bins = 30) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  labs(x = "Δ C-index (COMPERA+score − COMPERA)",
+       y = "Count",
+       title = "Bootstrap distribution of c-index improvement") +
+  theme_classic(base_size = 12)
+
+```
+
+```{r}
+cox.zph(m2)
+```
+
