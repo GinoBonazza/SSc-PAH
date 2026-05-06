@@ -2878,3 +2878,565 @@ ggplot(df_bd, aes(x = delta_c)) +
 cox.zph(m2)
 ```
 
+## Suggested figures for COMPERA and mortality results
+
+These chunks assume the objects from your final-part analysis already exist, especially:
+- `clin_z`, `pred_z`, `df_surv_z`
+- `m0`, `m1`, `m2`, `cindex_tbl`
+- `output_dir_figs`
+
+### 1) Final score across COMPERA risk strata
+
+This is probably the clearest figure for the COMPERA-related result.
+It shows whether the final score increases across clinical risk strata.
+
+```{r score_by_compera_boxplot, fig.height=4.3, fig.width=5.8, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+
+score_by_compera <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, COMPERA_4strata, COMPERA_number) %>%
+  dplyr::left_join(pred_z %>% dplyr::select(Barcode, score_eta), by = "Barcode") %>%
+  dplyr::mutate(
+    COMPERA_4strata = factor(
+      COMPERA_4strata,
+      levels = c("low", "intermediate-low", "intermediate-high", "high")
+    ),
+    COMPERA_number = as.numeric(COMPERA_number)
+  ) %>%
+  dplyr::filter(!is.na(COMPERA_4strata), !is.na(COMPERA_number), !is.na(score_eta))
+
+p_kw <- kruskal.test(score_eta ~ COMPERA_4strata, data = score_by_compera)$p.value
+rho   <- suppressWarnings(cor.test(score_by_compera$COMPERA_number, score_by_compera$score_eta, method = "spearman"))
+
+cols_compera <- c(
+  "low"               = "#9CA3AF",
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+
+ggplot(score_by_compera, aes(x = COMPERA_4strata, y = score_eta, fill = COMPERA_4strata)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 2, alpha = 0.75) +
+  scale_fill_manual(values = cols_compera) +
+  annotate(
+    "text",
+    x = 1,
+    y = max(score_by_compera$score_eta, na.rm = TRUE),
+    hjust = 0,
+    vjust = 1.2,
+    size = 4,
+    label = paste0(
+      "Kruskal-Wallis p = ", signif(p_kw, 3),
+      "\nSpearman rho = ", round(unname(rho$estimate), 2),
+      ", p = ", signif(rho$p.value, 3)
+    )
+  ) +
+  labs(
+    title = "Final score across COMPERA risk strata",
+    x = "COMPERA risk stratum",
+    y = "Final score (linear predictor)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+
+### 2) Trend plot across COMPERA strata
+
+This is a nice companion to the boxplot if you want to emphasize monotonic increase.
+
+```{r score_by_compera_trend, fig.height=3.8, fig.width=4.6, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+
+trend_df <- score_by_compera %>%
+  dplyr::group_by(COMPERA_number, COMPERA_4strata) %>%
+  dplyr::summarise(
+    mean_score = mean(score_eta, na.rm = TRUE),
+    se_score   = sd(score_eta, na.rm = TRUE) / sqrt(dplyr::n()),
+    n = dplyr::n(),
+    .groups = "drop"
+  )
+
+ggplot(trend_df, aes(x = COMPERA_number, y = mean_score)) +
+  geom_line(linewidth = 0.7) +
+  geom_point(size = 2.6) +
+  geom_errorbar(aes(ymin = mean_score - se_score, ymax = mean_score + se_score), width = 0.08) +
+  scale_x_continuous(breaks = trend_df$COMPERA_number, labels = trend_df$COMPERA_4strata) +
+  labs(
+    title = "Final score increases with COMPERA risk",
+    x = "COMPERA risk stratum",
+    y = "Mean final score ± SE"
+  ) +
+  theme_classic(base_size = 12)
+```
+
+
+### 3) Forest plot for Cox regression results
+
+Yes: for the mortality results, a forest plot is one of the best ways to show the Cox model output.
+This chunk shows HRs for:
+- COMPERA alone
+- score alone
+- combined model
+
+```{r cox_forest_plot, fig.height=4.6, fig.width=6.6, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(broom)
+
+forest_df <- dplyr::bind_rows(
+  broom::tidy(m0, exponentiate = TRUE, conf.int = TRUE) %>% dplyr::mutate(model = "COMPERA only"),
+  broom::tidy(m1, exponentiate = TRUE, conf.int = TRUE) %>% dplyr::mutate(model = "Score only"),
+  broom::tidy(m2, exponentiate = TRUE, conf.int = TRUE) %>% dplyr::mutate(model = "COMPERA + score")
+) %>%
+  dplyr::filter(term %in% c("COMPERA_number", "eta")) %>%
+  dplyr::mutate(
+    term_label = dplyr::case_when(
+      term == "COMPERA_number" & model == "COMPERA only"     ~ "COMPERA",
+      term == "eta"            & model == "Score only"       ~ "Score",
+      term == "COMPERA_number" & model == "COMPERA + score" ~ "COMPERA (adjusted for score)",
+      term == "eta"            & model == "COMPERA + score" ~ "Score (adjusted for COMPERA)",
+      TRUE ~ term
+    ),
+    term_label = factor(
+      term_label,
+      levels = rev(c(
+        "Score (adjusted for COMPERA)",
+        "COMPERA (adjusted for score)",
+        "Score",
+        "COMPERA"
+      ))
+    )
+  )
+
+ggplot(forest_df, aes(x = estimate, y = term_label)) +
+  geom_vline(xintercept = 1, linetype = 2, color = "grey60") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.18, linewidth = 0.6) +
+  geom_point(size = 2.5) +
+  scale_x_log10() +
+  labs(
+    title = "Cox regression for mortality",
+    x = "Hazard ratio (log scale)",
+    y = NULL
+  ) +
+  theme_classic(base_size = 12)
+```
+
+
+### 4) Kaplan-Meier plot by final score group
+
+This is the other figure I would definitely include for mortality.
+Use a median split to avoid overfitting and to keep the figure simple.
+
+```{r km_by_score_group, fig.height=4.5, fig.width=5.6, message=FALSE, warning=FALSE}
+library(dplyr)
+library(survival)
+
+km_df <- df_surv_z %>%
+  dplyr::mutate(
+    score_group = ifelse(eta >= median(eta, na.rm = TRUE), "High score", "Low score"),
+    score_group = factor(score_group, levels = c("Low score", "High score"))
+  )
+
+fit_km <- survival::survfit(Surv(time_days, event) ~ score_group, data = km_df)
+logrank_p <- 1 - pchisq(survival::survdiff(Surv(time_days, event) ~ score_group, data = km_df)$chisq, df = 1)
+
+plot(
+  fit_km,
+  col = c("#004C8C", "#A63A2A"),
+  lwd = 2,
+  xlab = "Follow-up (days)",
+  ylab = "Survival probability",
+  main = "Kaplan-Meier survival by final score"
+)
+legend(
+  "bottomleft",
+  legend = c(
+    paste0("Low score (n=", sum(km_df$score_group == "Low score"), ")"),
+    paste0("High score (n=", sum(km_df$score_group == "High score"), ")")
+  ),
+  col = c("#004C8C", "#A63A2A"),
+  lwd = 2,
+  bty = "n"
+)
+mtext(paste0("Log-rank p = ", signif(logrank_p, 3)), side = 3, adj = 1, line = 0.2, cex = 0.9)
+```
+
+
+### 5) C-index comparison plot
+
+This is better than leaving the c-index only as a printed table.
+
+```{r cindex_dotplot, fig.height=3.8, fig.width=5.2, message=FALSE, warning=FALSE}
+library(ggplot2)
+
+cindex_tbl$model <- factor(cindex_tbl$model, levels = c("COMPERA", "Score", "COMPERA + score"))
+
+ggplot(cindex_tbl, aes(x = c_index, y = model)) +
+  geom_point(size = 3) +
+  geom_text(aes(label = sprintf("%.2f", c_index)), nudge_x = 0.015, size = 4) +
+  xlim(0.5, 1.0) +
+  labs(
+    title = "Model discrimination",
+    x = "C-index",
+    y = NULL
+  ) +
+  theme_classic(base_size = 12)
+```
+
+
+### 6) Optional: bootstrap distribution of C-index improvement
+
+This is useful if you want to support the claim that adding the score improves prediction over COMPERA.
+
+```{r delta_cindex_bootstrap_plot, fig.height=3.8, fig.width=5.5, message=FALSE, warning=FALSE}
+library(ggplot2)
+
+df_bd <- data.frame(delta_c = boot_delta)
+df_bd <- df_bd[is.finite(df_bd$delta_c), , drop = FALSE]
+
+ggplot(df_bd, aes(x = delta_c)) +
+  geom_histogram(bins = 30) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  labs(
+    title = "Bootstrap distribution of C-index improvement",
+    x = expression(Delta*" C-index (COMPERA + score minus COMPERA)"),
+    y = "Count"
+  ) +
+  theme_classic(base_size = 12)
+```
+
+
+### 7) Optional: save the important figures
+
+```{r save_compera_mortality_figures, eval=FALSE}
+ggsave(here::here(output_dir_figs, "Score_by_COMPERA_boxplot.png"), width = 5.8, height = 4.3, dpi = 300)
+ggsave(here::here(output_dir_figs, "Score_by_COMPERA_trend.png"), width = 4.6, height = 3.8, dpi = 300)
+ggsave(here::here(output_dir_figs, "Cox_forest_plot.png"), width = 6.6, height = 4.6, dpi = 300)
+ggsave(here::here(output_dir_figs, "Cindex_dotplot.png"), width = 5.2, height = 3.8, dpi = 300)
+ggsave(here::here(output_dir_figs, "Delta_Cindex_bootstrap.png"), width = 5.5, height = 3.8, dpi = 300)
+
+png(here::here(output_dir_figs, "KM_by_score_group.png"), width = 5.6, height = 4.5, units = "in", res = 300)
+plot(
+  fit_km,
+  col = c("#004C8C", "#A63A2A"),
+  lwd = 2,
+  xlab = "Follow-up (days)",
+  ylab = "Survival probability",
+  main = "Kaplan-Meier survival by final score"
+)
+legend(
+  "bottomleft",
+  legend = c(
+    paste0("Low score (n=", sum(km_df$score_group == "Low score"), ")"),
+    paste0("High score (n=", sum(km_df$score_group == "High score"), ")")
+  ),
+  col = c("#004C8C", "#A63A2A"),
+  lwd = 2,
+  bty = "n"
+)
+mtext(paste0("Log-rank p = ", signif(logrank_p, 3)), side = 3, adj = 1, line = 0.2, cex = 0.9)
+dev.off()
+```
+
+## Additional figures: Poland COMPERA score and cohort severity comparison
+
+These chunks assume that the main analysis has already been run and that the following objects already exist:
+- `clin_z`, `clin_p`
+- `pred_z`, `pred_p`
+- `output_dir_figs`
+
+They add:
+1. Final score across COMPERA strata in the Poland cohort
+2. Final score across COMPERA strata in both cohorts (optional combined figure)
+3. TAPSE/sPAP comparison between Zurich and Poland in SSc-PAH patients
+4. COMPERA group counts in the two cohorts shown as side-by-side barplots
+
+```{r helper_compera_labels, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+standardize_compera <- function(x) {
+  x <- as.character(x)
+  x <- trimws(tolower(x))
+  dplyr::case_when(
+    x %in% c("low") ~ "low",
+    x %in% c("intermediate-low", "intermediate low", "intermediate_low") ~ "intermediate-low",
+    x %in% c("intermediate-high", "intermediate high", "intermediate_high") ~ "intermediate-high",
+    x %in% c("high") ~ "high",
+    TRUE ~ NA_character_
+  )
+}
+
+compera_levels <- c("low", "intermediate-low", "intermediate-high", "high")
+compera_labels <- c("low", "intermediate-low", "intermediate-high", "high")
+compera_cols <- c(
+  "low"               = "#9CA3AF",
+  "intermediate-low"  = "#DDB7B2",
+  "intermediate-high" = "#C7685F",
+  "high"              = "#A63A2A"
+)
+cohort_cols <- c("Zurich" = "#004C8C", "Poland" = "#A63A2A")
+```
+
+### 1) Poland cohort: final score across COMPERA strata
+
+```{r poland_score_by_compera, fig.height=4.4, fig.width=5.8, message=FALSE, warning=FALSE}
+score_poland_compera <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, Compera_4strata, Compera_number) %>%
+  dplyr::left_join(pred_p %>% dplyr::select(Barcode, score_eta), by = "Barcode") %>%
+  dplyr::mutate(
+    COMPERA = standardize_compera(Compera_4strata),
+    COMPERA = factor(COMPERA, levels = compera_levels),
+    Compera_number = as.numeric(Compera_number)
+  ) %>%
+  dplyr::filter(!is.na(COMPERA), !is.na(Compera_number), !is.na(score_eta))
+
+p_kw_pol <- kruskal.test(score_eta ~ COMPERA, data = score_poland_compera)$p.value
+rho_pol  <- suppressWarnings(cor.test(score_poland_compera$Compera_number,
+                                      score_poland_compera$score_eta,
+                                      method = "spearman"))
+
+ggplot(score_poland_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 2, alpha = 0.75) +
+  scale_fill_manual(values = compera_cols, drop = FALSE) +
+  annotate(
+    "text",
+    x = 1,
+    y = max(score_poland_compera$score_eta, na.rm = TRUE),
+    hjust = 0,
+    vjust = 1.2,
+    size = 4,
+    label = paste0(
+      "Kruskal-Wallis p = ", signif(p_kw_pol, 3),
+      "\nSpearman rho = ", round(unname(rho_pol$estimate), 2),
+      ", p = ", signif(rho_pol$p.value, 3)
+    )
+  ) +
+  labs(
+    title = "Poland cohort: final score across COMPERA risk strata",
+    x = "COMPERA risk stratum",
+    y = "Final score (linear predictor)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+### 2) Optional combined figure: final score across COMPERA strata in both cohorts
+
+```{r both_cohorts_score_by_compera, fig.height=4.6, fig.width=8.5, message=FALSE, warning=FALSE}
+score_zurich_compera <- clin_z %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, COMPERA_4strata, COMPERA_number) %>%
+  dplyr::left_join(pred_z %>% dplyr::select(Barcode, score_eta), by = "Barcode") %>%
+  dplyr::mutate(
+    COMPERA = standardize_compera(COMPERA_4strata),
+    COMPERA = factor(COMPERA, levels = compera_levels),
+    COMPERA_number = as.numeric(COMPERA_number),
+    Cohort = "Zurich"
+  ) %>%
+  dplyr::filter(!is.na(COMPERA), !is.na(COMPERA_number), !is.na(score_eta))
+
+score_poland_compera2 <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, Compera_4strata, Compera_number) %>%
+  dplyr::left_join(pred_p %>% dplyr::select(Barcode, score_eta), by = "Barcode") %>%
+  dplyr::mutate(
+    COMPERA = standardize_compera(Compera_4strata),
+    COMPERA = factor(COMPERA, levels = compera_levels),
+    Compera_number = as.numeric(Compera_number),
+    Cohort = "Poland"
+  ) %>%
+  dplyr::rename(COMPERA_number = Compera_number) %>%
+  dplyr::filter(!is.na(COMPERA), !is.na(COMPERA_number), !is.na(score_eta))
+
+score_both_compera <- dplyr::bind_rows(score_zurich_compera, score_poland_compera2)
+
+ggplot(score_both_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
+  facet_wrap(~Cohort) +
+  scale_fill_manual(values = compera_cols, drop = FALSE) +
+  labs(
+    title = "Final score across COMPERA risk strata",
+    x = "COMPERA risk stratum",
+    y = "Final score (linear predictor)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+### 3) TAPSE/sPAP comparison between cohorts in SSc-PAH patients
+
+```{r tapse_spap_boxplot_by_cohort, fig.height=4.5, fig.width=5.8, message=FALSE, warning=FALSE}
+tapse_spap_compare <- dplyr::bind_rows(
+  clin_z %>%
+    dplyr::filter(Group == "SSc-PAH") %>%
+    dplyr::transmute(
+      Barcode,
+      TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+      Cohort = "Zurich"
+    ),
+  clin_p %>%
+    dplyr::filter(Group == "SSc-PAH") %>%
+    dplyr::transmute(
+      Barcode,
+      TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+      Cohort = "Poland"
+    )
+) %>%
+  dplyr::filter(!is.na(TAPSE_sPAP))
+
+p_tapse <- wilcox.test(TAPSE_sPAP ~ Cohort, data = tapse_spap_compare)$p.value
+
+ggplot(tapse_spap_compare, aes(x = Cohort, y = TAPSE_sPAP, fill = Cohort)) +
+  geom_hline(yintercept = 0.32, linetype = 2, color = "black", linewidth = 0.6) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 2, alpha = 0.75) +
+  scale_fill_manual(values = cohort_cols) +
+  annotate(
+    "text",
+    x = 1.5,
+    y = max(tapse_spap_compare$TAPSE_sPAP, na.rm = TRUE),
+    label = paste0("Wilcoxon p = ", signif(p_tapse, 3)),
+    vjust = 1.2,
+    size = 4
+  ) +
+  labs(
+    title = "TAPSE/sPAP in SSc-PAH patients",
+    x = NULL,
+    y = "TAPSE/sPAP"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+### 4) COMPERA group distribution by cohort (counts)
+
+This gives two barplots next to each other, one for Zurich and one for Poland, with patient counts per risk group.
+
+```{r compera_counts_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE}
+compera_counts <- dplyr::bind_rows(
+  clin_z %>%
+    dplyr::filter(Group == "SSc-PAH") %>%
+    dplyr::transmute(
+      Cohort = "Zurich",
+      COMPERA = standardize_compera(COMPERA_4strata)
+    ),
+  clin_p %>%
+    dplyr::filter(Group == "SSc-PAH") %>%
+    dplyr::transmute(
+      Cohort = "Poland",
+      COMPERA = standardize_compera(Compera_4strata)
+    )
+) %>%
+  dplyr::filter(!is.na(COMPERA)) %>%
+  dplyr::mutate(COMPERA = factor(COMPERA, levels = compera_levels)) %>%
+  dplyr::count(Cohort, COMPERA, .drop = FALSE)
+
+ggplot(compera_counts, aes(x = COMPERA, y = n, fill = COMPERA)) +
+  geom_col(width = 0.8) +
+  geom_text(aes(label = n), vjust = -0.25, size = 4) +
+  facet_wrap(~Cohort, nrow = 1) +
+  scale_fill_manual(values = compera_cols, drop = FALSE) +
+  labs(
+    title = "COMPERA risk-group distribution in SSc-PAH patients",
+    x = "COMPERA risk stratum",
+    y = "Number of patients"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1)
+  )
+```
+
+### 5) Optional: percentages instead of counts
+
+If you also want a cleaner comparison independent of cohort size, this percentage version can be useful in supplement.
+
+```{r compera_percent_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE}
+compera_props <- compera_counts %>%
+  dplyr::group_by(Cohort) %>%
+  dplyr::mutate(prop = n / sum(n)) %>%
+  dplyr::ungroup()
+
+ggplot(compera_props, aes(x = COMPERA, y = prop, fill = COMPERA)) +
+  geom_col(width = 0.8) +
+  geom_text(aes(label = scales::percent(prop, accuracy = 1)), vjust = -0.25, size = 4) +
+  facet_wrap(~Cohort, nrow = 1) +
+  scale_fill_manual(values = compera_cols, drop = FALSE) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  labs(
+    title = "COMPERA risk-group proportions in SSc-PAH patients",
+    x = "COMPERA risk stratum",
+    y = "Proportion of patients"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+### 6) Optional save commands
+
+```{r save_poland_and_cohort_comparison_figures, eval=FALSE}
+ggsave(here::here(output_dir_figs, "Poland_score_by_COMPERA.png"), width = 5.8, height = 4.4, dpi = 300)
+ggsave(here::here(output_dir_figs, "Both_cohorts_score_by_COMPERA.png"), width = 8.5, height = 4.6, dpi = 300)
+ggsave(here::here(output_dir_figs, "TAPSE_sPAP_by_cohort_PAH.png"), width = 5.8, height = 4.5, dpi = 300)
+ggsave(here::here(output_dir_figs, "COMPERA_counts_by_cohort.png"), width = 8, height = 4.5, dpi = 300)
+ggsave(here::here(output_dir_figs, "COMPERA_percent_by_cohort.png"), width = 8, height = 4.5, dpi = 300)
+```
+
+```{r poland_score_by_death_status, fig.height=4.2, fig.width=4.8, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+
+death_col_p <- "Death (no/yes; 0/1)"
+
+score_poland_death <- clin_p %>%
+  dplyr::filter(Group == "SSc-PAH") %>%
+  dplyr::select(Barcode, all_of(death_col_p)) %>%
+  dplyr::left_join(pred_p %>% dplyr::select(Barcode, score_eta), by = "Barcode") %>%
+  dplyr::mutate(
+    death = as.numeric(.data[[death_col_p]]),
+    death_status = dplyr::case_when(
+      death == 0 ~ "No",
+      death == 1 ~ "Yes",
+      TRUE ~ NA_character_
+    ),
+    death_status = factor(death_status, levels = c("No", "Yes"))
+  ) %>%
+  dplyr::filter(!is.na(death_status), !is.na(score_eta))
+
+score_poland_death %>%
+  dplyr::count(death_status)
+
+p_death_pol <- wilcox.test(score_eta ~ death_status, data = score_poland_death)$p.value
+
+ggplot(score_poland_death, aes(x = death_status, y = score_eta, fill = death_status)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 2, alpha = 0.75) +
+  scale_fill_manual(values = c("No" = "grey75", "Yes" = "#A63A2A")) +
+  annotate(
+    "text",
+    x = 1.5,
+    y = max(score_poland_death$score_eta, na.rm = TRUE),
+    label = paste0("Wilcoxon p = ", signif(p_death_pol, 3)),
+    vjust = 1.2,
+    size = 4
+  ) +
+  labs(
+    title = "Poland cohort: final score by death status",
+    subtitle = "SSc-PAH patients only",
+    x = "Death",
+    y = "Final score (linear predictor)"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+```
