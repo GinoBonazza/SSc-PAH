@@ -3231,7 +3231,7 @@ ggplot(score_poland_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
 
 ### 2) Optional combined figure: final score across COMPERA strata in both cohorts
 
-```{r both_cohorts_score_by_compera, fig.height=4.6, fig.width=8.5, message=FALSE, warning=FALSE}
+```{r both_cohorts_score_by_compera, fig.height=4.6, fig.width=9, message=FALSE, warning=FALSE}
 score_zurich_compera <- clin_z %>%
   dplyr::filter(Group == "SSc-PAH") %>%
   dplyr::select(Barcode, COMPERA_4strata, COMPERA_number) %>%
@@ -3440,3 +3440,186 @@ ggplot(score_poland_death, aes(x = death_status, y = score_eta, fill = death_sta
   theme_classic(base_size = 12) +
   theme(legend.position = "none")
 ```
+
+## Score vs NT-proBNP
+
+```{r score_ntprobnp_prepare, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+# Helper to prepare one cohort
+make_score_ntprobnp_df <- function(clin_df, pred_df, cohort, ntprobnp_col) {
+  clin_df %>%
+    dplyr::filter(Group == "SSc-PAH") %>%
+    dplyr::select(Barcode, Group, TAPSE_sPAP, all_of(ntprobnp_col)) %>%
+    dplyr::left_join(
+      pred_df %>% dplyr::select(Barcode, score_eta),
+      by = "Barcode"
+    ) %>%
+    dplyr::mutate(
+      Cohort = cohort,
+      NTproBNP = as.numeric(.data[[ntprobnp_col]]),
+      log10_NTproBNP = log10(NTproBNP),
+      TAPSE_sPAP_group = dplyr::case_when(
+        TAPSE_sPAP < 0.32 ~ "<0.32",
+        TAPSE_sPAP >= 0.32 ~ "≥0.32",
+        TRUE ~ NA_character_
+      ),
+      TAPSE_sPAP_group = factor(TAPSE_sPAP_group, levels = c("≥0.32", "<0.32"))
+    ) %>%
+    dplyr::filter(!is.na(score_eta), !is.na(NTproBNP), NTproBNP > 0)
+}
+
+score_nt_p <- make_score_ntprobnp_df(
+  clin_df = clin_p,
+  pred_df = pred_p,
+  cohort = "Poland",
+  ntprobnp_col = "NTproBNP"
+)
+
+score_nt_z <- make_score_ntprobnp_df(
+  clin_df = clin_z,
+  pred_df = pred_z,
+  cohort = "Zurich",
+  ntprobnp_col = "NTproBNP_pg.ml"
+)
+
+score_nt_both <- dplyr::bind_rows(score_nt_p, score_nt_z)
+
+score_nt_both %>%
+  dplyr::count(Cohort)
+```
+
+```{r score_ntprobnp_correlation_tables, message=FALSE, warning=FALSE}
+cor_one <- function(df) {
+  ct <- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = "spearman"))
+  data.frame(
+    n = nrow(df),
+    spearman_rho = unname(ct$estimate),
+    p_value = ct$p.value
+  )
+}
+
+cor_poland <- cor_one(score_nt_p) %>%
+  dplyr::mutate(Cohort = "Poland", .before = 1)
+
+cor_zurich <- cor_one(score_nt_z) %>%
+  dplyr::mutate(Cohort = "Zurich", .before = 1)
+
+cor_both <- score_nt_both %>%
+  dplyr::group_by(Cohort) %>%
+  dplyr::group_modify(~ cor_one(.x)) %>%
+  dplyr::ungroup()
+
+cor_combined <- cor_one(score_nt_both) %>%
+  dplyr::mutate(Cohort = "Combined", .before = 1)
+
+dplyr::bind_rows(cor_both, cor_combined)
+```
+
+```{r score_ntprobnp_plots_separate, fig.height=4.2, fig.width=8.5, message=FALSE, warning=FALSE}
+plot_score_nt <- function(df, cohort_label) {
+  ct <- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = "spearman"))
+
+  ggplot(df, aes(x = score_eta, y = log10_NTproBNP)) +
+    geom_point(aes(color = TAPSE_sPAP_group), size = 2.4, alpha = 0.8) +
+    geom_smooth(method = "lm", se = TRUE, color = "black", linewidth = 0.7) +
+    scale_color_manual(
+      values = c("≥0.32" = "grey60", "<0.32" = "#A63A2A"),
+      na.value = "grey80",
+      name = "TAPSE/sPAP"
+    ) +
+    annotate(
+      "text",
+      x = -Inf,
+      y = Inf,
+      hjust = -0.05,
+      vjust = 1.2,
+      size = 4,
+      label = paste0(
+        "Spearman rho = ", round(unname(ct$estimate), 2),
+        "\np = ", signif(ct$p.value, 3),
+        "\nn = ", nrow(df)
+      )
+    ) +
+    labs(
+      title = paste0(cohort_label, ": final score vs NT-proBNP"),
+      x = "Final score",
+      y = expression(log[10]*"(NT-proBNP)")
+    ) +
+    theme_classic(base_size = 12)
+}
+
+p_nt_p <- plot_score_nt(score_nt_p, "Poland")
+p_nt_z <- plot_score_nt(score_nt_z, "Zurich")
+
+p_nt_p + p_nt_z
+```
+
+```{r score_ntprobnp_plot_combined, fig.height=4.5, fig.width=5.8, message=FALSE, warning=FALSE}
+ct_combined <- suppressWarnings(cor.test(
+  score_nt_both$score_eta,
+  score_nt_both$log10_NTproBNP,
+  method = "spearman"
+))
+
+ggplot(score_nt_both, aes(x = score_eta, y = log10_NTproBNP, color = Cohort)) +
+  geom_point(size = 2.4, alpha = 0.8) +
+  geom_smooth(method = "lm", se = TRUE, color = "black", linewidth = 0.7) +
+  scale_color_manual(values = c("Zurich" = "#004C8C", "Poland" = "#A63A2A")) +
+  annotate(
+    "text",
+    x = -Inf,
+    y = Inf,
+    hjust = -0.05,
+    vjust = 1.2,
+    size = 4,
+    label = paste0(
+      "Combined Spearman rho = ", round(unname(ct_combined$estimate), 2),
+      "\np = ", signif(ct_combined$p.value, 3),
+      "\nn = ", nrow(score_nt_both)
+    )
+  ) +
+  labs(
+    title = "Final score vs NT-proBNP",
+    subtitle = "SSc-PAH patients only",
+    x = "Final score",
+    y = expression(log[10]*"(NT-proBNP)")
+  ) +
+  theme_classic(base_size = 12)
+```
+
+```{r score_ntprobnp_by_tapse_group, fig.height=4.3, fig.width=8.5, message=FALSE, warning=FALSE}
+score_nt_both2 <- score_nt_both %>%
+  dplyr::filter(!is.na(TAPSE_sPAP_group))
+
+p_score_group <- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = score_eta, fill = TAPSE_sPAP_group)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
+  facet_wrap(~Cohort) +
+  scale_fill_manual(values = c("≥0.32" = "grey75", "<0.32" = "#A63A2A")) +
+  labs(
+    title = "Final score by TAPSE/sPAP group",
+    x = "TAPSE/sPAP group",
+    y = "Final score"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+
+p_nt_group <- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = log10_NTproBNP, fill = TAPSE_sPAP_group)) +
+  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
+  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
+  facet_wrap(~Cohort) +
+  scale_fill_manual(values = c("≥0.32" = "grey75", "<0.32" = "#A63A2A")) +
+  labs(
+    title = "NT-proBNP by TAPSE/sPAP group",
+    x = "TAPSE/sPAP group",
+    y = expression(log[10]*"(NT-proBNP)")
+  ) +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none")
+
+p_score_group + p_nt_group
+```
+
