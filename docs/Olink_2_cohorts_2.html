@@ -522,15 +522,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtreeb8709540ae1f7b7bbe6b23df61ea2a5467481ba5targetblankb870954a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree229ba88c1c86ba270741f9658b3197ada2daca27targetblank229ba88a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/GinoBonazza/SSc-PAH/tree/b8709540ae1f7b7bbe6b23df61ea2a5467481ba5" target="_blank">b870954</a>
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/229ba88c1c86ba270741f9658b3197ada2daca27" target="_blank">229ba88</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtreeb8709540ae1f7b7bbe6b23df61ea2a5467481ba5targetblankb870954a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtree229ba88c1c86ba270741f9658b3197ada2daca27targetblank229ba88a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -540,7 +540,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/GinoBonazza/SSc-PAH/tree/b8709540ae1f7b7bbe6b23df61ea2a5467481ba5" target="_blank">b870954</a>.
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/229ba88c1c86ba270741f9658b3197ada2daca27" target="_blank">229ba88</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -637,6 +637,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/GinoBonazza/SSc-PAH/blob/229ba88c1c86ba270741f9658b3197ada2daca27/analysis/Olink_2_cohorts_2.Rmd" target="_blank">229ba88</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2026-05-07
+</td>
+<td>
+wflow_publish("analysis/Olink_2_cohorts_2.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/GinoBonazza/SSc-PAH/d1a6d10d79904feeb905c19c43981490434293b1/docs/Olink_2_cohorts_2.html" target="_blank">d1a6d10</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2026-05-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -4559,14 +4593,14 @@ sign_map &lt;- stab_df %&gt;%
   tibble::deframe()
 
 # IMPORTANT: refit/scores must use the FULL cohort matrices (data_p/data_z)
-# but only these proteins
+# but only these proteins; final score is protein-only (age/sex were used during LASSO panel selection only)
 refit_pre &lt;- fit_logistic_refit(
   expr_mat = as.matrix(data_p),  # proteins x samples
   clin_df  = train_p,
   proteins = panel_prots,
   cutoff = 0.32,
-  include_age = TRUE,
-  include_sex = TRUE
+  include_age = FALSE,
+  include_sex = FALSE
 )
 
 pred_p &lt;- predict_logistic_refit(refit_pre, as.matrix(data_p), train_p)
@@ -4721,8 +4755,8 @@ make_3groups &lt;- function(clin_df){
 }
 
 # score ALL subjects to visualize, but plot ETA
-clin_p_all &lt;- clin_p %&gt;% filter(Barcode %in% colnames(data_p), !is.na(Age), !is.na(Sex))
-clin_z_all &lt;- clin_z %&gt;% filter(Barcode %in% colnames(data_z), !is.na(Age), !is.na(Sex))
+clin_p_all &lt;- clin_p %&gt;% filter(Barcode %in% colnames(data_p))
+clin_z_all &lt;- clin_z %&gt;% filter(Barcode %in% colnames(data_z))
 
 pred_p_all &lt;- predict_logistic_refit(refit_pre, as.matrix(data_p), clin_p_all) %&gt;% make_3groups()
 pred_z_all &lt;- predict_logistic_refit(refit_pre, as.matrix(data_z), clin_z_all) %&gt;% make_3groups()
@@ -4867,14 +4901,14 @@ corr_tbl</code></pre>
 <pre><code># A tibble: 12 × 6
    Cohort Feature    rho          p     n     p_adj
    &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
- 1 Poland Score   -0.685 0.00000208    38 0.0000125
+ 1 Poland Score   -0.684 0.00000216    38 0.0000130
  2 Poland SIGLEC8 -0.534 0.000560      38 0.00168  
  3 Poland CLSTN2  -0.401 0.0126        38 0.0190   
  4 Poland CXCL17  -0.401 0.0127        38 0.0190   
  5 Poland IL15    -0.283 0.0854        38 0.102    
  6 Poland LRRN1    0.157 0.346         38 0.346    
  7 Zurich CXCL17  -0.507 0.00824       26 0.0495   
- 8 Zurich Score   -0.405 0.0402        26 0.121    
+ 8 Zurich Score   -0.429 0.0288        26 0.0865   
  9 Zurich CLSTN2  -0.284 0.159         26 0.238    
 10 Zurich LRRN1    0.306 0.128         26 0.238    
 11 Zurich IL15    -0.181 0.376         26 0.407    
@@ -5329,8 +5363,8 @@ cindex_tbl &lt;- data.frame(
 cindex_tbl</code></pre>
 <pre><code>            model   c_index
 1         COMPERA 0.7892562
-2           Score 0.7685950
-3 COMPERA + score 0.8512397</code></pre>
+2           Score 0.7520661
+3 COMPERA + score 0.8347107</code></pre>
 <pre class="r"><code># Likelihood ratio test: does adding score improve COMPERA?
 lrt &lt;- anova(m0, m2, test = &quot;LRT&quot;)
 lrt</code></pre>
@@ -5340,7 +5374,7 @@ lrt</code></pre>
  Model 2: ~ COMPERA_number + eta
    loglik  Chisq Df Pr(&gt;|Chi|)  
 1 -18.038                       
-2 -16.178 3.7195  1    0.05378 .
+2 -16.616 2.8434  1    0.09175 .
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This gives you exactly the table format you showed (just with “Score”
@@ -5375,9 +5409,9 @@ boot_delta &lt;- replicate(B, {
 boot_delta &lt;- boot_delta[is.finite(boot_delta)]
 quantile(boot_delta, c(0.025, 0.5, 0.975))</code></pre>
 <pre><code>       2.5%         50%       97.5% 
--0.01532813  0.05311117  0.21000000 </code></pre>
+-0.02542339  0.04124660  0.18693354 </code></pre>
 <pre class="r"><code>mean(boot_delta)</code></pre>
-<pre><code>[1] 0.06417841</code></pre>
+<pre><code>[1] 0.05181901</code></pre>
 <hr />
 </div>
 <div id="optional-model-summary-table-hrs" class="section level2">
@@ -5390,8 +5424,8 @@ tidy(m2, exponentiate = TRUE, conf.int = TRUE) %&gt;%
 <pre><code># A tibble: 2 × 5
   term           estimate conf.low conf.high p.value
   &lt;chr&gt;             &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-1 COMPERA_number     2.05    0.931      4.49  0.0748
-2 eta                1.09    0.999      1.20  0.0538</code></pre>
+1 COMPERA_number     1.97    0.890      4.38  0.0945
+2 eta                1.14    0.979      1.32  0.0913</code></pre>
 <pre class="r"><code>library(ggplot2)
 df_bd &lt;- data.frame(delta_c = boot_delta)
 
@@ -5442,9 +5476,9 @@ GinoBonazza
 </div>
 <pre class="r"><code>cox.zph(m2)</code></pre>
 <pre><code>                chisq df    p
-COMPERA_number 0.0382  1 0.84
-eta            1.8971  1 0.17
-GLOBAL         2.4555  2 0.29</code></pre>
+COMPERA_number 0.0921  1 0.76
+eta            0.3441  1 0.56
+GLOBAL         0.8202  2 0.66</code></pre>
 </div>
 <div id="suggested-figures-for-compera-and-mortality-results"
 class="section level2">
@@ -6083,7 +6117,7 @@ ggplot(score_both_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
   ) +
   theme_classic(base_size = 12) +
   theme(legend.position = &quot;none&quot;)</code></pre>
-<p><img src="figure/Olink_2_cohorts_2.Rmd/both_cohorts_score_by_compera-1.png" width="2700" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Olink_2_cohorts_2.Rmd/both_cohorts_score_by_compera-1.png" width="2550" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-both_cohorts_score_by_compera-1">
 Past versions of both_cohorts_score_by_compera-1.png
@@ -6447,300 +6481,6 @@ GinoBonazza
 </table>
 </div>
 </div>
-</div>
-</div>
-<div id="score-vs-nt-probnp" class="section level2">
-<h2>Score vs NT-proBNP</h2>
-<pre class="r"><code>library(dplyr)
-library(ggplot2)
-library(patchwork)
-
-# Helper to prepare one cohort
-make_score_ntprobnp_df &lt;- function(clin_df, pred_df, cohort, ntprobnp_col) {
-  clin_df %&gt;%
-    dplyr::filter(Group == &quot;SSc-PAH&quot;) %&gt;%
-    dplyr::select(Barcode, Group, TAPSE_sPAP, all_of(ntprobnp_col)) %&gt;%
-    dplyr::left_join(
-      pred_df %&gt;% dplyr::select(Barcode, score_eta),
-      by = &quot;Barcode&quot;
-    ) %&gt;%
-    dplyr::mutate(
-      Cohort = cohort,
-      NTproBNP = as.numeric(.data[[ntprobnp_col]]),
-      log10_NTproBNP = log10(NTproBNP),
-      TAPSE_sPAP_group = dplyr::case_when(
-        TAPSE_sPAP &lt; 0.32 ~ &quot;&lt;0.32&quot;,
-        TAPSE_sPAP &gt;= 0.32 ~ &quot;≥0.32&quot;,
-        TRUE ~ NA_character_
-      ),
-      TAPSE_sPAP_group = factor(TAPSE_sPAP_group, levels = c(&quot;≥0.32&quot;, &quot;&lt;0.32&quot;))
-    ) %&gt;%
-    dplyr::filter(!is.na(score_eta), !is.na(NTproBNP), NTproBNP &gt; 0)
-}
-
-score_nt_p &lt;- make_score_ntprobnp_df(
-  clin_df = clin_p,
-  pred_df = pred_p,
-  cohort = &quot;Poland&quot;,
-  ntprobnp_col = &quot;NTproBNP&quot;
-)
-
-score_nt_z &lt;- make_score_ntprobnp_df(
-  clin_df = clin_z,
-  pred_df = pred_z,
-  cohort = &quot;Zurich&quot;,
-  ntprobnp_col = &quot;NTproBNP_pg.ml&quot;
-)
-
-score_nt_both &lt;- dplyr::bind_rows(score_nt_p, score_nt_z)
-
-score_nt_both %&gt;%
-  dplyr::count(Cohort)</code></pre>
-<pre><code># A tibble: 2 × 2
-  Cohort     n
-  &lt;chr&gt;  &lt;int&gt;
-1 Poland    38
-2 Zurich    26</code></pre>
-<pre class="r"><code>cor_one &lt;- function(df) {
-  ct &lt;- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = &quot;spearman&quot;))
-  data.frame(
-    n = nrow(df),
-    spearman_rho = unname(ct$estimate),
-    p_value = ct$p.value
-  )
-}
-
-cor_poland &lt;- cor_one(score_nt_p) %&gt;%
-  dplyr::mutate(Cohort = &quot;Poland&quot;, .before = 1)
-
-cor_zurich &lt;- cor_one(score_nt_z) %&gt;%
-  dplyr::mutate(Cohort = &quot;Zurich&quot;, .before = 1)
-
-cor_both &lt;- score_nt_both %&gt;%
-  dplyr::group_by(Cohort) %&gt;%
-  dplyr::group_modify(~ cor_one(.x)) %&gt;%
-  dplyr::ungroup()
-
-cor_combined &lt;- cor_one(score_nt_both) %&gt;%
-  dplyr::mutate(Cohort = &quot;Combined&quot;, .before = 1)
-
-dplyr::bind_rows(cor_both, cor_combined)</code></pre>
-<pre><code># A tibble: 3 × 4
-  Cohort       n spearman_rho  p_value
-  &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;    &lt;dbl&gt;
-1 Poland      38        0.550 0.000432
-2 Zurich      26        0.640 0.000569
-3 Combined    64        0.392 0.00135 </code></pre>
-<pre class="r"><code>plot_score_nt &lt;- function(df, cohort_label) {
-  ct &lt;- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = &quot;spearman&quot;))
-
-  ggplot(df, aes(x = score_eta, y = log10_NTproBNP)) +
-    geom_point(aes(color = TAPSE_sPAP_group), size = 2.4, alpha = 0.8) +
-    geom_smooth(method = &quot;lm&quot;, se = TRUE, color = &quot;black&quot;, linewidth = 0.7) +
-    scale_color_manual(
-      values = c(&quot;≥0.32&quot; = &quot;grey60&quot;, &quot;&lt;0.32&quot; = &quot;#A63A2A&quot;),
-      na.value = &quot;grey80&quot;,
-      name = &quot;TAPSE/sPAP&quot;
-    ) +
-    annotate(
-      &quot;text&quot;,
-      x = -Inf,
-      y = Inf,
-      hjust = -0.05,
-      vjust = 1.2,
-      size = 4,
-      label = paste0(
-        &quot;Spearman rho = &quot;, round(unname(ct$estimate), 2),
-        &quot;\np = &quot;, signif(ct$p.value, 3),
-        &quot;\nn = &quot;, nrow(df)
-      )
-    ) +
-    labs(
-      title = paste0(cohort_label, &quot;: final score vs NT-proBNP&quot;),
-      x = &quot;Final score&quot;,
-      y = expression(log[10]*&quot;(NT-proBNP)&quot;)
-    ) +
-    theme_classic(base_size = 12)
-}
-
-p_nt_p &lt;- plot_score_nt(score_nt_p, &quot;Poland&quot;)
-p_nt_z &lt;- plot_score_nt(score_nt_z, &quot;Zurich&quot;)
-
-p_nt_p + p_nt_z</code></pre>
-<p><img src="figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_plots_separate-1.png" width="2550" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-score_ntprobnp_plots_separate-1">
-Past versions of score_ntprobnp_plots_separate-1.png
-</button>
-</p>
-<div id="fig-score_ntprobnp_plots_separate-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/GinoBonazza/SSc-PAH/blob/b8709540ae1f7b7bbe6b23df61ea2a5467481ba5/docs/figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_plots_separate-1.png" target="_blank">b870954</a>
-</td>
-<td>
-GinoBonazza
-</td>
-<td>
-2026-05-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>ct_combined &lt;- suppressWarnings(cor.test(
-  score_nt_both$score_eta,
-  score_nt_both$log10_NTproBNP,
-  method = &quot;spearman&quot;
-))
-
-ggplot(score_nt_both, aes(x = score_eta, y = log10_NTproBNP, color = Cohort)) +
-  geom_point(size = 2.4, alpha = 0.8) +
-  geom_smooth(method = &quot;lm&quot;, se = TRUE, color = &quot;black&quot;, linewidth = 0.7) +
-  scale_color_manual(values = c(&quot;Zurich&quot; = &quot;#004C8C&quot;, &quot;Poland&quot; = &quot;#A63A2A&quot;)) +
-  annotate(
-    &quot;text&quot;,
-    x = -Inf,
-    y = Inf,
-    hjust = -0.05,
-    vjust = 1.2,
-    size = 4,
-    label = paste0(
-      &quot;Combined Spearman rho = &quot;, round(unname(ct_combined$estimate), 2),
-      &quot;\np = &quot;, signif(ct_combined$p.value, 3),
-      &quot;\nn = &quot;, nrow(score_nt_both)
-    )
-  ) +
-  labs(
-    title = &quot;Final score vs NT-proBNP&quot;,
-    subtitle = &quot;SSc-PAH patients only&quot;,
-    x = &quot;Final score&quot;,
-    y = expression(log[10]*&quot;(NT-proBNP)&quot;)
-  ) +
-  theme_classic(base_size = 12)</code></pre>
-<p><img src="figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_plot_combined-1.png" width="1740" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-score_ntprobnp_plot_combined-1">
-Past versions of score_ntprobnp_plot_combined-1.png
-</button>
-</p>
-<div id="fig-score_ntprobnp_plot_combined-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/GinoBonazza/SSc-PAH/blob/b8709540ae1f7b7bbe6b23df61ea2a5467481ba5/docs/figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_plot_combined-1.png" target="_blank">b870954</a>
-</td>
-<td>
-GinoBonazza
-</td>
-<td>
-2026-05-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>score_nt_both2 &lt;- score_nt_both %&gt;%
-  dplyr::filter(!is.na(TAPSE_sPAP_group))
-
-p_score_group &lt;- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = score_eta, fill = TAPSE_sPAP_group)) +
-  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
-  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
-  facet_wrap(~Cohort) +
-  scale_fill_manual(values = c(&quot;≥0.32&quot; = &quot;grey75&quot;, &quot;&lt;0.32&quot; = &quot;#A63A2A&quot;)) +
-  labs(
-    title = &quot;Final score by TAPSE/sPAP group&quot;,
-    x = &quot;TAPSE/sPAP group&quot;,
-    y = &quot;Final score&quot;
-  ) +
-  theme_classic(base_size = 12) +
-  theme(legend.position = &quot;none&quot;)
-
-p_nt_group &lt;- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = log10_NTproBNP, fill = TAPSE_sPAP_group)) +
-  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
-  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
-  facet_wrap(~Cohort) +
-  scale_fill_manual(values = c(&quot;≥0.32&quot; = &quot;grey75&quot;, &quot;&lt;0.32&quot; = &quot;#A63A2A&quot;)) +
-  labs(
-    title = &quot;NT-proBNP by TAPSE/sPAP group&quot;,
-    x = &quot;TAPSE/sPAP group&quot;,
-    y = expression(log[10]*&quot;(NT-proBNP)&quot;)
-  ) +
-  theme_classic(base_size = 12) +
-  theme(legend.position = &quot;none&quot;)
-
-p_score_group + p_nt_group</code></pre>
-<p><img src="figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_by_tapse_group-1.png" width="2550" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-score_ntprobnp_by_tapse_group-1">
-Past versions of score_ntprobnp_by_tapse_group-1.png
-</button>
-</p>
-<div id="fig-score_ntprobnp_by_tapse_group-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/GinoBonazza/SSc-PAH/blob/b8709540ae1f7b7bbe6b23df61ea2a5467481ba5/docs/figure/Olink_2_cohorts_2.Rmd/score_ntprobnp_by_tapse_group-1.png" target="_blank">b870954</a>
-</td>
-<td>
-GinoBonazza
-</td>
-<td>
-2026-05-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -6869,6 +6609,7 @@ loaded via a namespace (and not attached):
 [175] data.table_1.17.8        htmlwidgets_1.6.4        fgsea_1.36.0            
 [178] rlang_1.1.6              lmerTest_3.2-0           Cairo_1.7-0             
 [181] ggnewscale_0.5.2         beeswarm_0.4.0          </code></pre>
+</div>
 </div>
 </div>
 </div>
