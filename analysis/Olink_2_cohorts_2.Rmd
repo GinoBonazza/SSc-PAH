@@ -122,7 +122,7 @@ dim(data_p)
 table(clin_p$Group)
 ```
 
-```{r, fig.height=8, fig.width=10.8}
+```{r, fig.height=8, fig.width=10.8, dpi = 300}
 barcodes <- colnames(data_z)
 
 grp <- clin_z$Group[match(barcodes, clin_z$Barcode)]
@@ -176,7 +176,7 @@ Heatmap(
   draw(heatmap_legend_side = "right", annotation_legend_side = "right")
 ```
 
-```{r, fig.height=8, fig.width=10.8}
+```{r, fig.height=8, fig.width=10.8, dpi = 300}
 barcodes <- colnames(data_p)
 
 grp <- clin_p$Group[match(barcodes, clin_p$Barcode)]
@@ -230,7 +230,7 @@ Heatmap(
   draw(heatmap_legend_side = "right", annotation_legend_side = "right")
 ```
 
-```{r heatmap_z_top100var, fig.height=10.8, fig.width=10.8}
+```{r heatmap_z_top100var, fig.height=10.8, fig.width=10.8, dpi = 300}
 barcodes <- colnames(data_z)
 
 grp <- clin_z$Group[match(barcodes, clin_z$Barcode)]
@@ -287,7 +287,7 @@ Heatmap(
   draw(heatmap_legend_side = "right", annotation_legend_side = "right")
 ```
 
-```{r heatmap_p_top100var, fig.height=10.88, fig.width=10.8}
+```{r heatmap_p_top100var, fig.height=10.88, fig.width=10.8, dpi = 300}
 stopifnot(exists("data_p"), exists("clin_p"))
 
 barcodes <- colnames(data_p)
@@ -345,7 +345,7 @@ Heatmap(
 ) |>
   draw(heatmap_legend_side = "right", annotation_legend_side = "right")
 ```
-```{r pca_z_group, fig.height=3.5, fig.width=5.4}
+```{r pca_z_group, fig.height=3.5, fig.width=5.4, dpi = 300}
 # PCA (samples as rows)
 pca <- prcomp(t(as.matrix(data_z)), scale. = TRUE)
 pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
@@ -372,7 +372,7 @@ ggplot(df, aes(PC1, PC2, color = Group)) +
   theme_minimal()
 ```
 
-```{r pca_z_compera, fig.height=3.5, fig.width=5.4}
+```{r pca_z_compera, fig.height=3.5, fig.width=5.4, dpi = 300}
 # --- subset to SSc-PAH only ---
 keep <- clin_z$Group == "SSc-PAH"
 barcodes_keep <- clin_z$Barcode[keep]
@@ -415,7 +415,7 @@ ggplot(df, aes(PC1, PC2, color = COMPERA)) +
   guides(fill = "none")
 ```
 
-```{r pca_p_group, fig.height=3.5, fig.width=5.4}
+```{r pca_p_group, fig.height=3.5, fig.width=5.4, dpi = 300}
 pca <- prcomp(t(as.matrix(data_p)), scale. = TRUE)
 pvar <- (pca$sdev^2) / sum(pca$sdev^2) * 100
 
@@ -441,7 +441,7 @@ ggplot(df, aes(PC1, PC2, color = Group)) +
   theme_minimal()
 ```
 
-```{r pca_p_compera, fig.height=3.5, fig.width=5.4}
+```{r pca_p_compera, fig.height=3.5, fig.width=5.4, dpi = 300}
 # --- subset to SSc-PAH only ---
 keep <- clin_p$Group == "SSc-PAH"
 barcodes_keep <- clin_p$Barcode[keep]
@@ -486,7 +486,7 @@ ggplot(df, aes(PC1, PC2, color = COMPERA)) +
 
 ## Variance partitioning
 
-```{r vp_z_all, fig.height=4.5, fig.width=6.5}
+```{r vp_z_all, fig.height=4.5, fig.width=6.5, dpi = 300}
 # expression: proteins x samples
 expr <- as.matrix(data_z)
 
@@ -536,7 +536,7 @@ plotVarPart(vp) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-```{r vp_z_pah, fig.height=4.5, fig.width=6.5}
+```{r vp_z_pah, fig.height=4.5, fig.width=6.5, dpi = 300}
 expr <- as.matrix(data_z)
 
 meta <- clin_z |>
@@ -584,7 +584,7 @@ plotVarPart(vp) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-```{r vp_p_all, fig.height=4.5, fig.width=6.5}
+```{r vp_p_all, fig.height=4.5, fig.width=6.5, dpi = 300}
 library(variancePartition)
 
 expr <- as.matrix(data_p)
@@ -633,7 +633,7 @@ plotVarPart(vp) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-```{r vp_p_pah, fig.height=4.5, fig.width=6.5}
+```{r vp_p_pah, fig.height=4.5, fig.width=6.5, dpi = 300}
 library(variancePartition)
 
 expr <- as.matrix(data_p)
@@ -776,7 +776,7 @@ write.csv(DE_p_signif,
 n_p <- ncol(expr_p_de)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_z))
 names(keyvals) <- rep("Not significant", nrow(DE_z))
 
@@ -811,7 +811,7 @@ volcano_z <- EnhancedVolcano(
 volcano_z
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_p))
 names(keyvals) <- rep("Not significant", nrow(DE_p))
 
@@ -956,7 +956,7 @@ write.csv(
 n_p_TAPSE <- ncol(expr_p_de)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_z_TAPSE))
 names(keyvals) <- rep("Not significant", nrow(DE_z_TAPSE))
 
@@ -991,7 +991,7 @@ volcano_z_TAPSE <- EnhancedVolcano(
 volcano_z_TAPSE
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_p_TAPSE))
 names(keyvals) <- rep("Not significant", nrow(DE_p_TAPSE))
 
@@ -1065,7 +1065,7 @@ DE_z_bin_signif <- DE_z_bin %>%
 n_z_bin <- ncol(expr_z_bin)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_z_bin))
 names(keyvals) <- rep("Not significant", nrow(DE_z_bin))
 
@@ -1139,7 +1139,7 @@ DE_p_bin_signif <- DE_p_bin %>%
 n_p_bin <- ncol(expr_p_bin)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_p_bin))
 names(keyvals) <- rep("Not significant", nrow(DE_p_bin))
 
@@ -1217,7 +1217,7 @@ DE_z_comp_signif <- DE_z_comp %>%
 n_z_comp <- ncol(expr_z_comp)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_z_comp))
 names(keyvals) <- rep("Not significant", nrow(DE_z_comp))
 
@@ -1295,7 +1295,7 @@ DE_p_comp_signif <- DE_p_comp %>%
 n_p_comp <- ncol(expr_p_comp)
 ```
 
-```{r, fig.height=4, fig.width=3.5, warning=FALSE}
+```{r, fig.height=4, fig.width=3.5, warning=FALSE, dpi = 300}
 keyvals <- rep("grey", nrow(DE_p_comp))
 names(keyvals) <- rep("Not significant", nrow(DE_p_comp))
 
@@ -1330,7 +1330,7 @@ volcano_p_comp <- EnhancedVolcano(
 volcano_p_comp
 ```
 
-```{r cor_group, fig.height=4, fig.width=4}
+```{r cor_group, fig.height=4, fig.width=4, dpi = 300}
 df_group <- dplyr::inner_join(
   DE_z[, c("Gene", "logFC")],
   DE_p[, c("Gene", "logFC")],
@@ -1351,7 +1351,7 @@ ggplot(df_group, aes(logFC_z, logFC_p)) +
   theme_classic()
 ```
 
-```{r cor_tapse_cont, fig.height=4, fig.width=4}
+```{r cor_tapse_cont, fig.height=4, fig.width=4, dpi = 300}
 df_tapse <- dplyr::inner_join(
   DE_z_TAPSE[, c("Gene", "logFC")],
   DE_p_TAPSE[, c("Gene", "logFC")],
@@ -1372,7 +1372,7 @@ ggplot(df_tapse, aes(logFC_z, logFC_p)) +
   theme_classic()
 ```
 
-```{r cor_tapse_binary, fig.height=4, fig.width=4}
+```{r cor_tapse_binary, fig.height=4, fig.width=4, dpi = 300}
 df_tapse_bin <- dplyr::inner_join(
   DE_z_bin[, c("Gene", "logFC")],
   DE_p_bin[, c("Gene", "logFC")],
@@ -1393,7 +1393,7 @@ ggplot(df_tapse_bin, aes(logFC_z, logFC_p)) +
   theme_classic()
 ```
 
-```{r cor_compera, fig.height=4, fig.width=4}
+```{r cor_compera, fig.height=4, fig.width=4, dpi = 300}
 df_comp <- dplyr::inner_join(
   DE_z_comp[, c("Gene", "logFC")],
   DE_p_comp[, c("Gene", "logFC")],
@@ -1487,7 +1487,7 @@ clin_p <- clin_p %>%
   )
 ```
 
-```{r heatmaps_scores_zurich_tapseGroup, fig.height=10, fig.width=10.8}
+```{r heatmaps_scores_zurich_tapseGroup, fig.height=10, fig.width=10.8, dpi = 300}
 # ---- add TAPSE/sPAP group to clin_z once ----
 clin_z <- clin_z %>%
   dplyr::mutate(
@@ -1604,7 +1604,7 @@ plot_top_score_heatmap(
 )
 ```
 
-```{r heatmaps_scores_poland_tapseGroup, fig.height=10, fig.width=10.8}
+```{r heatmaps_scores_poland_tapseGroup, fig.height=10, fig.width=10.8, dpi = 300}
 # ---- add TAPSE/sPAP group to clin_p once ----
 clin_p <- clin_p %>%
   dplyr::mutate(
@@ -1795,7 +1795,7 @@ clin_z_tapse <- prepare_tapse_group_df(clin_z, "Zurich")
 clin_p_tapse <- prepare_tapse_group_df(clin_p, "Poland")
 ```
 
-```{r age_sex_poland, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE}
+```{r age_sex_poland, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE, dpi = 300}
 age_test_tbl(clin_p_tapse)
 sex_test_p <- sex_test_tbl(clin_p_tapse)
 sex_test_p$table
@@ -1805,7 +1805,7 @@ plot_age_by_tapse(clin_p_tapse, "Poland")
 plot_sex_by_tapse(clin_p_tapse, "Poland")
 ```
 
-```{r age_sex_zurich, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE}
+```{r age_sex_zurich, fig.height=4.5, fig.width=6.5, message=FALSE, warning=FALSE, dpi = 300}
 age_test_tbl(clin_z_tapse)
 sex_test_z <- sex_test_tbl(clin_z_tapse)
 sex_test_z$table
@@ -2164,7 +2164,7 @@ head(panel_df, 20)
 
 
 **Optional plot (top 10 panels):**
-```{r stability_most_frequent_panels_plot, fig.height=4.5, fig.width=12, message=FALSE, warning=FALSE}
+```{r stability_most_frequent_panels_plot, fig.height=4.5, fig.width=12, message=FALSE, warning=FALSE, dpi = 300}
 topM <- 10
 p_panels <- panel_df %>%
   slice_head(n = topM) %>%
@@ -2186,7 +2186,7 @@ ggsave(here::here(output_dir_figs, paste0("stability_top", topM, "_panels_B", st
 ## 3) Co-selection heatmap (which proteins tend to appear together)
 This is *often more informative* than exact combinations.
 
-```{r stability_co_selection_heatmap, message=FALSE, warning=FALSE, fig.height=8, fig.width=8}
+```{r stability_co_selection_heatmap, message=FALSE, warning=FALSE, fig.height=8, fig.width=8, dpi = 300}
 library(Matrix)
 
 # pick a manageable set (e.g. top 30 by selection freq)
@@ -2233,14 +2233,14 @@ sign_map <- stab_df %>%
   tibble::deframe()
 
 # IMPORTANT: refit/scores must use the FULL cohort matrices (data_p/data_z)
-# but only these proteins
+# but only these proteins; final score is protein-only (age/sex were used during LASSO panel selection only)
 refit_pre <- fit_logistic_refit(
   expr_mat = as.matrix(data_p),  # proteins x samples
   clin_df  = train_p,
   proteins = panel_prots,
   cutoff = 0.32,
-  include_age = TRUE,
-  include_sex = TRUE
+  include_age = FALSE,
+  include_sex = FALSE
 )
 
 pred_p <- predict_logistic_refit(refit_pre, as.matrix(data_p), train_p)
@@ -2257,7 +2257,7 @@ signed_z <- signed_mean_score(as.matrix(data_z), test_z, panel_prots, sign_map, 
 
 ### ROC with AUC confidence intervals
 
-```{r roc_refit_preselected, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE}
+```{r roc_refit_preselected, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE, dpi = 300}
 y_tr <- ifelse(pred_p$TAPSE_sPAP < 0.32, 1, 0)
 y_te <- ifelse(pred_z$TAPSE_sPAP < 0.32, 1, 0)
 
@@ -2346,7 +2346,7 @@ legend(
 
 ### Three-group score plot
 
-```{r boxplot_eta_preselected, fig.height=4.8, fig.width=9, message=FALSE, warning=FALSE}
+```{r boxplot_eta_preselected, fig.height=4.8, fig.width=9, message=FALSE, warning=FALSE, dpi = 300}
 library(ggpubr)
 
 make_3groups <- function(clin_df){
@@ -2363,8 +2363,8 @@ make_3groups <- function(clin_df){
 }
 
 # score ALL subjects to visualize, but plot ETA
-clin_p_all <- clin_p %>% filter(Barcode %in% colnames(data_p), !is.na(Age), !is.na(Sex))
-clin_z_all <- clin_z %>% filter(Barcode %in% colnames(data_z), !is.na(Age), !is.na(Sex))
+clin_p_all <- clin_p %>% filter(Barcode %in% colnames(data_p))
+clin_z_all <- clin_z %>% filter(Barcode %in% colnames(data_z))
 
 pred_p_all <- predict_logistic_refit(refit_pre, as.matrix(data_p), clin_p_all) %>% make_3groups()
 pred_z_all <- predict_logistic_refit(refit_pre, as.matrix(data_z), clin_z_all) %>% make_3groups()
@@ -2473,7 +2473,7 @@ write.csv(corr_tbl, here::here(output_dir_data, "corr_TAPSEsPAP_panelProteins_an
           row.names = FALSE)
 ```
 
-```{r corr_plot_score_vs_tapse, fig.height=3.8, fig.width=7.5, message=FALSE, warning=FALSE}
+```{r corr_plot_score_vs_tapse, fig.height=3.8, fig.width=7.5, message=FALSE, warning=FALSE, dpi = 300}
 # pull rho/p for annotation
 ann_score <- corr_tbl %>% filter(Feature == "Score") %>% dplyr::select(Cohort, rho, p, p_adj)
 
@@ -2508,7 +2508,7 @@ ggsave(here::here(output_dir_figs, "corr_score_vs_TAPSEsPAP_SScPAH.png"),
        p_score, width = 7.5, height = 3.8, dpi = 300)
 ```
 
-```{r corr_plot_proteins_vs_tapse_faceted, fig.height=5, fig.width=10.5, message=FALSE, warning=FALSE}
+```{r corr_plot_proteins_vs_tapse_faceted, fig.height=5, fig.width=10.5, message=FALSE, warning=FALSE, dpi = 300}
 # prepare long data for plotting
 df_long <- df_corr %>%
   pivot_longer(cols = all_of(panel_prots), names_to = "Protein", values_to = "NPX") %>%
@@ -2554,7 +2554,7 @@ ggsave(here::here(output_dir_figs, "corr_proteins_vs_TAPSEsPAP_SScPAH_faceted.pn
 ```
 
 
-```{r zurich_withincohort_scaling_auc, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE}
+```{r zurich_withincohort_scaling_auc, fig.height=4.5, fig.width=5, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(pROC)
 
@@ -2860,7 +2860,7 @@ tidy(m2, exponentiate = TRUE, conf.int = TRUE) %>%
   dplyr::select(term, estimate, conf.low, conf.high, p.value)
 ```
 
-```{r plot_boot_delta, fig.height=3.6, fig.width=5.5}
+```{r plot_boot_delta, fig.height=3.6, fig.width=5.5, dpi = 300}
 library(ggplot2)
 df_bd <- data.frame(delta_c = boot_delta)
 
@@ -2890,7 +2890,7 @@ These chunks assume the objects from your final-part analysis already exist, esp
 This is probably the clearest figure for the COMPERA-related result.
 It shows whether the final score increases across clinical risk strata.
 
-```{r score_by_compera_boxplot, fig.height=4.3, fig.width=5.8, message=FALSE, warning=FALSE}
+```{r score_by_compera_boxplot, fig.height=4.3, fig.width=5.8, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(ggplot2)
 
@@ -2948,7 +2948,7 @@ ggplot(score_by_compera, aes(x = COMPERA_4strata, y = score_eta, fill = COMPERA_
 
 This is a nice companion to the boxplot if you want to emphasize monotonic increase.
 
-```{r score_by_compera_trend, fig.height=3.8, fig.width=4.6, message=FALSE, warning=FALSE}
+```{r score_by_compera_trend, fig.height=3.8, fig.width=4.6, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(ggplot2)
 
@@ -2983,7 +2983,7 @@ This chunk shows HRs for:
 - score alone
 - combined model
 
-```{r cox_forest_plot, fig.height=4.6, fig.width=6.6, message=FALSE, warning=FALSE}
+```{r cox_forest_plot, fig.height=4.6, fig.width=6.6, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(ggplot2)
 library(broom)
@@ -3032,7 +3032,7 @@ ggplot(forest_df, aes(x = estimate, y = term_label)) +
 This is the other figure I would definitely include for mortality.
 Use a median split to avoid overfitting and to keep the figure simple.
 
-```{r km_by_score_group, fig.height=4.5, fig.width=5.6, message=FALSE, warning=FALSE}
+```{r km_by_score_group, fig.height=4.5, fig.width=5.6, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(survival)
 
@@ -3071,7 +3071,7 @@ mtext(paste0("Log-rank p = ", signif(logrank_p, 3)), side = 3, adj = 1, line = 0
 
 This is better than leaving the c-index only as a printed table.
 
-```{r cindex_dotplot, fig.height=3.8, fig.width=5.2, message=FALSE, warning=FALSE}
+```{r cindex_dotplot, fig.height=3.8, fig.width=5.2, message=FALSE, warning=FALSE, dpi = 300}
 library(ggplot2)
 
 cindex_tbl$model <- factor(cindex_tbl$model, levels = c("COMPERA", "Score", "COMPERA + score"))
@@ -3093,7 +3093,7 @@ ggplot(cindex_tbl, aes(x = c_index, y = model)) +
 
 This is useful if you want to support the claim that adding the score improves prediction over COMPERA.
 
-```{r delta_cindex_bootstrap_plot, fig.height=3.8, fig.width=5.5, message=FALSE, warning=FALSE}
+```{r delta_cindex_bootstrap_plot, fig.height=3.8, fig.width=5.5, message=FALSE, warning=FALSE, dpi = 300}
 library(ggplot2)
 
 df_bd <- data.frame(delta_c = boot_delta)
@@ -3186,7 +3186,7 @@ cohort_cols <- c("Zurich" = "#004C8C", "Poland" = "#A63A2A")
 
 ### 1) Poland cohort: final score across COMPERA strata
 
-```{r poland_score_by_compera, fig.height=4.4, fig.width=5.8, message=FALSE, warning=FALSE}
+```{r poland_score_by_compera, fig.height=4.4, fig.width=5.8, message=FALSE, warning=FALSE, dpi = 300}
 score_poland_compera <- clin_p %>%
   dplyr::filter(Group == "SSc-PAH") %>%
   dplyr::select(Barcode, Compera_4strata, Compera_number) %>%
@@ -3231,7 +3231,7 @@ ggplot(score_poland_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
 
 ### 2) Optional combined figure: final score across COMPERA strata in both cohorts
 
-```{r both_cohorts_score_by_compera, fig.height=4.6, fig.width=9, message=FALSE, warning=FALSE}
+```{r both_cohorts_score_by_compera, fig.height=4.6, fig.width=8.5, message=FALSE, warning=FALSE, dpi = 300}
 score_zurich_compera <- clin_z %>%
   dplyr::filter(Group == "SSc-PAH") %>%
   dplyr::select(Barcode, COMPERA_4strata, COMPERA_number) %>%
@@ -3275,7 +3275,7 @@ ggplot(score_both_compera, aes(x = COMPERA, y = score_eta, fill = COMPERA)) +
 
 ### 3) TAPSE/sPAP comparison between cohorts in SSc-PAH patients
 
-```{r tapse_spap_boxplot_by_cohort, fig.height=4.5, fig.width=5.8, message=FALSE, warning=FALSE}
+```{r tapse_spap_boxplot_by_cohort, fig.height=4.5, fig.width=5.8, message=FALSE, warning=FALSE, dpi = 300}
 tapse_spap_compare <- dplyr::bind_rows(
   clin_z %>%
     dplyr::filter(Group == "SSc-PAH") %>%
@@ -3322,7 +3322,7 @@ ggplot(tapse_spap_compare, aes(x = Cohort, y = TAPSE_sPAP, fill = Cohort)) +
 
 This gives two barplots next to each other, one for Zurich and one for Poland, with patient counts per risk group.
 
-```{r compera_counts_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE}
+```{r compera_counts_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE, dpi = 300}
 compera_counts <- dplyr::bind_rows(
   clin_z %>%
     dplyr::filter(Group == "SSc-PAH") %>%
@@ -3362,7 +3362,7 @@ ggplot(compera_counts, aes(x = COMPERA, y = n, fill = COMPERA)) +
 
 If you also want a cleaner comparison independent of cohort size, this percentage version can be useful in supplement.
 
-```{r compera_percent_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE}
+```{r compera_percent_by_cohort, fig.height=4.5, fig.width=8, message=FALSE, warning=FALSE, dpi = 300}
 compera_props <- compera_counts %>%
   dplyr::group_by(Cohort) %>%
   dplyr::mutate(prop = n / sum(n)) %>%
@@ -3393,7 +3393,7 @@ ggsave(here::here(output_dir_figs, "COMPERA_counts_by_cohort.png"), width = 8, h
 ggsave(here::here(output_dir_figs, "COMPERA_percent_by_cohort.png"), width = 8, height = 4.5, dpi = 300)
 ```
 
-```{r poland_score_by_death_status, fig.height=4.2, fig.width=4.8, message=FALSE, warning=FALSE}
+```{r poland_score_by_death_status, fig.height=4.2, fig.width=4.8, message=FALSE, warning=FALSE, dpi = 300}
 library(dplyr)
 library(ggplot2)
 
@@ -3440,186 +3440,3 @@ ggplot(score_poland_death, aes(x = death_status, y = score_eta, fill = death_sta
   theme_classic(base_size = 12) +
   theme(legend.position = "none")
 ```
-
-## Score vs NT-proBNP
-
-```{r score_ntprobnp_prepare, message=FALSE, warning=FALSE}
-library(dplyr)
-library(ggplot2)
-library(patchwork)
-
-# Helper to prepare one cohort
-make_score_ntprobnp_df <- function(clin_df, pred_df, cohort, ntprobnp_col) {
-  clin_df %>%
-    dplyr::filter(Group == "SSc-PAH") %>%
-    dplyr::select(Barcode, Group, TAPSE_sPAP, all_of(ntprobnp_col)) %>%
-    dplyr::left_join(
-      pred_df %>% dplyr::select(Barcode, score_eta),
-      by = "Barcode"
-    ) %>%
-    dplyr::mutate(
-      Cohort = cohort,
-      NTproBNP = as.numeric(.data[[ntprobnp_col]]),
-      log10_NTproBNP = log10(NTproBNP),
-      TAPSE_sPAP_group = dplyr::case_when(
-        TAPSE_sPAP < 0.32 ~ "<0.32",
-        TAPSE_sPAP >= 0.32 ~ "≥0.32",
-        TRUE ~ NA_character_
-      ),
-      TAPSE_sPAP_group = factor(TAPSE_sPAP_group, levels = c("≥0.32", "<0.32"))
-    ) %>%
-    dplyr::filter(!is.na(score_eta), !is.na(NTproBNP), NTproBNP > 0)
-}
-
-score_nt_p <- make_score_ntprobnp_df(
-  clin_df = clin_p,
-  pred_df = pred_p,
-  cohort = "Poland",
-  ntprobnp_col = "NTproBNP"
-)
-
-score_nt_z <- make_score_ntprobnp_df(
-  clin_df = clin_z,
-  pred_df = pred_z,
-  cohort = "Zurich",
-  ntprobnp_col = "NTproBNP_pg.ml"
-)
-
-score_nt_both <- dplyr::bind_rows(score_nt_p, score_nt_z)
-
-score_nt_both %>%
-  dplyr::count(Cohort)
-```
-
-```{r score_ntprobnp_correlation_tables, message=FALSE, warning=FALSE}
-cor_one <- function(df) {
-  ct <- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = "spearman"))
-  data.frame(
-    n = nrow(df),
-    spearman_rho = unname(ct$estimate),
-    p_value = ct$p.value
-  )
-}
-
-cor_poland <- cor_one(score_nt_p) %>%
-  dplyr::mutate(Cohort = "Poland", .before = 1)
-
-cor_zurich <- cor_one(score_nt_z) %>%
-  dplyr::mutate(Cohort = "Zurich", .before = 1)
-
-cor_both <- score_nt_both %>%
-  dplyr::group_by(Cohort) %>%
-  dplyr::group_modify(~ cor_one(.x)) %>%
-  dplyr::ungroup()
-
-cor_combined <- cor_one(score_nt_both) %>%
-  dplyr::mutate(Cohort = "Combined", .before = 1)
-
-dplyr::bind_rows(cor_both, cor_combined)
-```
-
-```{r score_ntprobnp_plots_separate, fig.height=4.2, fig.width=8.5, message=FALSE, warning=FALSE}
-plot_score_nt <- function(df, cohort_label) {
-  ct <- suppressWarnings(cor.test(df$score_eta, df$log10_NTproBNP, method = "spearman"))
-
-  ggplot(df, aes(x = score_eta, y = log10_NTproBNP)) +
-    geom_point(aes(color = TAPSE_sPAP_group), size = 2.4, alpha = 0.8) +
-    geom_smooth(method = "lm", se = TRUE, color = "black", linewidth = 0.7) +
-    scale_color_manual(
-      values = c("≥0.32" = "grey60", "<0.32" = "#A63A2A"),
-      na.value = "grey80",
-      name = "TAPSE/sPAP"
-    ) +
-    annotate(
-      "text",
-      x = -Inf,
-      y = Inf,
-      hjust = -0.05,
-      vjust = 1.2,
-      size = 4,
-      label = paste0(
-        "Spearman rho = ", round(unname(ct$estimate), 2),
-        "\np = ", signif(ct$p.value, 3),
-        "\nn = ", nrow(df)
-      )
-    ) +
-    labs(
-      title = paste0(cohort_label, ": final score vs NT-proBNP"),
-      x = "Final score",
-      y = expression(log[10]*"(NT-proBNP)")
-    ) +
-    theme_classic(base_size = 12)
-}
-
-p_nt_p <- plot_score_nt(score_nt_p, "Poland")
-p_nt_z <- plot_score_nt(score_nt_z, "Zurich")
-
-p_nt_p + p_nt_z
-```
-
-```{r score_ntprobnp_plot_combined, fig.height=4.5, fig.width=5.8, message=FALSE, warning=FALSE}
-ct_combined <- suppressWarnings(cor.test(
-  score_nt_both$score_eta,
-  score_nt_both$log10_NTproBNP,
-  method = "spearman"
-))
-
-ggplot(score_nt_both, aes(x = score_eta, y = log10_NTproBNP, color = Cohort)) +
-  geom_point(size = 2.4, alpha = 0.8) +
-  geom_smooth(method = "lm", se = TRUE, color = "black", linewidth = 0.7) +
-  scale_color_manual(values = c("Zurich" = "#004C8C", "Poland" = "#A63A2A")) +
-  annotate(
-    "text",
-    x = -Inf,
-    y = Inf,
-    hjust = -0.05,
-    vjust = 1.2,
-    size = 4,
-    label = paste0(
-      "Combined Spearman rho = ", round(unname(ct_combined$estimate), 2),
-      "\np = ", signif(ct_combined$p.value, 3),
-      "\nn = ", nrow(score_nt_both)
-    )
-  ) +
-  labs(
-    title = "Final score vs NT-proBNP",
-    subtitle = "SSc-PAH patients only",
-    x = "Final score",
-    y = expression(log[10]*"(NT-proBNP)")
-  ) +
-  theme_classic(base_size = 12)
-```
-
-```{r score_ntprobnp_by_tapse_group, fig.height=4.3, fig.width=8.5, message=FALSE, warning=FALSE}
-score_nt_both2 <- score_nt_both %>%
-  dplyr::filter(!is.na(TAPSE_sPAP_group))
-
-p_score_group <- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = score_eta, fill = TAPSE_sPAP_group)) +
-  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
-  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
-  facet_wrap(~Cohort) +
-  scale_fill_manual(values = c("≥0.32" = "grey75", "<0.32" = "#A63A2A")) +
-  labs(
-    title = "Final score by TAPSE/sPAP group",
-    x = "TAPSE/sPAP group",
-    y = "Final score"
-  ) +
-  theme_classic(base_size = 12) +
-  theme(legend.position = "none")
-
-p_nt_group <- ggplot(score_nt_both2, aes(x = TAPSE_sPAP_group, y = log10_NTproBNP, fill = TAPSE_sPAP_group)) +
-  geom_boxplot(alpha = 0.75, outlier.shape = NA) +
-  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) +
-  facet_wrap(~Cohort) +
-  scale_fill_manual(values = c("≥0.32" = "grey75", "<0.32" = "#A63A2A")) +
-  labs(
-    title = "NT-proBNP by TAPSE/sPAP group",
-    x = "TAPSE/sPAP group",
-    y = expression(log[10]*"(NT-proBNP)")
-  ) +
-  theme_classic(base_size = 12) +
-  theme(legend.position = "none")
-
-p_score_group + p_nt_group
-```
-
