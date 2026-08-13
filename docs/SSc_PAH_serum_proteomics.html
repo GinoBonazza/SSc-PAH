@@ -1,0 +1,3623 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="GinoBonazza (ginoandrea.bonazza@usz.ch)" />
+
+
+<title>SSc-PAH serum proteomics</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SSc-PAH</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/GinoBonazza/SSc-PAH">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">SSc-PAH serum proteomics</h1>
+<h4 class="author">GinoBonazza (<a
+href="mailto:ginoandrea.bonazza@usz.ch"
+class="email">ginoandrea.bonazza@usz.ch</a>)</h4>
+<h4 class="date">13 August, 2026</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-08-13
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>SSc-PAH/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20251015code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20251015)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20251015code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20251015)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtreeddc0dfe8583e23f6157435b04dde1ee7e8dbda79targetblankddc0dfea">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/ddc0dfe8583e23f6157435b04dde1ee7e8dbda79" target="_blank">ddc0dfe</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomGinoBonazzaSScPAHtreeddc0dfe8583e23f6157435b04dde1ee7e8dbda79targetblankddc0dfea"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/GinoBonazza/SSc-PAH/tree/ddc0dfe8583e23f6157435b04dde1ee7e8dbda79" target="_blank">ddc0dfe</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .RData
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/Olink_RV_dysf.Rmd
+    Untracked:  analysis/Olink_RV_dysf_PL.Rmd
+    Untracked:  analysis/SSc_PAH_serum_proteomics_significant_candidates.Rmd
+    Untracked:  analysis/SSc_PAH_two_protein_panel_test.Rmd
+    Untracked:  analysis/VennDiagram.2025-10-16_12-40-35.351562.log
+    Untracked:  analysis/VennDiagram.2025-10-22_22-26-15.195599.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-43-26.101506.log
+    Untracked:  analysis/VennDiagram.2025-10-24_20-54-12.491858.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-49-49.773885.log
+    Untracked:  analysis/VennDiagram.2025-10-30_20-58-01.820025.log
+    Untracked:  analysis/VennDiagram.2025-10-30_21-01-21.178598.log
+    Untracked:  analysis/omnipathr-log/
+    Untracked:  data/322591_DEA_Serum_ENRICH-iST_C37202WU322591.xlsx
+    Untracked:  data/Cohorts_comparison.xlsx
+    Untracked:  data/Cohorts_comparison_2.xlsx
+    Untracked:  data/DE_Groups_vs_Controls.xlsx
+    Untracked:  data/Metadata_Olink_analysis.xlsx
+    Untracked:  data/OLINK_PL/
+    Untracked:  data/P2024-199-OLI_80_NPX_2024-10-10.parquet
+    Untracked:  data/Plasma_ENRICHPlus_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Plasma_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_ENRICHiST_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Serum_Urea_o37198_o37202_integrated_SummarizedExperiment.qs2
+    Untracked:  data/Zurich_47_PAH_RHC_sample_list_CB040723_CLINICAL DATA_update20240109.xlsx
+    Untracked:  data/o37198_2025-02-27_olink_SummarizedExperiment.qs2
+    Untracked:  omnipathr-log/
+    Untracked:  output/Olink_2_cohorts/
+    Untracked:  output/Olink_2_cohorts_2/
+    Untracked:  output/Olink_RV_dysf/
+    Untracked:  output/Olink_RV_dysf_PL/
+    Untracked:  output/SSc_PAH_serum_proteomics/
+    Untracked:  output/SSc_PAH_serum_proteomics_final/
+    Untracked:  output/SSc_PAH_serum_proteomics_significant_candidates/
+    Untracked:  output/SSc_PAH_serum_proteomics_significant_candidates_k4/
+    Untracked:  output/SSc_PAH_serum_proteomics_top50_k5_3year_final/
+    Untracked:  output/SSc_PAH_two_protein_panel_test/
+    Untracked:  output/check_Olink_PL/
+    Untracked:  renv.lock
+    Untracked:  renv/
+
+Unstaged changes:
+    Modified:   .Rprofile
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/SSc_PAH_serum_proteomics.Rmd</code>) and HTML
+(<code>docs/SSc_PAH_serum_proteomics.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/GinoBonazza/SSc-PAH/blob/ddc0dfe8583e23f6157435b04dde1ee7e8dbda79/analysis/SSc_PAH_serum_proteomics.Rmd" target="_blank">ddc0dfe</a>
+</td>
+<td>
+GinoBonazza
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+wflow_publish("analysis/SSc_PAH_serum_proteomics.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<pre class="r fold-hide"><code>current_file &lt;- &quot;SSc_PAH_serum_proteomics&quot;
+
+library(here)
+library(readr)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggplot2)
+library(scales)
+library(patchwork)
+library(qs2)
+library(SummarizedExperiment)
+library(limma)
+library(EnhancedVolcano)
+library(glmnet)
+library(pROC)
+library(pheatmap)
+library(survival)
+library(broom)
+library(grid)
+
+output_dir_data &lt;- here::here(&quot;output&quot;, current_file)
+if (!dir.exists(output_dir_data)) dir.create(output_dir_data, recursive = TRUE)
+
+if (!dir.exists(here::here(&quot;docs&quot;, &quot;figure&quot;))) dir.create(here::here(&quot;docs&quot;, &quot;figure&quot;), recursive = TRUE)
+
+output_dir_figs &lt;- here::here(&quot;docs&quot;, &quot;figure&quot;, paste0(current_file, &quot;.Rmd&quot;))
+if (!dir.exists(output_dir_figs)) dir.create(output_dir_figs, recursive = TRUE)
+
+cols_group &lt;- c(&quot;SSc-noPAH&quot; = &quot;#004C8C&quot;, &quot;SSc-PAH&quot; = &quot;#A63A2A&quot;)
+cols_cohort &lt;- c(&quot;Zurich&quot; = &quot;#004C8C&quot;, &quot;Poland&quot; = &quot;#A63A2A&quot;)
+cols_tapse &lt;- c(&quot;Preserved&quot; = &quot;#8AA6B8&quot;, &quot;Impaired&quot; = &quot;#A63A2A&quot;)
+cols_compera &lt;- c(&quot;low&quot; = &quot;#9CA3AF&quot;, &quot;intermediate-low&quot; = &quot;#DDB7B2&quot;, &quot;intermediate-high&quot; = &quot;#C7685F&quot;, &quot;high&quot; = &quot;#A63A2A&quot;)
+
+standardize_compera &lt;- function(x){
+  x &lt;- tolower(trimws(as.character(x)))
+  dplyr::case_when(
+    x == &quot;low&quot; ~ &quot;low&quot;,
+    x %in% c(&quot;intermediate-low&quot;, &quot;intermediate low&quot;, &quot;intermediate_low&quot;) ~ &quot;intermediate-low&quot;,
+    x %in% c(&quot;intermediate-high&quot;, &quot;intermediate high&quot;, &quot;intermediate_high&quot;) ~ &quot;intermediate-high&quot;,
+    x == &quot;high&quot; ~ &quot;high&quot;,
+    TRUE ~ NA_character_
+  )
+}
+
+as_date_safe &lt;- function(x){
+  if (inherits(x, &quot;Date&quot;)) return(x)
+  if (inherits(x, c(&quot;POSIXct&quot;, &quot;POSIXt&quot;))) return(as.Date(x))
+  if (is.numeric(x)) return(as.Date(x, origin = &quot;1899-12-30&quot;))
+  out &lt;- suppressWarnings(as.Date(x))
+  bad &lt;- is.na(out) &amp; !is.na(x)
+  if (any(bad)) out[bad] &lt;- suppressWarnings(as.Date(x[bad], format = &quot;%d.%m.%Y&quot;))
+  out
+}</code></pre>
+</div>
+<div id="import-data" class="section level2">
+<h2>Import data</h2>
+<pre class="r"><code>data_z_se &lt;- qs_read(here::here(&quot;data&quot;, &quot;o37198_2025-02-27_olink_SummarizedExperiment.qs2&quot;))
+clin_z &lt;- read_excel(here::here(&quot;data&quot;, &quot;Metadata_Olink_analysis.xlsx&quot;), sheet = &quot;Merged&quot;)
+
+meta_z_olink &lt;- colData(data_z_se) %&gt;% data.frame()
+isOutlierColumn &lt;- meta_z_olink$Plate == &quot;P0194&quot; &amp; meta_z_olink$Col %in% c(&quot;3&quot;, &quot;4&quot;)
+use &lt;- meta_z_olink$SampleType %in% &quot;Serum&quot; &amp; meta_z_olink$Group %in% c(&quot;SSc-PAH&quot;, &quot;SSc-noPAH&quot;) &amp; !isOutlierColumn
+
+data_z_se &lt;- data_z_se[, use]
+meta_z_olink &lt;- meta_z_olink[use, ]
+rownames(meta_z_olink) &lt;- gsub(&quot;_P0194&quot;, &quot;&quot;, rownames(meta_z_olink))
+meta_z_olink$Barcode &lt;- rownames(meta_z_olink)
+
+rownames(data_z_se) &lt;- data_z_se@elementMetadata@listData[[&quot;Gene&quot;]]
+rownames(data_z_se@assays@data@listData[[&quot;npx&quot;]]) &lt;- data_z_se@elementMetadata@listData[[&quot;Gene&quot;]]
+data_z &lt;- assay(data_z_se, &quot;npx&quot;)
+data_z &lt;- as.data.frame(data_z[-c(1:3), ])
+colnames(data_z) &lt;- rownames(meta_z_olink)
+
+clin_z &lt;- clin_z %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_z)) %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE)
+
+data_p &lt;- read.delim(here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;quant.xls&quot;), sep = &quot;\t&quot;, check.names = FALSE)
+clin_p &lt;- read_excel(here::here(&quot;data&quot;, &quot;OLINK_PL&quot;, &quot;Metadata_Olink_PL.xlsx&quot;), sheet = &quot;Metadata&quot;)
+
+rownames(data_p) &lt;- sub(&quot;_.*&quot;, &quot;&quot;, data_p$SampleID)
+data_p &lt;- data_p[, -1]
+keep &lt;- intersect(colnames(data_p), clin_p$Barcode)
+data_p &lt;- data_p[, keep, drop = FALSE]
+clin_p &lt;- clin_p %&gt;%
+  dplyr::filter(Barcode %in% colnames(data_p)) %&gt;%
+  dplyr::distinct(Barcode, .keep_all = TRUE)
+
+cat(&quot;Zurich Olink matrix:&quot;, dim(data_z), &quot;\n&quot;)</code></pre>
+<pre><code>Zurich Olink matrix: 1034 68 </code></pre>
+<pre class="r"><code>print(table(clin_z$Group))</code></pre>
+<pre><code>
+SSc-noPAH   SSc-PAH 
+       37        31 </code></pre>
+<pre class="r"><code>cat(&quot;Poland Olink matrix:&quot;, dim(data_p), &quot;\n&quot;)</code></pre>
+<pre><code>Poland Olink matrix: 1034 73 </code></pre>
+<pre class="r"><code>print(table(clin_p$Group))</code></pre>
+<pre><code>
+SSc-noPAH   SSc-PAH 
+       35        38 </code></pre>
+<pre class="r"><code>cat(&quot;Missing NPX values Zurich:&quot;, sum(is.na(data_z)), &quot;\n&quot;)</code></pre>
+<pre><code>Missing NPX values Zurich: 0 </code></pre>
+<pre class="r"><code>cat(&quot;Missing NPX values Poland:&quot;, sum(is.na(data_p)), &quot;\n&quot;)</code></pre>
+<pre><code>Missing NPX values Poland: 0 </code></pre>
+<pre class="r"><code>cat(&quot;Duplicated protein names Zurich:&quot;, anyDuplicated(rownames(data_z)), &quot;\n&quot;)</code></pre>
+<pre><code>Duplicated protein names Zurich: 0 </code></pre>
+<pre class="r"><code>cat(&quot;Duplicated protein names Poland:&quot;, anyDuplicated(rownames(data_p)), &quot;\n&quot;)</code></pre>
+<pre><code>Duplicated protein names Poland: 0 </code></pre>
+</div>
+<div id="harmonize-metadata" class="section level2">
+<h2>Harmonize metadata</h2>
+<pre class="r"><code>if (&quot;DETECT_step2 &quot; %in% colnames(clin_z)) names(clin_z)[names(clin_z) == &quot;DETECT_step2 &quot;] &lt;- &quot;DETECT_step2&quot;
+
+clin_z &lt;- clin_z %&gt;%
+  mutate(
+    Cohort = &quot;Zurich&quot;,
+    Age = as.numeric(Age), Sex = factor(Sex), TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Sample_date_analysis = as_date_safe(`Sample date`), RHC_date_analysis = as_date_safe(RHC_date),
+    Sample_minus_RHC_days = as.numeric(Sample_date_analysis - RHC_date_analysis),
+    Sample_RHC_abs_days = abs(Sample_minus_RHC_days),
+    COMPERA = standardize_compera(COMPERA_4strata), COMPERA_number_common = as.numeric(COMPERA_number),
+    SixMWD = as.numeric(`6_Minute_walk_test_distance.in.m`), NTproBNP_common = as.numeric(NTproBNP_pg.ml),
+    WHO_FC = as.numeric(`NYHA class`), TAPSE = as.numeric(TAPSE_mm), sPAP = as.numeric(sPAP_ECHO),
+    mPAP = as.numeric(mPAP_mmHg), PCWP = as.numeric(Pulmonary_wedge_pressure_mmHg), PVR = as.numeric(PVR_WU),
+    CI = as.numeric(Cardiac_Index_L.min.m2), Creatinine_mg_dl = as.numeric(Creatinine),
+    ILD_common = tolower(trimws(as.character(ILDonHRCT))), FVC_pred_common = as.numeric(FVC),
+    DLCO_pred_common = as.numeric(Dlco), mRSS_common = as.numeric(mRSS), DETECT_score = as.numeric(DETECT_step2)
+  )
+
+clin_p &lt;- clin_p %&gt;%
+  mutate(
+    Cohort = &quot;Poland&quot;,
+    Age = as.numeric(Age), Sex = factor(Sex), TAPSE_sPAP = as.numeric(TAPSE_sPAP),
+    Sample_date_analysis = as_date_safe(Sample_date), RHC_date_analysis = as_date_safe(RHC_date),
+    Sample_minus_RHC_days = as.numeric(Sample_date_analysis - RHC_date_analysis),
+    Sample_RHC_abs_days = abs(Sample_minus_RHC_days),
+    COMPERA = standardize_compera(Compera_4strata), COMPERA_number_common = as.numeric(Compera_number),
+    SixMWD = as.numeric(`6MWT`), NTproBNP_common = as.numeric(NTproBNP), WHO_FC = as.numeric(NYHA),
+    TAPSE = as.numeric(TAPSE),
+    # Polish TAPSE/sPAP is calculated using RVSP + RAP.
+    sPAP = as.numeric(RVSP) + as.numeric(RAP),
+    mPAP = as.numeric(mPAP), PCWP = as.numeric(PCWP), PVR = as.numeric(PVR_WU), CI = as.numeric(CI),
+    Creatinine_mg_dl = as.numeric(Creatinine_mg_dL), ILD_common = tolower(trimws(as.character(ILD))),
+    FVC_pred_common = as.numeric(FVC_pred), DLCO_pred_common = as.numeric(DLCO_pred), mRSS_common = as.numeric(mRSS)
+  )
+
+clin_z$COMPERA &lt;- factor(clin_z$COMPERA, levels = c(&quot;low&quot;, &quot;intermediate-low&quot;, &quot;intermediate-high&quot;, &quot;high&quot;))
+clin_p$COMPERA &lt;- factor(clin_p$COMPERA, levels = c(&quot;low&quot;, &quot;intermediate-low&quot;, &quot;intermediate-high&quot;, &quot;high&quot;))
+
+# S319 TAPSE was entered as 181 instead of 18.1 mm
+clin_p$TAPSE[clin_p$Barcode == &quot;S319&quot;] &lt;- 18.1
+clin_p$TAPSE_sPAP[clin_p$Barcode == &quot;S319&quot;] &lt;- 18.1 / clin_p$sPAP[clin_p$Barcode == &quot;S319&quot;]
+
+common_proteins &lt;- intersect(rownames(data_p), rownames(data_z))
+cat(&quot;Proteins measured in both cohorts:&quot;, length(common_proteins), &quot;\n&quot;)</code></pre>
+<pre><code>Proteins measured in both cohorts: 1027 </code></pre>
+</div>
+<div id="define-analysis-populations" class="section level2">
+<h2>Define analysis populations</h2>
+<pre class="r"><code>z_all &lt;- clin_z %&gt;% filter(Barcode %in% colnames(data_z))
+p_all &lt;- clin_p %&gt;% filter(Barcode %in% colnames(data_p))
+
+z_pah &lt;- z_all %&gt;% filter(Group == &quot;SSc-PAH&quot;)
+z_nopah &lt;- z_all %&gt;% filter(Group == &quot;SSc-noPAH&quot;)
+p_pah &lt;- p_all %&gt;% filter(Group == &quot;SSc-PAH&quot;)
+p_nopah &lt;- p_all %&gt;% filter(Group == &quot;SSc-noPAH&quot;)
+
+z_pah_tapse &lt;- z_pah %&gt;% filter(!is.na(TAPSE_sPAP)) %&gt;% mutate(TAPSE_group = ifelse(TAPSE_sPAP &lt;= 0.32, &quot;Impaired&quot;, &quot;Preserved&quot;))
+p_pah_tapse &lt;- p_pah %&gt;% filter(!is.na(TAPSE_sPAP)) %&gt;% mutate(TAPSE_group = ifelse(TAPSE_sPAP &lt;= 0.32, &quot;Impaired&quot;, &quot;Preserved&quot;))
+
+z_pah_tapse$TAPSE_group &lt;- factor(z_pah_tapse$TAPSE_group, levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;))
+p_pah_tapse$TAPSE_group &lt;- factor(p_pah_tapse$TAPSE_group, levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;))
+
+cat(&quot;Zurich SSc-PAH with TAPSE/sPAP:\n&quot;)</code></pre>
+<pre><code>Zurich SSc-PAH with TAPSE/sPAP:</code></pre>
+<pre class="r"><code>print(table(z_pah_tapse$TAPSE_group))</code></pre>
+<pre><code>
+Preserved  Impaired 
+       20         6 </code></pre>
+<pre class="r"><code>cat(&quot;Poland SSc-PAH with TAPSE/sPAP:\n&quot;)</code></pre>
+<pre><code>Poland SSc-PAH with TAPSE/sPAP:</code></pre>
+<pre class="r"><code>print(table(p_pah_tapse$TAPSE_group))</code></pre>
+<pre><code>
+Preserved  Impaired 
+       14        24 </code></pre>
+</div>
+<div id="cohort-characteristics-and-qc" class="section level1">
+<h1>Cohort characteristics and QC</h1>
+<div id="table-1" class="section level2">
+<h2>Table 1</h2>
+<pre class="r"><code>fmt_cont &lt;- function(x, digits = 1){
+  x &lt;- as.numeric(x)
+  x &lt;- x[is.finite(x)]
+  if (length(x) == 0) return(&quot;-&quot;)
+  paste0(formatC(median(x), digits = digits, format = &quot;f&quot;), &quot; [&quot;,
+         formatC(quantile(x, 0.25), digits = digits, format = &quot;f&quot;), &quot;–&quot;,
+         formatC(quantile(x, 0.75), digits = digits, format = &quot;f&quot;), &quot;], n=&quot;, length(x))
+}
+
+fmt_binary &lt;- function(x, positive = &quot;yes&quot;){
+  x &lt;- tolower(trimws(as.character(x)))
+  x &lt;- x[!is.na(x) &amp; x != &quot;&quot;]
+  if (length(x) == 0) return(&quot;-&quot;)
+  npos &lt;- sum(x %in% positive)
+  paste0(npos, &quot; (&quot;, round(100 * npos / length(x), 1), &quot;%), n=&quot;, length(x))
+}
+
+fmt_female &lt;- function(x){
+  x &lt;- toupper(trimws(as.character(x)))
+  x &lt;- x[!is.na(x) &amp; x != &quot;&quot;]
+  if (length(x) == 0) return(&quot;-&quot;)
+  npos &lt;- sum(x == &quot;F&quot;)
+  paste0(npos, &quot; (&quot;, round(100 * npos / length(x), 1), &quot;%), n=&quot;, length(x))
+}
+
+fmt_compera &lt;- function(x, level){
+  x &lt;- as.character(x)
+  x &lt;- x[!is.na(x)]
+  if (length(x) == 0) return(&quot;-&quot;)
+  nlevel &lt;- sum(x == level)
+  paste0(nlevel, &quot; (&quot;, round(100 * nlevel / length(x), 1), &quot;%), n=&quot;, length(x))
+}
+
+make_table1_column &lt;- function(df){
+  c(
+    fmt_cont(df$Age, 0),
+    fmt_female(df$Sex),
+    fmt_cont(df$BMI, 1),
+    fmt_binary(df$ILD_common, &quot;yes&quot;),
+    fmt_cont(df$FVC_pred_common, 0),
+    fmt_cont(df$DLCO_pred_common, 0),
+    fmt_cont(df$Creatinine_mg_dl, 2),
+    fmt_cont(df$WHO_FC, 0),
+    fmt_cont(df$SixMWD, 0),
+    fmt_cont(df$NTproBNP_common, 0),
+    fmt_cont(df$TAPSE, 1),
+    fmt_cont(df$sPAP, 1),
+    fmt_cont(df$TAPSE_sPAP, 2),
+    fmt_cont(df$mPAP, 1),
+    fmt_cont(df$PCWP, 1),
+    fmt_cont(df$PVR, 1),
+    fmt_cont(df$CI, 2),
+    fmt_compera(df$COMPERA, &quot;low&quot;),
+    fmt_compera(df$COMPERA, &quot;intermediate-low&quot;),
+    fmt_compera(df$COMPERA, &quot;intermediate-high&quot;),
+    fmt_compera(df$COMPERA, &quot;high&quot;),
+    fmt_cont(df$Sample_RHC_abs_days, 0)
+  )
+}
+
+table1 &lt;- data.frame(
+  Characteristic = c(
+    &quot;Age, years&quot;, &quot;Female, n (%)&quot;, &quot;BMI, kg/m2&quot;, &quot;ILD, n (%)&quot;, &quot;FVC, % predicted&quot;, &quot;DLCO, % predicted&quot;,
+    &quot;Creatinine, mg/dL&quot;, &quot;WHO functional class&quot;, &quot;6-minute walk distance, m&quot;, &quot;NT-proBNP, pg/mL&quot;,
+    &quot;TAPSE, mm&quot;, &quot;sPAP, mmHg&quot;, &quot;TAPSE/sPAP&quot;, &quot;mPAP, mmHg&quot;, &quot;PCWP, mmHg&quot;, &quot;PVR, WU&quot;, &quot;Cardiac index, L/min/m2&quot;,
+    &quot;COMPERA low&quot;, &quot;COMPERA intermediate-low&quot;, &quot;COMPERA intermediate-high&quot;, &quot;COMPERA high&quot;, &quot;Absolute sample-RHC interval, days&quot;
+  ),
+  Zurich_noPAH = make_table1_column(z_nopah),
+  Zurich_PAH = make_table1_column(z_pah),
+  Poland_noPAH = make_table1_column(p_nopah),
+  Poland_PAH = make_table1_column(p_pah),
+  check.names = FALSE
+)
+
+colnames(table1)[2:5] &lt;- c(
+  paste0(&quot;Zurich SSc-noPAH (n=&quot;, nrow(z_nopah), &quot;)&quot;),
+  paste0(&quot;Zurich SSc-PAH (n=&quot;, nrow(z_pah), &quot;)&quot;),
+  paste0(&quot;Poland SSc-noPAH (n=&quot;, nrow(p_nopah), &quot;)&quot;),
+  paste0(&quot;Poland SSc-PAH (n=&quot;, nrow(p_pah), &quot;)&quot;)
+)
+
+write.csv(table1, here::here(output_dir_data, &quot;Table1_clinical_characteristics.csv&quot;), row.names = FALSE)
+knitr::kable(table1, align = c(&quot;l&quot;, &quot;c&quot;, &quot;c&quot;, &quot;c&quot;, &quot;c&quot;))</code></pre>
+<table>
+<colgroup>
+<col width="26%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Characteristic</th>
+<th align="center">Zurich SSc-noPAH (n=37)</th>
+<th align="center">Zurich SSc-PAH (n=31)</th>
+<th align="center">Poland SSc-noPAH (n=35)</th>
+<th align="center">Poland SSc-PAH (n=38)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Age, years</td>
+<td align="center">60 [49–66], n=37</td>
+<td align="center">65 [58–72], n=31</td>
+<td align="center">57 [52–64], n=35</td>
+<td align="center">72 [62–74], n=38</td>
+</tr>
+<tr class="even">
+<td align="left">Female, n (%)</td>
+<td align="center">31 (83.8%), n=37</td>
+<td align="center">25 (80.6%), n=31</td>
+<td align="center">26 (74.3%), n=35</td>
+<td align="center">22 (57.9%), n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI, kg/m2</td>
+<td align="center">22.8 [21.2–28.0], n=34</td>
+<td align="center">25.8 [21.7–30.6], n=27</td>
+<td align="center">-</td>
+<td align="center">25.5 [22.8–30.1], n=32</td>
+</tr>
+<tr class="even">
+<td align="left">ILD, n (%)</td>
+<td align="center">12 (32.4%), n=37</td>
+<td align="center">18 (58.1%), n=31</td>
+<td align="center">-</td>
+<td align="center">16 (45.7%), n=35</td>
+</tr>
+<tr class="odd">
+<td align="left">FVC, % predicted</td>
+<td align="center">69 [50–87], n=37</td>
+<td align="center">68 [42–92], n=30</td>
+<td align="center">-</td>
+<td align="center">80 [73–88], n=33</td>
+</tr>
+<tr class="even">
+<td align="left">DLCO, % predicted</td>
+<td align="center">87 [64–104], n=37</td>
+<td align="center">58 [43–89], n=30</td>
+<td align="center">-</td>
+<td align="center">40 [31–47], n=31</td>
+</tr>
+<tr class="odd">
+<td align="left">Creatinine, mg/dL</td>
+<td align="center">0.90 [0.70–0.90], n=37</td>
+<td align="center">0.90 [0.70–1.18], n=30</td>
+<td align="center">-</td>
+<td align="center">0.97 [0.84–1.10], n=35</td>
+</tr>
+<tr class="even">
+<td align="left">WHO functional class</td>
+<td align="center">2 [2–2], n=37</td>
+<td align="center">2 [2–3], n=30</td>
+<td align="center">2 [1–2], n=35</td>
+<td align="center">3 [3–3], n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">6-minute walk distance, m</td>
+<td align="center">525 [444–568], n=37</td>
+<td align="center">435 [398–478], n=28</td>
+<td align="center">460 [396–494], n=7</td>
+<td align="center">276 [126–390], n=37</td>
+</tr>
+<tr class="even">
+<td align="left">NT-proBNP, pg/mL</td>
+<td align="center">162 [97–419], n=37</td>
+<td align="center">173 [102–886], n=31</td>
+<td align="center">305 [217–854], n=15</td>
+<td align="center">1938 [341–3667], n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">TAPSE, mm</td>
+<td align="center">21.0 [18.0–23.5], n=36</td>
+<td align="center">18.5 [15.0–21.0], n=28</td>
+<td align="center">23.0 [21.0–25.0], n=35</td>
+<td align="center">18.0 [15.2–22.8], n=38</td>
+</tr>
+<tr class="even">
+<td align="left">sPAP, mmHg</td>
+<td align="center">25.5 [23.0–32.0], n=36</td>
+<td align="center">38.0 [32.0–54.0], n=29</td>
+<td align="center">29.0 [25.0–36.5], n=31</td>
+<td align="center">68.0 [63.0–75.8], n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">TAPSE/sPAP</td>
+<td align="center">0.72 [0.57–0.98], n=35</td>
+<td align="center">0.55 [0.35–0.65], n=26</td>
+<td align="center">0.75 [0.61–0.94], n=31</td>
+<td align="center">0.25 [0.18–0.35], n=38</td>
+</tr>
+<tr class="even">
+<td align="left">mPAP, mmHg</td>
+<td align="center">18.0 [15.0–20.0], n=37</td>
+<td align="center">27.0 [23.0–34.5], n=31</td>
+<td align="center">-</td>
+<td align="center">36.0 [29.0–45.5], n=35</td>
+</tr>
+<tr class="odd">
+<td align="left">PCWP, mmHg</td>
+<td align="center">9.0 [8.0–11.0], n=37</td>
+<td align="center">10.0 [8.0–13.0], n=31</td>
+<td align="center">-</td>
+<td align="center">9.0 [7.2–12.8], n=34</td>
+</tr>
+<tr class="even">
+<td align="left">PVR, WU</td>
+<td align="center">1.4 [1.2–1.7], n=34</td>
+<td align="center">3.0 [2.4–4.6], n=27</td>
+<td align="center">-</td>
+<td align="center">6.6 [3.7–8.6], n=34</td>
+</tr>
+<tr class="odd">
+<td align="left">Cardiac index, L/min/m2</td>
+<td align="center">3.20 [2.70–3.60], n=33</td>
+<td align="center">3.05 [2.82–3.60], n=26</td>
+<td align="center">-</td>
+<td align="center">2.58 [2.10–2.84], n=35</td>
+</tr>
+<tr class="even">
+<td align="left">COMPERA low</td>
+<td align="center">-</td>
+<td align="center">10 (32.3%), n=31</td>
+<td align="center">-</td>
+<td align="center">3 (7.9%), n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">COMPERA intermediate-low</td>
+<td align="center">-</td>
+<td align="center">7 (22.6%), n=31</td>
+<td align="center">-</td>
+<td align="center">9 (23.7%), n=38</td>
+</tr>
+<tr class="even">
+<td align="left">COMPERA intermediate-high</td>
+<td align="center">-</td>
+<td align="center">6 (19.4%), n=31</td>
+<td align="center">-</td>
+<td align="center">15 (39.5%), n=38</td>
+</tr>
+<tr class="odd">
+<td align="left">COMPERA high</td>
+<td align="center">-</td>
+<td align="center">8 (25.8%), n=31</td>
+<td align="center">-</td>
+<td align="center">11 (28.9%), n=38</td>
+</tr>
+<tr class="even">
+<td align="left">Absolute sample-RHC interval, days</td>
+<td align="center">38 [6–135], n=37</td>
+<td align="center">31 [1–64], n=31</td>
+<td align="center">-</td>
+<td align="center">4 [1–164], n=35</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="npx-distributions" class="section level2">
+<h2>NPX distributions</h2>
+<pre class="r"><code>order_z &lt;- z_all %&gt;% arrange(Group, Barcode) %&gt;% pull(Barcode)
+
+npx_long_z &lt;- data_z %&gt;%
+  as.data.frame() %&gt;%
+  rownames_to_column(&quot;Protein&quot;) %&gt;%
+  pivot_longer(-Protein, names_to = &quot;Barcode&quot;, values_to = &quot;NPX&quot;) %&gt;%
+  left_join(z_all %&gt;% select(Barcode, Group), by = &quot;Barcode&quot;) %&gt;%
+  mutate(Barcode = factor(Barcode, levels = order_z))
+
+p_npx_z &lt;- ggplot(npx_long_z, aes(Barcode, NPX, fill = Group)) +
+  geom_boxplot(outlier.shape = NA, linewidth = 0.25) +
+  scale_fill_manual(values = cols_group) +
+  labs(title = &quot;Zurich cohort&quot;, x = NULL, y = &quot;NPX&quot;) +
+  theme_classic(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5), legend.position = &quot;top&quot;)
+
+p_npx_z</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/npx_distribution_zurich-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_NPX_distribution_Zurich.png&quot;), p_npx_z, width = 11, height = 5.2, dpi = 300)</code></pre>
+<pre class="r"><code>order_p &lt;- p_all %&gt;% arrange(Group, Barcode) %&gt;% pull(Barcode)
+
+npx_long_p &lt;- data_p %&gt;%
+  as.data.frame() %&gt;%
+  rownames_to_column(&quot;Protein&quot;) %&gt;%
+  pivot_longer(-Protein, names_to = &quot;Barcode&quot;, values_to = &quot;NPX&quot;) %&gt;%
+  left_join(p_all %&gt;% select(Barcode, Group), by = &quot;Barcode&quot;) %&gt;%
+  mutate(Barcode = factor(Barcode, levels = order_p))
+
+p_npx_p &lt;- ggplot(npx_long_p, aes(Barcode, NPX, fill = Group)) +
+  geom_boxplot(outlier.shape = NA, linewidth = 0.25) +
+  scale_fill_manual(values = cols_group) +
+  labs(title = &quot;Poland cohort&quot;, x = NULL, y = &quot;NPX&quot;) +
+  theme_classic(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5), legend.position = &quot;top&quot;)
+
+p_npx_p</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/npx_distribution_poland-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_NPX_distribution_Poland.png&quot;), p_npx_p, width = 11, height = 5.2, dpi = 300)</code></pre>
+</div>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<pre class="r"><code>sd_pca_z &lt;- apply(data_z, 1, sd, na.rm = TRUE)
+data_z_pca &lt;- data_z[is.finite(sd_pca_z) &amp; sd_pca_z &gt; 0, , drop = FALSE]
+pca_z &lt;- prcomp(t(as.matrix(data_z_pca)), center = TRUE, scale. = TRUE)
+var_z &lt;- 100 * pca_z$sdev^2 / sum(pca_z$sdev^2)
+pca_z_df &lt;- data.frame(Barcode = rownames(pca_z$x), PC1 = pca_z$x[, 1], PC2 = pca_z$x[, 2]) %&gt;%
+  left_join(z_all %&gt;% select(Barcode, Group, COMPERA), by = &quot;Barcode&quot;)
+
+p_pca_z &lt;- ggplot(pca_z_df, aes(PC1, PC2, color = Group)) +
+  geom_point(size = 2.2, alpha = 0.85) +
+  scale_color_manual(values = cols_group) +
+  labs(title = &quot;Zurich cohort&quot;, x = paste0(&quot;PC1 (&quot;, round(var_z[1], 1), &quot;%)&quot;), y = paste0(&quot;PC2 (&quot;, round(var_z[2], 1), &quot;%)&quot;)) +
+  theme_classic(base_size = 11)
+
+p_pca_z</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/pca_zurich-1.png" width="1560" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_PCA_Zurich_group.png&quot;), p_pca_z, width = 5.2, height = 4.2, dpi = 300)</code></pre>
+<pre class="r"><code>sd_pca_p &lt;- apply(data_p, 1, sd, na.rm = TRUE)
+data_p_pca &lt;- data_p[is.finite(sd_pca_p) &amp; sd_pca_p &gt; 0, , drop = FALSE]
+pca_p &lt;- prcomp(t(as.matrix(data_p_pca)), center = TRUE, scale. = TRUE)
+var_p &lt;- 100 * pca_p$sdev^2 / sum(pca_p$sdev^2)
+pca_p_df &lt;- data.frame(Barcode = rownames(pca_p$x), PC1 = pca_p$x[, 1], PC2 = pca_p$x[, 2]) %&gt;%
+  left_join(p_all %&gt;% select(Barcode, Group, COMPERA), by = &quot;Barcode&quot;)
+
+p_pca_p &lt;- ggplot(pca_p_df, aes(PC1, PC2, color = Group)) +
+  geom_point(size = 2.2, alpha = 0.85) +
+  scale_color_manual(values = cols_group) +
+  labs(title = &quot;Poland cohort&quot;, x = paste0(&quot;PC1 (&quot;, round(var_p[1], 1), &quot;%)&quot;), y = paste0(&quot;PC2 (&quot;, round(var_p[2], 1), &quot;%)&quot;)) +
+  theme_classic(base_size = 11)
+
+p_pca_p</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/pca_poland-1.png" width="1560" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_PCA_Poland_group.png&quot;), p_pca_p, width = 5.2, height = 4.2, dpi = 300)</code></pre>
+<pre class="r"><code>p_pca_z_compera &lt;- pca_z_df %&gt;% filter(Group == &quot;SSc-PAH&quot;, !is.na(COMPERA)) %&gt;%
+  ggplot(aes(PC1, PC2, color = COMPERA)) + geom_point(size = 2.4) + scale_color_manual(values = cols_compera) +
+  labs(title = &quot;Zurich SSc-PAH&quot;, x = paste0(&quot;PC1 (&quot;, round(var_z[1], 1), &quot;%)&quot;), y = paste0(&quot;PC2 (&quot;, round(var_z[2], 1), &quot;%)&quot;)) + theme_classic(base_size = 11)
+
+p_pca_p_compera &lt;- pca_p_df %&gt;% filter(Group == &quot;SSc-PAH&quot;, !is.na(COMPERA)) %&gt;%
+  ggplot(aes(PC1, PC2, color = COMPERA)) + geom_point(size = 2.4) + scale_color_manual(values = cols_compera) +
+  labs(title = &quot;Poland SSc-PAH&quot;, x = paste0(&quot;PC1 (&quot;, round(var_p[1], 1), &quot;%)&quot;), y = paste0(&quot;PC2 (&quot;, round(var_p[2], 1), &quot;%)&quot;)) + theme_classic(base_size = 11)
+
+p_pca_z_compera + p_pca_p_compera</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/pca_compera-1.png" width="3000" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_PCA_COMPERA_both_cohorts.png&quot;), p_pca_z_compera + p_pca_p_compera, width = 10, height = 4.2, dpi = 300)</code></pre>
+</div>
+<div id="sample-rhc-interval" class="section level2">
+<h2>Sample-RHC interval</h2>
+<pre class="r"><code>rhc_interval_df &lt;- bind_rows(
+  z_all %&gt;% transmute(Barcode, Cohort = &quot;Zurich&quot;, Group, days = Sample_RHC_abs_days),
+  p_all %&gt;% transmute(Barcode, Cohort = &quot;Poland&quot;, Group, days = Sample_RHC_abs_days)
+) %&gt;% filter(!is.na(days))
+
+rhc_interval_summary &lt;- rhc_interval_df %&gt;% group_by(Cohort) %&gt;%
+  summarise(n = n(), median = median(days), q1 = quantile(days, 0.25), q3 = quantile(days, 0.75), min = min(days), max = max(days), .groups = &quot;drop&quot;)
+
+rhc_interval_summary</code></pre>
+<pre><code># A tibble: 2 × 7
+  Cohort     n median    q1    q3   min   max
+  &lt;chr&gt;  &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Poland    35    4       1  164      0   876
+2 Zurich    68   34.5     1  107.     0   484</code></pre>
+<pre class="r"><code>write.csv(rhc_interval_summary, here::here(output_dir_data, &quot;Sample_RHC_interval_summary.csv&quot;), row.names = FALSE)
+
+p_rhc_interval &lt;- ggplot(rhc_interval_df, aes(Cohort, days, fill = Cohort)) +
+  geom_boxplot(outlier.shape = NA, width = 0.5, alpha = 0.75) + geom_jitter(width = 0.12, size = 1.6, alpha = 0.7) +
+  scale_fill_manual(values = cols_cohort) + labs(x = NULL, y = &quot;Absolute interval between serum collection and RHC (days)&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;)
+
+p_rhc_interval</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/rhc_sample_interval-1.png" width="2100" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;QC_Sample_RHC_interval.png&quot;), p_rhc_interval, width = 7, height = 4.5, dpi = 300)</code></pre>
+</div>
+<div id="cohort-severity" class="section level2">
+<h2>Cohort severity</h2>
+<pre class="r"><code>tapse_cohort_df &lt;- bind_rows(
+  z_pah %&gt;% transmute(Cohort = &quot;Zurich&quot;, TAPSE_sPAP),
+  p_pah %&gt;% transmute(Cohort = &quot;Poland&quot;, TAPSE_sPAP)
+) %&gt;% filter(!is.na(TAPSE_sPAP))
+
+p_tapse_cohort &lt;- ggplot(tapse_cohort_df, aes(Cohort, TAPSE_sPAP, fill = Cohort)) +
+  geom_hline(yintercept = 0.32, linetype = 2, linewidth = 0.5) + geom_boxplot(outlier.shape = NA, alpha = 0.75) +
+  geom_jitter(width = 0.12, size = 1.8, alpha = 0.75) + scale_fill_manual(values = cols_cohort) +
+  labs(x = NULL, y = &quot;TAPSE/sPAP&quot;) + theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;)
+
+compera_counts &lt;- bind_rows(
+  z_pah %&gt;% transmute(Cohort = &quot;Zurich&quot;, COMPERA),
+  p_pah %&gt;% transmute(Cohort = &quot;Poland&quot;, COMPERA)
+) %&gt;% filter(!is.na(COMPERA)) %&gt;% dplyr::count(Cohort, COMPERA, .drop = FALSE)
+
+p_compera_counts &lt;- ggplot(compera_counts, aes(COMPERA, n, fill = COMPERA)) +
+  geom_col(width = 0.8) + geom_text(aes(label = n), vjust = -0.25, size = 3.6) + facet_wrap(~Cohort, nrow = 1) +
+  scale_fill_manual(values = cols_compera, drop = FALSE) + labs(x = &quot;COMPERA risk stratum&quot;, y = &quot;Patients&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 30, hjust = 1))
+
+p_tapse_cohort + p_compera_counts</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/cohort_severity-1.png" width="3000" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure1_cohort_severity_panels.png&quot;), p_tapse_cohort + p_compera_counts, width = 10, height = 4.5, dpi = 300)</code></pre>
+<pre class="r"><code>workflow_labels &lt;- data.frame(
+  x = c(1, 3, 5, 7), y = c(1, 1, 1, 1),
+  label = c(
+    paste0(&quot;Zurich\n&quot;, nrow(z_all), &quot; SSc patients\n&quot;, nrow(z_nopah), &quot; noPAH / &quot;, nrow(z_pah), &quot; PAH&quot;),
+    paste0(&quot;Poland\n&quot;, nrow(p_all), &quot; SSc patients\n&quot;, nrow(p_nopah), &quot; noPAH / &quot;, nrow(p_pah), &quot; PAH&quot;),
+    paste0(&quot;Olink REVEAL\n&quot;, length(common_proteins), &quot; proteins&quot;),
+    &quot;PAH screening + RV-PA coupling\nPanel development and validation&quot;
+  )
+)
+
+p_workflow &lt;- ggplot(workflow_labels, aes(x, y, label = label)) +
+  geom_label(size = 4, label.size = 0.35, label.padding = unit(0.5, &quot;lines&quot;), fill = &quot;white&quot;) +
+  geom_segment(data = data.frame(x = c(1.55, 3.55, 5.55), xend = c(2.45, 4.45, 6.45), y = 1, yend = 1),
+               aes(x = x, xend = xend, y = y, yend = yend), inherit.aes = FALSE, arrow = grid::arrow(length = unit(0.15, &quot;inches&quot;))) +
+  xlim(0.2, 7.8) + ylim(0.4, 1.6) + theme_void()
+
+Figure1 &lt;- p_workflow / (p_tapse_cohort | p_compera_counts) + plot_layout(heights = c(0.8, 1.4)) + plot_annotation(tag_levels = &quot;A&quot;)
+Figure1</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/figure1_overview-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure1_study_overview.png&quot;), Figure1, width = 11, height = 8, dpi = 300)</code></pre>
+</div>
+<div id="age-and-sex-across-tapsespap-groups" class="section level2">
+<h2>Age and sex across TAPSE/sPAP groups</h2>
+<pre class="r"><code>tapse_group_clin &lt;- bind_rows(
+  z_pah_tapse %&gt;% transmute(Cohort = &quot;Zurich&quot;, TAPSE_group, Age, Sex),
+  p_pah_tapse %&gt;% transmute(Cohort = &quot;Poland&quot;, TAPSE_group, Age, Sex)
+)
+
+tapse_group_summary &lt;- tapse_group_clin %&gt;% group_by(Cohort, TAPSE_group) %&gt;% summarise(
+  n = n(), age_median = median(Age, na.rm = TRUE), age_q1 = quantile(Age, 0.25, na.rm = TRUE), age_q3 = quantile(Age, 0.75, na.rm = TRUE),
+  female_n = sum(toupper(as.character(Sex)) == &quot;F&quot;, na.rm = TRUE), sex_n = sum(!is.na(Sex)), .groups = &quot;drop&quot;
+) %&gt;% mutate(female_percent = 100 * female_n / sex_n)
+
+tapse_group_summary</code></pre>
+<pre><code># A tibble: 4 × 9
+  Cohort TAPSE_group     n age_median age_q1 age_q3 female_n sex_n
+  &lt;chr&gt;  &lt;fct&gt;       &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;int&gt; &lt;int&gt;
+1 Poland Preserved      14       71     63     72.8        7    14
+2 Poland Impaired       24       72.5   61.8   74.2       15    24
+3 Zurich Preserved      20       66     59.8   72         16    20
+4 Zurich Impaired        6       68     63.2   75          5     6
+# ℹ 1 more variable: female_percent &lt;dbl&gt;</code></pre>
+<pre class="r"><code>write.csv(tapse_group_summary, here::here(output_dir_data, &quot;TAPSE_group_age_sex_summary.csv&quot;), row.names = FALSE)
+
+p_tapse_age &lt;- ggplot(tapse_group_clin, aes(TAPSE_group, Age, fill = TAPSE_group)) + geom_boxplot(outlier.shape = NA, alpha = 0.75) +
+  geom_jitter(width = 0.12, size = 1.5, alpha = 0.7) + facet_wrap(~Cohort) + scale_fill_manual(values = cols_tapse) +
+  labs(x = NULL, y = &quot;Age, years&quot;) + theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;)
+
+p_tapse_sex &lt;- tapse_group_summary %&gt;% ggplot(aes(TAPSE_group, female_percent, fill = TAPSE_group)) + geom_col(width = 0.7) +
+  geom_text(aes(label = paste0(female_n, &quot;/&quot;, sex_n)), vjust = -0.3, size = 3.5) + facet_wrap(~Cohort) +
+  scale_fill_manual(values = cols_tapse) + coord_cartesian(ylim = c(0, 105)) + labs(x = NULL, y = &quot;Female, %&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;)
+
+p_tapse_age | p_tapse_sex</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/tapse_group_characteristics-1.png" width="3000" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Supplement_TAPSE_group_age_sex.png&quot;), p_tapse_age | p_tapse_sex, width = 10, height = 4.5, dpi = 300)</code></pre>
+</div>
+</div>
+<div id="aim-1-pah-diagnosis-and-detect" class="section level1">
+<h1>Aim 1: PAH diagnosis and DETECT</h1>
+<div id="ssc-pah-vs-ssc-nopah---zurich" class="section level2">
+<h2>SSc-PAH vs SSc-noPAH - Zurich</h2>
+<pre class="r"><code>meta_z_group &lt;- z_all %&gt;%
+  filter(!is.na(Group), !is.na(Age), !is.na(Sex)) %&gt;%
+  mutate(Group = factor(Group, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;)), Age_z = as.numeric(scale(Age))) %&gt;%
+  column_to_rownames(&quot;Barcode&quot;)
+
+expr_z_group &lt;- as.matrix(data_z[, rownames(meta_z_group), drop = FALSE])
+design_z_group &lt;- model.matrix(~ Group + Age_z + Sex, data = meta_z_group)
+fit_z_group &lt;- eBayes(lmFit(expr_z_group, design_z_group))
+
+DE_group_z &lt;- topTable(fit_z_group, coef = &quot;GroupSSc-PAH&quot;, number = Inf, adjust.method = &quot;BH&quot;) %&gt;%
+  rownames_to_column(&quot;Protein&quot;)
+
+write.csv(DE_group_z, here::here(output_dir_data, &quot;DE_SScPAH_vs_noPAH_Zurich.csv&quot;), row.names = FALSE)
+DE_group_z %&gt;% filter(adj.P.Val &lt; 0.1) %&gt;% arrange(adj.P.Val) %&gt;% head(30)</code></pre>
+<pre><code>[1] Protein   logFC     AveExpr   t         P.Value   adj.P.Val B        
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+<div id="ssc-pah-vs-ssc-nopah---poland" class="section level2">
+<h2>SSc-PAH vs SSc-noPAH - Poland</h2>
+<pre class="r"><code>meta_p_group &lt;- p_all %&gt;%
+  filter(!is.na(Group), !is.na(Age), !is.na(Sex)) %&gt;%
+  mutate(Group = factor(Group, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;)), Age_z = as.numeric(scale(Age))) %&gt;%
+  column_to_rownames(&quot;Barcode&quot;)
+
+expr_p_group &lt;- as.matrix(data_p[, rownames(meta_p_group), drop = FALSE])
+design_p_group &lt;- model.matrix(~ Group + Age_z + Sex, data = meta_p_group)
+fit_p_group &lt;- eBayes(lmFit(expr_p_group, design_p_group))
+
+DE_group_p &lt;- topTable(fit_p_group, coef = &quot;GroupSSc-PAH&quot;, number = Inf, adjust.method = &quot;BH&quot;) %&gt;%
+  rownames_to_column(&quot;Protein&quot;)
+
+write.csv(DE_group_p, here::here(output_dir_data, &quot;DE_SScPAH_vs_noPAH_Poland.csv&quot;), row.names = FALSE)
+DE_group_p %&gt;% filter(adj.P.Val &lt; 0.1) %&gt;% arrange(adj.P.Val) %&gt;% head(30)</code></pre>
+<pre><code>     Protein      logFC    AveExpr         t      P.Value    adj.P.Val
+1        ADM  0.8442555 0.13419118  5.440603 6.822365e-07 0.0007054325
+2       ACE2  0.9604750 0.33173180  4.795544 8.392787e-06 0.0043390707
+3      PRELP  0.5058679 0.03241897  4.639340 1.509541e-05 0.0047699604
+4      TAFA5  0.5592915 0.18441695  4.585345 1.845246e-05 0.0047699604
+5       CFC1  0.5701316 0.17549629  4.401661 3.622699e-05 0.0063061597
+6      FGF23  1.3334234 0.51399613  4.349073 4.383482e-05 0.0063061597
+7      EDA2R  0.8481480 0.18763930  4.326722 4.751766e-05 0.0063061597
+8     SFTPA2  1.0726079 0.11106371  4.319386 4.879040e-05 0.0063061597
+9  TNFRSF10B  0.7082658 0.15427143  4.186682 7.838942e-05 0.0085267086
+10      NEFL  1.0130189 0.20315153  4.140447 9.230309e-05 0.0085267086
+11       JTB  0.4292374 0.15592243  4.126936 9.679959e-05 0.0085267086
+12       LPO  0.7033702 0.22463348  4.120670 9.895600e-05 0.0085267086
+13    CLSTN2  0.7038639 0.29136481  4.020920 1.401885e-04 0.0104869421
+14     CD302  0.4552461 0.17173204  4.016485 1.423613e-04 0.0104869421
+15     LCN15  0.8544580 0.19806421  3.997313 1.521317e-04 0.0104869421
+16    RAET1L  0.5672279 0.21880823  3.948072 1.802669e-04 0.0115313838
+17      IL15  0.4625565 0.10111093  3.928923 1.925040e-04 0.0115313838
+18     LRRN1 -0.4772220 0.03290717 -3.916683 2.007398e-04 0.0115313838
+19      LAYN  0.5766217 0.21837518  3.778519 3.204674e-04 0.0162305188
+20     CXADR  0.6652885 0.19737103  3.777021 3.220803e-04 0.0162305188
+21   TNFSF13  0.4199953 0.19367634  3.767350 3.326792e-04 0.0162305188
+22     VEGFD  0.6386545 0.09042618  3.743729 3.599878e-04 0.0162305188
+23       DCN  0.3071950 0.09932834  3.742864 3.610270e-04 0.0162305188
+24    LGALS7  0.5145077 0.11386576  3.612038 5.559320e-04 0.0239514031
+25      LAG3  0.6375243 0.22589684  3.560197 6.580168e-04 0.0269970985
+26     RSPO1  0.4485659 0.20564844  3.547910 6.846988e-04 0.0269970985
+27      OCLN  0.5941681 0.05458387  3.538882 7.049533e-04 0.0269970985
+28    PTPRN2  0.4711327 0.04192572  3.485233 8.375389e-04 0.0301429439
+29  TNFRSF19  0.5129789 0.20984922  3.482310 8.454017e-04 0.0301429439
+30  ADAMTSL4  0.5351288 0.23442794  3.461588 9.031817e-04 0.0311296628
+             B
+1   5.77155657
+2   3.46105269
+3   2.92228534
+4   2.73818188
+5   2.12054057
+6   1.94627634
+7   1.87256520
+8   1.84841907
+9   1.41572287
+10  1.26683095
+11  1.22350767
+12  1.20344339
+13  0.88654275
+14  0.87256275
+15  0.81224162
+16  0.65813551
+17  0.59853035
+18  0.56052363
+19  0.13681790
+20  0.13227776
+21  0.10299959
+22  0.03168867
+23  0.02908369
+24 -0.36038088
+25 -0.51211021
+26 -0.54785288
+27 -0.57405940
+28 -0.72884065
+29 -0.73722601
+30 -0.79653274</code></pre>
+</div>
+<div id="volcano-plots" class="section level2">
+<h2>Volcano plots</h2>
+<pre class="r"><code>keyvals_z &lt;- rep(&quot;grey70&quot;, nrow(DE_group_z))
+names(keyvals_z) &lt;- rep(&quot;Not significant&quot;, nrow(DE_group_z))
+keyvals_z[DE_group_z$adj.P.Val &lt; 0.1 &amp; DE_group_z$logFC &gt; 0] &lt;- &quot;#A63A2A&quot;
+keyvals_z[DE_group_z$adj.P.Val &lt; 0.1 &amp; DE_group_z$logFC &lt; 0] &lt;- &quot;#004C8C&quot;
+names(keyvals_z)[keyvals_z == &quot;#A63A2A&quot;] &lt;- &quot;Higher in SSc-PAH&quot;
+names(keyvals_z)[keyvals_z == &quot;#004C8C&quot;] &lt;- &quot;Lower in SSc-PAH&quot;
+
+p_volcano_group_z &lt;- EnhancedVolcano(DE_group_z, lab = DE_group_z$Protein, x = &quot;logFC&quot;, y = &quot;adj.P.Val&quot;, labSize = 0,
+  pointSize = 1.4, pCutoff = 0.1, FCcutoff = 0, colCustom = keyvals_z, colAlpha = 1, subtitle = NULL,
+  title = &quot;Zurich: SSc-PAH vs SSc-noPAH&quot;, xlab = &quot;NPX difference (SSc-PAH - SSc-noPAH)&quot;) + theme(legend.position = &quot;none&quot;)
+
+p_volcano_group_z</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/volcano_group_zurich-1.png" width="1260" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>keyvals_p &lt;- rep(&quot;grey70&quot;, nrow(DE_group_p))
+names(keyvals_p) &lt;- rep(&quot;Not significant&quot;, nrow(DE_group_p))
+keyvals_p[DE_group_p$adj.P.Val &lt; 0.1 &amp; DE_group_p$logFC &gt; 0] &lt;- &quot;#A63A2A&quot;
+keyvals_p[DE_group_p$adj.P.Val &lt; 0.1 &amp; DE_group_p$logFC &lt; 0] &lt;- &quot;#004C8C&quot;
+names(keyvals_p)[keyvals_p == &quot;#A63A2A&quot;] &lt;- &quot;Higher in SSc-PAH&quot;
+names(keyvals_p)[keyvals_p == &quot;#004C8C&quot;] &lt;- &quot;Lower in SSc-PAH&quot;
+
+p_volcano_group_p &lt;- EnhancedVolcano(DE_group_p, lab = DE_group_p$Protein, x = &quot;logFC&quot;, y = &quot;adj.P.Val&quot;, labSize = 0,
+  pointSize = 1.4, pCutoff = 0.1, FCcutoff = 0, colCustom = keyvals_p, colAlpha = 1, subtitle = NULL,
+  title = &quot;Poland: SSc-PAH vs SSc-noPAH&quot;, xlab = &quot;NPX difference (SSc-PAH - SSc-noPAH)&quot;) + theme(legend.position = &quot;none&quot;)
+
+p_volcano_group_p</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/volcano_group_poland-1.png" width="1260" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cross-cohort-concordance" class="section level2">
+<h2>Cross-cohort concordance</h2>
+<pre class="r"><code>concordance_group &lt;- inner_join(
+  DE_group_z %&gt;% select(Protein, effect_z = logFC),
+  DE_group_p %&gt;% select(Protein, effect_p = logFC), by = &quot;Protein&quot;
+)
+
+pear_group &lt;- cor.test(concordance_group$effect_z, concordance_group$effect_p, method = &quot;pearson&quot;)
+spear_group &lt;- cor.test(concordance_group$effect_z, concordance_group$effect_p, method = &quot;spearman&quot;, exact = FALSE)
+
+p_concordance_group &lt;- ggplot(concordance_group, aes(effect_z, effect_p)) +
+  geom_hline(yintercept = 0, linewidth = 0.35, color = &quot;grey75&quot;) + geom_vline(xintercept = 0, linewidth = 0.35, color = &quot;grey75&quot;) +
+  geom_point(size = 1.2, alpha = 0.65) + geom_smooth(method = MASS::rlm, formula = y ~ x, se = FALSE, linewidth = 0.8) +
+  labs(x = &quot;Zurich effect&quot;, y = &quot;Poland effect&quot;,
+       title = paste0(&quot;SSc-PAH vs SSc-noPAH\nPearson r = &quot;, round(pear_group$estimate, 2), &quot;; Spearman rho = &quot;, round(spear_group$estimate, 2))) +
+  theme_classic(base_size = 11)
+
+p_concordance_group</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/concordance_group-1.png" width="1380" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;PAH_noPAH_cross_cohort_concordance.png&quot;), p_concordance_group, width = 4.6, height = 4.4, dpi = 300)</code></pre>
+</div>
+<div id="detect-improvement---zurich-only" class="section level2">
+<h2>DETECT improvement - Zurich only</h2>
+<pre class="r"><code>stratified_folds_binary &lt;- function(y, k = 5){
+  folds &lt;- integer(length(y))
+  for (lev in sort(unique(y))){
+    idx &lt;- which(y == lev)
+    idx &lt;- sample(idx)
+    folds[idx] &lt;- rep(seq_len(k), length.out = length(idx))
+  }
+  folds
+}
+
+specificity_at_sensitivity &lt;- function(y, score, target_sensitivity = 0.95){
+  ok &lt;- is.finite(y) &amp; is.finite(score)
+  y &lt;- y[ok]; score &lt;- score[ok]
+  thresholds &lt;- sort(unique(c(Inf, score, -Inf)), decreasing = TRUE)
+  out &lt;- lapply(thresholds, function(th){
+    pred &lt;- ifelse(score &gt;= th, 1, 0)
+    sens &lt;- sum(pred == 1 &amp; y == 1) / sum(y == 1)
+    spec &lt;- sum(pred == 0 &amp; y == 0) / sum(y == 0)
+    c(threshold = th, sensitivity = sens, specificity = spec)
+  }) %&gt;% do.call(rbind, .) %&gt;% as.data.frame()
+  out &lt;- out[out$sensitivity &gt;= target_sensitivity, , drop = FALSE]
+  if (nrow(out) == 0) return(c(threshold = NA, sensitivity = NA, specificity = NA))
+  best &lt;- out[out$specificity == max(out$specificity), , drop = FALSE]
+  best &lt;- best[which.max(best$threshold), , drop = FALSE]
+  unlist(best[1, ])
+}
+
+calc_auc &lt;- function(y, score){
+  as.numeric(pROC::auc(pROC::roc(y, score, levels = c(0, 1), quiet = TRUE, direction = &quot;&lt;&quot;)))
+}</code></pre>
+<pre class="r"><code>detect_df &lt;- z_all %&gt;%
+  filter(Group %in% c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH&quot;), !is.na(DETECT_score)) %&gt;%
+  filter(Barcode %in% colnames(data_z)) %&gt;%
+  mutate(y = ifelse(Group == &quot;SSc-PAH&quot;, 1, 0))
+
+X_detect_prot &lt;- t(as.matrix(data_z[common_proteins, detect_df$Barcode, drop = FALSE]))
+y_detect &lt;- detect_df$y
+detect_score &lt;- detect_df$DETECT_score
+
+set.seed(1)
+R_detect &lt;- 50
+K_detect &lt;- 5
+pred_sum_detect &lt;- matrix(0, nrow = nrow(detect_df), ncol = 3, dimnames = list(detect_df$Barcode, c(&quot;DETECT&quot;, &quot;Proteomics&quot;, &quot;DETECT_plus_proteomics&quot;)))
+pred_n_detect &lt;- matrix(0, nrow = nrow(detect_df), ncol = 3, dimnames = list(detect_df$Barcode, c(&quot;DETECT&quot;, &quot;Proteomics&quot;, &quot;DETECT_plus_proteomics&quot;)))
+selected_n_detect &lt;- c()
+
+for (r in seq_len(R_detect)){
+  folds &lt;- stratified_folds_binary(y_detect, K_detect)
+
+  for (f in seq_len(K_detect)){
+    tr &lt;- which(folds != f)
+    te &lt;- which(folds == f)
+
+    p_detect &lt;- detect_score[te]
+
+    inner_fold &lt;- stratified_folds_binary(y_detect[tr], 5)
+    fit_prot &lt;- cv.glmnet(X_detect_prot[tr, , drop = FALSE], y_detect[tr], family = &quot;binomial&quot;, alpha = 1,
+                          foldid = inner_fold, type.measure = &quot;auc&quot;, standardize = TRUE)
+    p_prot &lt;- as.numeric(predict(fit_prot, newx = X_detect_prot[te, , drop = FALSE], s = &quot;lambda.1se&quot;, type = &quot;response&quot;))
+
+    X_comb_tr &lt;- cbind(DETECT = detect_score[tr], X_detect_prot[tr, , drop = FALSE])
+    X_comb_te &lt;- cbind(DETECT = detect_score[te], X_detect_prot[te, , drop = FALSE])
+    penalty_comb &lt;- c(0, rep(1, ncol(X_detect_prot)))
+    fit_comb &lt;- cv.glmnet(X_comb_tr, y_detect[tr], family = &quot;binomial&quot;, alpha = 1, foldid = inner_fold,
+                          type.measure = &quot;auc&quot;, standardize = TRUE, penalty.factor = penalty_comb)
+    p_comb &lt;- as.numeric(predict(fit_comb, newx = X_comb_te, s = &quot;lambda.1se&quot;, type = &quot;response&quot;))
+
+    pred_sum_detect[te, &quot;DETECT&quot;] &lt;- pred_sum_detect[te, &quot;DETECT&quot;] + p_detect
+    pred_sum_detect[te, &quot;Proteomics&quot;] &lt;- pred_sum_detect[te, &quot;Proteomics&quot;] + p_prot
+    pred_sum_detect[te, &quot;DETECT_plus_proteomics&quot;] &lt;- pred_sum_detect[te, &quot;DETECT_plus_proteomics&quot;] + p_comb
+    pred_n_detect[te, ] &lt;- pred_n_detect[te, ] + 1
+
+    b &lt;- as.matrix(coef(fit_prot, s = &quot;lambda.1se&quot;))[-1, 1]
+    selected_n_detect &lt;- c(selected_n_detect, sum(b != 0))
+  }
+}
+
+detect_oof &lt;- pred_sum_detect / pred_n_detect
+
+detect_pred_df &lt;- data.frame(Barcode = detect_df$Barcode, y = y_detect, DETECT = detect_oof[, &quot;DETECT&quot;],
+                             Proteomics = detect_oof[, &quot;Proteomics&quot;], DETECT_plus_proteomics = detect_oof[, &quot;DETECT_plus_proteomics&quot;])
+write.csv(detect_pred_df, here::here(output_dir_data, &quot;DETECT_repeatedCV_predictions.csv&quot;), row.names = FALSE)
+summary(selected_n_detect)</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    3.00   13.50   13.37   22.00   41.00 </code></pre>
+<pre class="r"><code>get_detect_perf &lt;- function(score, model_name){
+  ss &lt;- specificity_at_sensitivity(y_detect, score, 0.95)
+  data.frame(Model = model_name, AUC = calc_auc(y_detect, score), Sensitivity = unname(ss[&quot;sensitivity&quot;]), Specificity_at_95_sensitivity = unname(ss[&quot;specificity&quot;]),
+             Threshold = unname(ss[&quot;threshold&quot;]), Negative_RHCs_avoided = round(unname(ss[&quot;specificity&quot;]) * sum(y_detect == 0)))
+}
+
+detect_perf &lt;- bind_rows(
+  get_detect_perf(detect_oof[, &quot;DETECT&quot;], &quot;DETECT&quot;),
+  get_detect_perf(detect_oof[, &quot;Proteomics&quot;], &quot;Proteomics&quot;),
+  get_detect_perf(detect_oof[, &quot;DETECT_plus_proteomics&quot;], &quot;DETECT + proteomics&quot;)
+)
+
+set.seed(2)
+B_detect &lt;- 2000
+boot_detect &lt;- vector(&quot;list&quot;, B_detect)
+
+for (b in seq_len(B_detect)){
+  idx &lt;- sample(seq_len(nrow(detect_df)), replace = TRUE)
+  yb &lt;- y_detect[idx]
+  if (length(unique(yb)) &lt; 2) next
+
+  vals &lt;- lapply(c(&quot;DETECT&quot;, &quot;Proteomics&quot;, &quot;DETECT_plus_proteomics&quot;), function(m){
+    sc &lt;- detect_oof[idx, m]
+    ss &lt;- specificity_at_sensitivity(yb, sc, 0.95)
+    c(AUC = calc_auc(yb, sc), Spec95 = unname(ss[&quot;specificity&quot;]))
+  })
+
+  boot_detect[[b]] &lt;- data.frame(
+    DETECT_AUC = vals[[1]][&quot;AUC&quot;], Proteomics_AUC = vals[[2]][&quot;AUC&quot;], Combined_AUC = vals[[3]][&quot;AUC&quot;],
+    DETECT_Spec95 = vals[[1]][&quot;Spec95&quot;], Proteomics_Spec95 = vals[[2]][&quot;Spec95&quot;], Combined_Spec95 = vals[[3]][&quot;Spec95&quot;]
+  )
+}
+
+boot_detect &lt;- bind_rows(boot_detect)
+
+detect_ci &lt;- data.frame(
+  Model = c(&quot;DETECT&quot;, &quot;Proteomics&quot;, &quot;DETECT + proteomics&quot;),
+  AUC_low = c(quantile(boot_detect$DETECT_AUC, 0.025, na.rm = TRUE), quantile(boot_detect$Proteomics_AUC, 0.025, na.rm = TRUE), quantile(boot_detect$Combined_AUC, 0.025, na.rm = TRUE)),
+  AUC_high = c(quantile(boot_detect$DETECT_AUC, 0.975, na.rm = TRUE), quantile(boot_detect$Proteomics_AUC, 0.975, na.rm = TRUE), quantile(boot_detect$Combined_AUC, 0.975, na.rm = TRUE)),
+  Spec95_low = c(quantile(boot_detect$DETECT_Spec95, 0.025, na.rm = TRUE), quantile(boot_detect$Proteomics_Spec95, 0.025, na.rm = TRUE), quantile(boot_detect$Combined_Spec95, 0.025, na.rm = TRUE)),
+  Spec95_high = c(quantile(boot_detect$DETECT_Spec95, 0.975, na.rm = TRUE), quantile(boot_detect$Proteomics_Spec95, 0.975, na.rm = TRUE), quantile(boot_detect$Combined_Spec95, 0.975, na.rm = TRUE))
+)
+
+detect_perf &lt;- left_join(detect_perf, detect_ci, by = &quot;Model&quot;)
+detect_perf</code></pre>
+<pre><code>                Model       AUC Sensitivity Specificity_at_95_sensitivity
+1              DETECT 0.7699074   0.9666667                             0
+2          Proteomics 0.6333333   0.9666667                             0
+3 DETECT + proteomics 0.7546296   0.9666667                             0
+    Threshold Negative_RHCs_avoided   AUC_low  AUC_high Spec95_low Spec95_high
+1 26.55923473                     0 0.6372200 0.8860362          0   0.5000000
+2  0.28310054                     0 0.4897917 0.7719930          0   0.4186659
+3  0.05777724                     0 0.6175876 0.8759202          0   0.4737171</code></pre>
+<pre class="r"><code>write.csv(detect_perf, here::here(output_dir_data, &quot;DETECT_model_performance.csv&quot;), row.names = FALSE)
+
+detect_delta &lt;- data.frame(
+  Comparison = c(&quot;Proteomics - DETECT&quot;, &quot;DETECT + proteomics - DETECT&quot;),
+  Delta_AUC = c(mean(boot_detect$Proteomics_AUC - boot_detect$DETECT_AUC, na.rm = TRUE), mean(boot_detect$Combined_AUC - boot_detect$DETECT_AUC, na.rm = TRUE)),
+  AUC_low = c(quantile(boot_detect$Proteomics_AUC - boot_detect$DETECT_AUC, 0.025, na.rm = TRUE), quantile(boot_detect$Combined_AUC - boot_detect$DETECT_AUC, 0.025, na.rm = TRUE)),
+  AUC_high = c(quantile(boot_detect$Proteomics_AUC - boot_detect$DETECT_AUC, 0.975, na.rm = TRUE), quantile(boot_detect$Combined_AUC - boot_detect$DETECT_AUC, 0.975, na.rm = TRUE)),
+  Delta_Spec95 = c(mean(boot_detect$Proteomics_Spec95 - boot_detect$DETECT_Spec95, na.rm = TRUE), mean(boot_detect$Combined_Spec95 - boot_detect$DETECT_Spec95, na.rm = TRUE)),
+  Spec95_low = c(quantile(boot_detect$Proteomics_Spec95 - boot_detect$DETECT_Spec95, 0.025, na.rm = TRUE), quantile(boot_detect$Combined_Spec95 - boot_detect$DETECT_Spec95, 0.025, na.rm = TRUE)),
+  Spec95_high = c(quantile(boot_detect$Proteomics_Spec95 - boot_detect$DETECT_Spec95, 0.975, na.rm = TRUE), quantile(boot_detect$Combined_Spec95 - boot_detect$DETECT_Spec95, 0.975, na.rm = TRUE))
+)
+
+detect_delta</code></pre>
+<pre><code>                    Comparison   Delta_AUC     AUC_low     AUC_high
+1          Proteomics - DETECT -0.13771705 -0.27120459 -0.002263391
+2 DETECT + proteomics - DETECT -0.01523528 -0.03076976 -0.004326923
+  Delta_Spec95  Spec95_low Spec95_high
+1 -0.068677901 -0.44458333    0.135229
+2 -0.007480599 -0.06985252    0.000000</code></pre>
+<pre class="r"><code>write.csv(detect_delta, here::here(output_dir_data, &quot;DETECT_incremental_performance.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>roc_detect &lt;- pROC::roc(y_detect, detect_oof[, &quot;DETECT&quot;], quiet = TRUE, direction = &quot;&lt;&quot;)
+roc_prot &lt;- pROC::roc(y_detect, detect_oof[, &quot;Proteomics&quot;], quiet = TRUE, direction = &quot;&lt;&quot;)
+roc_comb &lt;- pROC::roc(y_detect, detect_oof[, &quot;DETECT_plus_proteomics&quot;], quiet = TRUE, direction = &quot;&lt;&quot;)
+
+roc_detect_df &lt;- bind_rows(
+  data.frame(FPR = 1 - roc_detect$specificities, Sensitivity = roc_detect$sensitivities, Model = &quot;DETECT&quot;),
+  data.frame(FPR = 1 - roc_prot$specificities, Sensitivity = roc_prot$sensitivities, Model = &quot;Proteomics&quot;),
+  data.frame(FPR = 1 - roc_comb$specificities, Sensitivity = roc_comb$sensitivities, Model = &quot;DETECT + proteomics&quot;)
+) %&gt;% arrange(Model, FPR, Sensitivity)
+
+roc_cols &lt;- c(&quot;DETECT&quot; = &quot;grey40&quot;, &quot;Proteomics&quot; = &quot;#004C8C&quot;, &quot;DETECT + proteomics&quot; = &quot;#A63A2A&quot;)
+
+p_detect_roc &lt;- ggplot(roc_detect_df, aes(FPR, Sensitivity, color = Model)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;grey75&quot;) + geom_step(direction = &quot;hv&quot;, linewidth = 0.9) +
+  scale_color_manual(values = roc_cols) + coord_equal() + labs(x = &quot;1 - Specificity&quot;, y = &quot;Sensitivity&quot;, title = &quot;Zurich DETECT-positive cohort&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;bottom&quot;)
+
+p_detect_spec &lt;- detect_perf %&gt;%
+  mutate(Model = factor(Model, levels = c(&quot;DETECT&quot;, &quot;Proteomics&quot;, &quot;DETECT + proteomics&quot;))) %&gt;%
+  ggplot(aes(Model, Specificity_at_95_sensitivity, color = Model)) + geom_point(size = 3) +
+  geom_errorbar(aes(ymin = Spec95_low, ymax = Spec95_high), width = 0.12) + scale_color_manual(values = roc_cols) +
+  coord_cartesian(ylim = c(0, 1)) + labs(x = NULL, y = &quot;Specificity at &gt;=95% sensitivity&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 20, hjust = 1))
+
+p_detect_roc + p_detect_spec</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/detect_plots-1.png" width="3000" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;DETECT_performance_panels.png&quot;), p_detect_roc + p_detect_spec, width = 10, height = 4.5, dpi = 300)</code></pre>
+<pre class="r"><code>Figure2 &lt;- (p_volcano_group_z | p_volcano_group_p | p_concordance_group) / (p_detect_roc | p_detect_spec | plot_spacer()) +
+  plot_annotation(tag_levels = &quot;A&quot;)
+Figure2</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/figure2_detect-1.png" width="3600" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure2_PAH_DETECT.png&quot;), Figure2, width = 12, height = 8.5, dpi = 300)</code></pre>
+</div>
+</div>
+<div id="aim-2-impaired-rv-pa-coupling" class="section level1">
+<h1>Aim 2: Impaired RV-PA coupling</h1>
+<div id="differential-abundance---zurich" class="section level2">
+<h2>Differential abundance - Zurich</h2>
+<pre class="r"><code>meta_z_coupling &lt;- z_pah %&gt;%
+  filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  mutate(TAPSE_group = ifelse(TAPSE_sPAP &lt;= 0.32, &quot;Impaired&quot;, &quot;Preserved&quot;),
+         TAPSE_group = factor(TAPSE_group, levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;)), Age_z = as.numeric(scale(Age))) %&gt;%
+  column_to_rownames(&quot;Barcode&quot;)
+
+expr_z_coupling &lt;- as.matrix(data_z[, rownames(meta_z_coupling), drop = FALSE])
+design_z_coupling &lt;- model.matrix(~ TAPSE_group + Age_z + Sex, data = meta_z_coupling)
+fit_z_coupling &lt;- eBayes(lmFit(expr_z_coupling, design_z_coupling))
+
+DE_coupling_z &lt;- topTable(fit_z_coupling, coef = &quot;TAPSE_groupImpaired&quot;, number = Inf, adjust.method = &quot;BH&quot;) %&gt;% rownames_to_column(&quot;Protein&quot;)
+write.csv(DE_coupling_z, here::here(output_dir_data, &quot;DE_impaired_vs_preserved_RVPA_Zurich.csv&quot;), row.names = FALSE)
+DE_coupling_z %&gt;% filter(adj.P.Val &lt; 0.1) %&gt;% arrange(adj.P.Val) %&gt;% head(30)</code></pre>
+<pre><code>     Protein     logFC     AveExpr        t      P.Value   adj.P.Val
+1     CFAP36 0.9337070  0.05590769 5.233166 1.973773e-05 0.008455739
+2     TARBP2 0.9774879  0.17989615 5.214120 2.073702e-05 0.008455739
+3      SUMO1 1.0908184 -0.34851154 5.149342 2.453309e-05 0.008455739
+4    SEPTIN8 1.0318151  1.41127308 4.818071 5.809019e-05 0.013570747
+5      LCN15 1.9294293  0.83875385 4.771290 6.562257e-05 0.013570747
+6        KEL 0.8751361  0.24353077 4.584151 1.068846e-04 0.015967916
+7     TGFBR1 0.9796213  0.52162308 4.579812 1.081000e-04 0.015967916
+8      STK11 0.9332130  0.23613077 4.451392 1.510547e-04 0.018111820
+9     METAP2 1.4460872  0.86430000 4.434988 1.576464e-04 0.018111820
+10     PRDX1 1.1270223  0.54387692 4.388218 1.780555e-04 0.018222406
+11     UBL4A 0.9705366  1.18296923 4.325674 2.095116e-04 0.018222406
+12      DFFA 1.0591603  0.98069231 4.253325 2.528427e-04 0.018222406
+13   PRKAR2A 1.0783043  1.19598462 4.184637 3.021735e-04 0.018222406
+14     MKI67 1.2532862  0.50478846 4.183027 3.034378e-04 0.018222406
+15    BNIP3L 0.9333884  0.10916923 4.171922 3.123009e-04 0.018222406
+16     FGF23 2.1823460  0.10372692 4.144074 3.356701e-04 0.018222406
+17     PSMD1 1.5465561  1.38612692 4.131351 3.469152e-04 0.018222406
+18 TNFRSF10B 1.0695521  1.42198846 4.115823 3.611465e-04 0.018222406
+19    NT5C1A 1.1681922  0.35976154 4.110399 3.662524e-04 0.018222406
+20  RABGAP1L 1.2809018  0.56186538 4.106526 3.699424e-04 0.018222406
+21    EIF2S2 1.2813626  0.87023077 4.091077 3.850286e-04 0.018222406
+22      USO1 0.9537847  0.83120000 4.088393 3.877108e-04 0.018222406
+23     FKBP4 1.2116993  1.27207308 4.040012 4.393584e-04 0.018942499
+24  ATP6V1G1 0.9971433  1.10233077 4.039737 4.396712e-04 0.018942499
+25     CDC26 0.7396379  0.62548462 4.009344 4.755596e-04 0.019127448
+26     DCTN1 1.2227691  2.66245000 3.963950 5.346105e-04 0.019127448
+27    PTPN11 1.0956173  0.53935385 3.960406 5.395139e-04 0.019127448
+28     AKAP8 0.9000525  1.13752308 3.959329 5.410129e-04 0.019127448
+29     EBAG9 0.7864832 -0.16524231 3.942870 5.644382e-04 0.019127448
+30     FKBP5 1.4573064  1.76230385 3.942081 5.655859e-04 0.019127448
+             B
+1   2.88085301
+2   2.83520437
+3   2.67980062
+4   1.88238564
+5   1.76955080
+6   1.31808331
+7   1.30761979
+8   0.99804831
+9   0.95853701
+10  0.84593453
+11  0.69549823
+12  0.52172322
+13  0.35703755
+14  0.35318048
+15  0.32658624
+16  0.25993920
+17  0.22951078
+18  0.19239010
+19  0.17942862
+20  0.17017388
+21  0.13327612
+22  0.12686839
+23  0.01146204
+24  0.01080549
+25 -0.06157732
+26 -0.16950801
+27 -0.17792480
+28 -0.18048253
+29 -0.21955392
+30 -0.22142616</code></pre>
+</div>
+<div id="differential-abundance---poland" class="section level2">
+<h2>Differential abundance - Poland</h2>
+<p>The Polish discovery analysis uses all SSc patients with available
+TAPSE/sPAP. SSc-noPAH patients all fall in the preserved/non-impaired
+group and are therefore included in the development phenotype.</p>
+<pre class="r"><code>meta_p_coupling &lt;- p_all %&gt;%
+  filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex)) %&gt;%
+  mutate(TAPSE_group = ifelse(TAPSE_sPAP &lt;= 0.32, &quot;Impaired&quot;, &quot;Preserved&quot;),
+         TAPSE_group = factor(TAPSE_group, levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;)), Age_z = as.numeric(scale(Age))) %&gt;%
+  column_to_rownames(&quot;Barcode&quot;)
+
+expr_p_coupling &lt;- as.matrix(data_p[, rownames(meta_p_coupling), drop = FALSE])
+design_p_coupling &lt;- model.matrix(~ TAPSE_group + Age_z + Sex, data = meta_p_coupling)
+fit_p_coupling &lt;- eBayes(lmFit(expr_p_coupling, design_p_coupling))
+
+DE_coupling_p &lt;- topTable(fit_p_coupling, coef = &quot;TAPSE_groupImpaired&quot;, number = Inf, adjust.method = &quot;BH&quot;) %&gt;% rownames_to_column(&quot;Protein&quot;)
+write.csv(DE_coupling_p, here::here(output_dir_data, &quot;DE_impaired_vs_preserved_RVPA_Poland_all_SSc.csv&quot;), row.names = FALSE)
+DE_coupling_p %&gt;% filter(adj.P.Val &lt; 0.1) %&gt;% arrange(adj.P.Val) %&gt;% head(30)</code></pre>
+<pre><code>     Protein      logFC    AveExpr         t      P.Value    adj.P.Val
+1     CLSTN2  0.8608327 0.31567960  5.389529 9.384115e-07 0.0005306546
+2      RSPO1  0.6116502 0.22392822  5.366565 1.026411e-06 0.0005306546
+3      FGF23  1.4540186 0.55250202  4.987074 4.422365e-06 0.0015242417
+4      PRELP  0.5193187 0.03154992  4.884279 6.521182e-06 0.0016857256
+5   CEACAM16 -1.1743897 0.22940480 -4.724914 1.182760e-05 0.0024459467
+6     CXCL17  0.8961132 0.27049679  4.581477 2.006323e-05 0.0034575630
+7        ADM  0.6913191 0.16010914  4.419191 3.615276e-05 0.0053402786
+8  TNFRSF10B  0.6997986 0.18083954  4.300924 5.517470e-05 0.0063214150
+9        HGF  0.5807348 0.09800409  4.279984 5.942837e-05 0.0063214150
+10     TAFA5  0.5224038 0.19526320  4.271986 6.113554e-05 0.0063214150
+11   SIGLEC8  0.5584893 0.20185859  4.238890 6.871728e-05 0.0064594242
+12      ACE2  0.8413462 0.35164568  4.109402 1.080936e-04 0.0093140682
+13      EBI3  0.4883530 0.11958517  4.063049 1.269010e-04 0.0100935139
+14      IL15  0.4525392 0.10797966  3.983440 1.667819e-04 0.0123180355
+15     PALM2  0.6107657 0.09786160  3.892089 2.274059e-04 0.0154412580
+16      OCLN  0.6212080 0.07767945  3.855162 2.574869e-04 0.0154412580
+17     EDA2R  0.7533139 0.22189782  3.841776 2.693056e-04 0.0154412580
+18    SCARB2  0.6399535 0.27589488  3.810500 2.989762e-04 0.0154412580
+19      LAG3  0.6524608 0.23209586  3.808120 3.013580e-04 0.0154412580
+20       HRC  0.3038139 0.07219783  3.804332 3.051859e-04 0.0154412580
+21     CALCB  0.5105580 0.15552943  3.788430 3.217701e-04 0.0154412580
+22     MUC16  1.0665007 0.37166757  3.782166 3.285374e-04 0.0154412580
+23     CD302  0.4228059 0.18578958  3.759548 3.541197e-04 0.0159199913
+24  TNFRSF19  0.5289501 0.22943658  3.678930 4.616793e-04 0.0190337598
+25     LMOD1  0.4223712 0.05643486  3.654767 4.995655e-04 0.0190337598
+26    EGFLAM  0.4542714 0.14518334  3.647716 5.111688e-04 0.0190337598
+27    PTPRN2  0.4783467 0.04910628  3.647706 5.111853e-04 0.0190337598
+28    RAET1L  0.5089452 0.24663897  3.621109 5.573040e-04 0.0190337598
+29    ACVRL1  0.4097379 0.07754148  3.619254 5.606634e-04 0.0190337598
+30     CXCL8  0.9004425 0.33732976  3.614132 5.700426e-04 0.0190337598
+             B
+1   5.49933003
+2   5.41603119
+3   4.06022107
+4   3.70031155
+5   3.14920948
+6   2.66079812
+7   2.11751927
+8   1.72821936
+9   1.65989786
+10  1.63384926
+11  1.52635905
+12  1.11039954
+13  0.96332870
+14  0.71306656
+15  0.42961090
+16  0.31618699
+17  0.27523598
+18  0.17991218
+19  0.17267821
+20  0.16117136
+21  0.11294258
+22  0.09397758
+23  0.02567607
+24 -0.21561863
+25 -0.28727354
+26 -0.30812613
+27 -0.30815536
+28 -0.38656712
+29 -0.39202060
+30 -0.40707368</code></pre>
+</div>
+<div id="differential-abundance-plots" class="section level2">
+<h2>Differential abundance plots</h2>
+<pre class="r"><code>keyvals_cz &lt;- rep(&quot;grey70&quot;, nrow(DE_coupling_z)); names(keyvals_cz) &lt;- rep(&quot;Not significant&quot;, nrow(DE_coupling_z))
+keyvals_cz[DE_coupling_z$adj.P.Val &lt; 0.1 &amp; DE_coupling_z$logFC &gt; 0] &lt;- &quot;#A63A2A&quot;
+keyvals_cz[DE_coupling_z$adj.P.Val &lt; 0.1 &amp; DE_coupling_z$logFC &lt; 0] &lt;- &quot;#004C8C&quot;
+names(keyvals_cz)[keyvals_cz == &quot;#A63A2A&quot;] &lt;- &quot;Higher with impaired coupling&quot;
+names(keyvals_cz)[keyvals_cz == &quot;#004C8C&quot;] &lt;- &quot;Lower with impaired coupling&quot;
+
+keyvals_cp &lt;- rep(&quot;grey70&quot;, nrow(DE_coupling_p)); names(keyvals_cp) &lt;- rep(&quot;Not significant&quot;, nrow(DE_coupling_p))
+keyvals_cp[DE_coupling_p$adj.P.Val &lt; 0.1 &amp; DE_coupling_p$logFC &gt; 0] &lt;- &quot;#A63A2A&quot;
+keyvals_cp[DE_coupling_p$adj.P.Val &lt; 0.1 &amp; DE_coupling_p$logFC &lt; 0] &lt;- &quot;#004C8C&quot;
+names(keyvals_cp)[keyvals_cp == &quot;#A63A2A&quot;] &lt;- &quot;Higher with impaired coupling&quot;
+names(keyvals_cp)[keyvals_cp == &quot;#004C8C&quot;] &lt;- &quot;Lower with impaired coupling&quot;
+
+p_coupling_z &lt;- EnhancedVolcano(DE_coupling_z, lab = DE_coupling_z$Protein, x = &quot;logFC&quot;, y = &quot;adj.P.Val&quot;, labSize = 0,
+  pointSize = 1.4, pCutoff = 0.1, FCcutoff = 0, colCustom = keyvals_cz, colAlpha = 1, subtitle = NULL,
+  title = &quot;Zurich SSc-PAH&quot;, xlab = &quot;NPX difference (impaired - preserved)&quot;) + theme(legend.position = &quot;none&quot;)
+
+p_coupling_p &lt;- EnhancedVolcano(DE_coupling_p, lab = DE_coupling_p$Protein, x = &quot;logFC&quot;, y = &quot;adj.P.Val&quot;, labSize = 0,
+  pointSize = 1.4, pCutoff = 0.1, FCcutoff = 0, colCustom = keyvals_cp, colAlpha = 1, subtitle = NULL,
+  title = &quot;Poland all SSc&quot;, xlab = &quot;NPX difference (impaired - preserved)&quot;) + theme(legend.position = &quot;none&quot;)
+
+concordance_coupling &lt;- inner_join(
+  DE_coupling_z %&gt;% select(Protein, effect_z = logFC),
+  DE_coupling_p %&gt;% select(Protein, effect_p = logFC), by = &quot;Protein&quot;
+)
+
+pear_coupling &lt;- cor.test(concordance_coupling$effect_z, concordance_coupling$effect_p, method = &quot;pearson&quot;)
+spear_coupling &lt;- cor.test(concordance_coupling$effect_z, concordance_coupling$effect_p, method = &quot;spearman&quot;, exact = FALSE)
+
+p_concordance_coupling &lt;- ggplot(concordance_coupling, aes(effect_z, effect_p)) +
+  geom_hline(yintercept = 0, linewidth = 0.35, color = &quot;grey75&quot;) + geom_vline(xintercept = 0, linewidth = 0.35, color = &quot;grey75&quot;) +
+  geom_point(size = 1.2, alpha = 0.65) + geom_smooth(method = MASS::rlm, formula = y ~ x, se = FALSE, linewidth = 0.8) +
+  labs(x = &quot;Zurich effect&quot;, y = &quot;Poland effect&quot;,
+       title = paste0(&quot;Impaired vs preserved\nPearson r = &quot;, round(pear_coupling$estimate, 2), &quot;; Spearman rho = &quot;, round(spear_coupling$estimate, 2))) +
+  theme_classic(base_size = 11)
+
+Figure3 &lt;- (p_coupling_p | p_coupling_z | p_concordance_coupling) + plot_annotation(tag_levels = &quot;A&quot;)
+Figure3</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/coupling_volcano_concordance-1.png" width="3600" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure3_impaired_RVPA_proteomics.png&quot;), Figure3, width = 12, height = 4.5, dpi = 300)</code></pre>
+</div>
+</div>
+<div id="protein-panel-development-in-poland" class="section level1">
+<h1>Protein panel development in Poland</h1>
+<p>The development cohort includes all Polish SSc patients with
+TAPSE/sPAP available. TAPSE/sPAP &lt;= 0.32 defines impaired RV-PA
+coupling; all patients above 0.32 are classified as
+preserved/non-impaired. External validation remains restricted to Zurich
+SSc-PAH patients.</p>
+<div id="prepare-development-and-external-validation-cohorts"
+class="section level2">
+<h2>Prepare development and external validation cohorts</h2>
+<pre class="r"><code>p_dev &lt;- p_all %&gt;%
+  filter(!is.na(TAPSE_sPAP), !is.na(Age), !is.na(Sex), Barcode %in% colnames(data_p)) %&gt;%
+  arrange(Barcode) %&gt;%
+  mutate(y_impaired = ifelse(TAPSE_sPAP &lt;= 0.32, 1, 0), Impaired = y_impaired,
+         TAPSE_group = factor(ifelse(y_impaired == 1, &quot;Impaired&quot;, &quot;Preserved&quot;), levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;)))
+
+z_val &lt;- z_pah %&gt;%
+  filter(!is.na(TAPSE_sPAP), Barcode %in% colnames(data_z)) %&gt;%
+  arrange(Barcode) %&gt;%
+  mutate(y_impaired = ifelse(TAPSE_sPAP &lt;= 0.32, 1, 0), Impaired = y_impaired,
+         TAPSE_group = factor(ifelse(y_impaired == 1, &quot;Impaired&quot;, &quot;Preserved&quot;), levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;)))
+
+cat(&quot;Poland development cohort n =&quot;, nrow(p_dev), &quot;\n&quot;)</code></pre>
+<pre><code>Poland development cohort n = 69 </code></pre>
+<pre class="r"><code>print(table(p_dev$Group, p_dev$TAPSE_group))</code></pre>
+<pre><code>           
+            Preserved Impaired
+  SSc-noPAH        31        0
+  SSc-PAH          14       24</code></pre>
+<pre class="r"><code>cat(&quot;Zurich external validation SSc-PAH n =&quot;, nrow(z_val), &quot;\n&quot;)</code></pre>
+<pre><code>Zurich external validation SSc-PAH n = 26 </code></pre>
+<pre class="r"><code>print(table(z_val$TAPSE_group))</code></pre>
+<pre><code>
+Preserved  Impaired 
+       20         6 </code></pre>
+</div>
+<div id="candidate-ranking-in-poland" class="section level2">
+<h2>Candidate ranking in Poland</h2>
+<p>The top 50 proteins ranked by the absolute moderated limma
+t-statistic in the full Polish development cohort are used as the final
+candidate pool. For estimation of internal predictive performance and
+panel size, the limma ranking is repeated inside each outer
+cross-validation training fold. For bootstrap stability selection, the
+top 50 candidates from the full Polish development cohort are kept
+fixed.</p>
+<pre class="r"><code>candidate_n &lt;- 50
+candidate_ranking_p &lt;- DE_coupling_p %&gt;% filter(Protein %in% common_proteins) %&gt;% arrange(desc(abs(t)))
+candidate_proteins &lt;- candidate_ranking_p$Protein[seq_len(min(candidate_n, nrow(candidate_ranking_p)))]
+
+candidate_ranking_p %&gt;% select(Protein, logFC, t, P.Value, adj.P.Val) %&gt;% head(50)</code></pre>
+<pre><code>     Protein      logFC         t      P.Value    adj.P.Val
+1     CLSTN2  0.8608327  5.389529 9.384115e-07 0.0005306546
+2      RSPO1  0.6116502  5.366565 1.026411e-06 0.0005306546
+3      FGF23  1.4540186  4.987074 4.422365e-06 0.0015242417
+4      PRELP  0.5193187  4.884279 6.521182e-06 0.0016857256
+5   CEACAM16 -1.1743897 -4.724914 1.182760e-05 0.0024459467
+6     CXCL17  0.8961132  4.581477 2.006323e-05 0.0034575630
+7        ADM  0.6913191  4.419191 3.615276e-05 0.0053402786
+8  TNFRSF10B  0.6997986  4.300924 5.517470e-05 0.0063214150
+9        HGF  0.5807348  4.279984 5.942837e-05 0.0063214150
+10     TAFA5  0.5224038  4.271986 6.113554e-05 0.0063214150
+11   SIGLEC8  0.5584893  4.238890 6.871728e-05 0.0064594242
+12      ACE2  0.8413462  4.109402 1.080936e-04 0.0093140682
+13      IL15  0.4525392  3.983440 1.667819e-04 0.0123180355
+14     PALM2  0.6107657  3.892089 2.274059e-04 0.0154412580
+15      OCLN  0.6212080  3.855162 2.574869e-04 0.0154412580
+16     EDA2R  0.7533139  3.841776 2.693056e-04 0.0154412580
+17    SCARB2  0.6399535  3.810500 2.989762e-04 0.0154412580
+18      LAG3  0.6524608  3.808120 3.013580e-04 0.0154412580
+19       HRC  0.3038139  3.804332 3.051859e-04 0.0154412580
+20     CALCB  0.5105580  3.788430 3.217701e-04 0.0154412580
+21     MUC16  1.0665007  3.782166 3.285374e-04 0.0154412580
+22     CD302  0.4228059  3.759548 3.541197e-04 0.0159199913
+23  TNFRSF19  0.5289501  3.678930 4.616793e-04 0.0190337598
+24     LMOD1  0.4223712  3.654767 4.995655e-04 0.0190337598
+25    EGFLAM  0.4542714  3.647716 5.111688e-04 0.0190337598
+26    PTPRN2  0.4783467  3.647706 5.111853e-04 0.0190337598
+27    ACVRL1  0.4097379  3.619254 5.606634e-04 0.0190337598
+28     CXCL8  0.9004425  3.614132 5.700426e-04 0.0190337598
+29     FGF21  1.4491231  3.597803 6.009485e-04 0.0190337598
+30    CLSTN3  0.4327473  3.590740 6.148024e-04 0.0190337598
+31      LIPF -0.7735955 -3.586288 6.236917e-04 0.0190337598
+32     IFI30  0.6075675  3.585207 6.258683e-04 0.0190337598
+33      CFC1  0.4684544  3.542424 7.180541e-04 0.0210617694
+34    BAIAP2  0.8602985  3.535860 7.332918e-04 0.0210617694
+35      CD38  0.4248115  3.525268 7.585291e-04 0.0211978126
+36     LRRN1 -0.4299838 -3.512639 7.896941e-04 0.0214879934
+37      NOS3  0.8116233  3.489981 8.486760e-04 0.0225007953
+38       DCN  0.2839730  3.477713 8.823321e-04 0.0228082859
+39      BMP4  0.4385095  3.462500 9.258215e-04 0.0233487656
+40     RSPO3  0.4907675  3.449446 9.647482e-04 0.0237511809
+41     NUCB2  0.4744648  3.372001 1.229472e-03 0.0282135701
+42      CSF2  0.3192998  3.368536 1.242787e-03 0.0282135701
+43      XCL1  0.4879974  3.366620 1.250209e-03 0.0282135701
+44     EVA1C  0.3806149  3.365351 1.255149e-03 0.0282135701
+45    SPOCK1  0.3817734  3.355105 1.295700e-03 0.0285054035
+46     CALCA  0.9290913  3.321502 1.437542e-03 0.0302900908
+47    NT5C1A  0.5805341  3.318548 1.450687e-03 0.0302900908
+48  ADAMTSL4  0.5049419  3.311821 1.481046e-03 0.0302900908
+49   TNFSF13  0.3706715  3.308991 1.493999e-03 0.0302900908
+50    CLEC4A -0.4143393 -3.302211 1.525456e-03 0.0303331124</code></pre>
+<pre class="r"><code>write.csv(candidate_ranking_p, here::here(output_dir_data, &quot;Poland_RVPA_candidate_ranking.csv&quot;), row.names = FALSE)
+write.csv(candidate_ranking_p %&gt;% slice_head(n = candidate_n), here::here(output_dir_data, &quot;Poland_RVPA_top50_candidates.csv&quot;), row.names = FALSE)</code></pre>
+</div>
+<div id="helper-functions" class="section level2">
+<h2>Helper functions</h2>
+<pre class="r"><code>make_stratified_folds &lt;- function(y, k = 5){
+  fold_id &lt;- integer(length(y))
+  for (cl in sort(unique(y))){
+    ids &lt;- sample(which(y == cl))
+    fold_id[ids] &lt;- rep(seq_len(k), length.out = length(ids))
+  }
+  fold_id
+}</code></pre>
+<pre class="r"><code>rank_proteins_limma &lt;- function(expr_mat, meta, proteins){
+  expr &lt;- as.matrix(expr_mat[proteins, meta$Barcode, drop = FALSE])
+  meta$Sex_M &lt;- ifelse(as.character(meta$Sex) == &quot;M&quot;, 1, 0)
+  design &lt;- model.matrix(~ Impaired + Age + Sex_M, data = meta)
+  fit &lt;- limma::eBayes(limma::lmFit(expr, design))
+  limma::topTable(fit, coef = &quot;Impaired&quot;, number = Inf, sort.by = &quot;none&quot;) %&gt;%
+    rownames_to_column(&quot;Protein&quot;) %&gt;% arrange(desc(abs(t)))
+}</code></pre>
+<pre class="r"><code>auc_safe &lt;- function(y, pred){
+  ok &lt;- is.finite(y) &amp; is.finite(pred)
+  if (sum(ok) &lt; 3 || length(unique(y[ok])) &lt; 2) return(NA_real_)
+  as.numeric(pROC::auc(pROC::roc(y[ok], pred[ok], levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE)))
+}</code></pre>
+</div>
+<div id="lasso-panel-size-1-10-proteins" class="section level2">
+<h2>LASSO panel size: 1-10 proteins</h2>
+<p>For every outer training fold, candidate ranking is repeated from
+scratch, the top 50 proteins are passed to LASSO, and an inner
+cross-validation identifies the best solution for each panel size from 1
+to 10 proteins. Performance across panel sizes is shown for
+transparency. For the final analysis, the panel size is fixed at five
+proteins.</p>
+<pre class="r"><code>choose_lasso_lambda_for_k &lt;- function(cvfit, k, kmax = 10){
+  beta &lt;- as.matrix(coef(cvfit$glmnet.fit))
+  nzero &lt;- colSums(beta[-1, , drop = FALSE] != 0)
+  idx &lt;- which(nzero == k &amp; is.finite(cvfit$cvm))
+
+  if (length(idx) == 0){
+    allowed &lt;- which(nzero &gt;= 1 &amp; nzero &lt;= kmax &amp; is.finite(cvfit$cvm))
+    if (length(allowed) == 0) return(NULL)
+    distance &lt;- abs(nzero[allowed] - k)
+    allowed &lt;- allowed[distance == min(distance)]
+    idx &lt;- allowed
+  }
+
+  best &lt;- idx[which.max(cvfit$cvm[idx])]
+  list(lambda = cvfit$lambda[best], nzero = nzero[best], cv_auc = cvfit$cvm[best])
+}</code></pre>
+<pre class="r"><code>run_lasso_nested_cv &lt;- function(expr_mat, meta, proteins, candidate_n = 50, kmax = 10, repeats = 100, outer_folds = 5, inner_folds = 5, seed = 1){
+  set.seed(seed)
+  y &lt;- meta$Impaired
+  n &lt;- nrow(meta)
+  result_list &lt;- vector(&quot;list&quot;, repeats * kmax)
+  pred_sum &lt;- matrix(0, nrow = n, ncol = kmax, dimnames = list(meta$Barcode, paste0(&quot;k&quot;, 1:kmax)))
+  pred_n &lt;- matrix(0, nrow = n, ncol = kmax, dimnames = list(meta$Barcode, paste0(&quot;k&quot;, 1:kmax)))
+  counter &lt;- 1
+
+  for (r in seq_len(repeats)){
+    outer_id &lt;- make_stratified_folds(y, outer_folds)
+    pred_repeat &lt;- matrix(NA_real_, nrow = n, ncol = kmax)
+
+    for (f in seq_len(outer_folds)){
+      tr &lt;- which(outer_id != f)
+      te &lt;- which(outer_id == f)
+      meta_tr &lt;- meta[tr, , drop = FALSE]
+      meta_te &lt;- meta[te, , drop = FALSE]
+
+      ranking &lt;- rank_proteins_limma(expr_mat, meta_tr, proteins)
+      candidates &lt;- ranking$Protein[seq_len(min(candidate_n, nrow(ranking)))]
+      Xtr &lt;- t(as.matrix(expr_mat[candidates, meta_tr$Barcode, drop = FALSE]))
+      Xte &lt;- t(as.matrix(expr_mat[candidates, meta_te$Barcode, drop = FALSE]))
+      ytr &lt;- meta_tr$Impaired
+
+      inner_id &lt;- make_stratified_folds(ytr, inner_folds)
+      cvfit &lt;- cv.glmnet(Xtr, ytr, family = &quot;binomial&quot;, alpha = 1, type.measure = &quot;auc&quot;, foldid = inner_id,
+                         nlambda = 500, lambda.min.ratio = 1e-4, standardize = TRUE, dfmax = kmax)
+
+      for (k in seq_len(kmax)){
+        choice &lt;- choose_lasso_lambda_for_k(cvfit, k, kmax)
+        if (is.null(choice)) next
+        pred_repeat[te, k] &lt;- as.numeric(predict(cvfit$glmnet.fit, newx = Xte, s = choice$lambda, type = &quot;response&quot;))
+      }
+    }
+
+    for (k in seq_len(kmax)){
+      pred &lt;- pred_repeat[, k]
+      ok &lt;- is.finite(pred)
+      result_list[[counter]] &lt;- data.frame(rep_id = r, k = k, AUC = auc_safe(y, pred))
+      counter &lt;- counter + 1
+      pred_sum[ok, k] &lt;- pred_sum[ok, k] + pred[ok]
+      pred_n[ok, k] &lt;- pred_n[ok, k] + 1
+    }
+  }
+
+  results &lt;- bind_rows(result_list)
+  summary &lt;- results %&gt;% group_by(k) %&gt;% summarise(
+    mean_AUC = mean(AUC, na.rm = TRUE), sd_AUC = sd(AUC, na.rm = TRUE),
+    se_AUC = sd_AUC / sqrt(sum(is.finite(AUC))),
+    AUC_low = quantile(AUC, 0.025, na.rm = TRUE), AUC_high = quantile(AUC, 0.975, na.rm = TRUE), .groups = &quot;drop&quot;)
+  pred_avg &lt;- pred_sum / pred_n
+  list(results = results, summary = summary, pred_avg = pred_avg)
+}</code></pre>
+<pre class="r"><code>lasso_cv &lt;- run_lasso_nested_cv(as.matrix(data_p), p_dev, common_proteins, candidate_n = 50, kmax = 10,
+                                repeats = 100, outer_folds = 5, inner_folds = 5, seed = 100)
+lasso_cv$summary</code></pre>
+<pre><code># A tibble: 10 × 6
+       k mean_AUC sd_AUC  se_AUC AUC_low AUC_high
+   &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+ 1     1    0.748 0.0596 0.00596   0.631    0.850
+ 2     2    0.768 0.0472 0.00472   0.671    0.844
+ 3     3    0.779 0.0384 0.00384   0.696    0.844
+ 4     4    0.786 0.0357 0.00357   0.703    0.847
+ 5     5    0.794 0.0332 0.00332   0.726    0.854
+ 6     6    0.800 0.0314 0.00314   0.735    0.852
+ 7     7    0.805 0.0298 0.00298   0.740    0.852
+ 8     8    0.810 0.0299 0.00299   0.754    0.853
+ 9     9    0.813 0.0323 0.00323   0.745    0.857
+10    10    0.815 0.0320 0.00320   0.757    0.865</code></pre>
+<pre class="r"><code>write.csv(lasso_cv$results, here::here(output_dir_data, &quot;LASSO_nested_CV_all_repeats.csv&quot;), row.names = FALSE)
+write.csv(lasso_cv$summary, here::here(output_dir_data, &quot;LASSO_nested_CV_summary.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>lasso_cv$summary &lt;- lasso_cv$summary %&gt;%
+  arrange(k) %&gt;%
+  mutate(Delta_AUC_vs_previous = c(NA, diff(mean_AUC)))
+
+lasso_delta_by_repeat &lt;- lasso_cv$results %&gt;%
+  arrange(rep_id, k) %&gt;%
+  group_by(rep_id) %&gt;%
+  mutate(Delta_AUC_vs_previous = AUC - lag(AUC)) %&gt;%
+  ungroup() %&gt;%
+  filter(k &gt; 1)
+
+lasso_delta_summary &lt;- lasso_delta_by_repeat %&gt;%
+  group_by(k) %&gt;%
+  summarise(
+    mean_delta = mean(Delta_AUC_vs_previous, na.rm = TRUE),
+    delta_low = quantile(Delta_AUC_vs_previous, 0.025, na.rm = TRUE),
+    delta_high = quantile(Delta_AUC_vs_previous, 0.975, na.rm = TRUE),
+    .groups = &quot;drop&quot;
+  )
+
+lasso_k &lt;- 5
+
+lasso_cv$summary</code></pre>
+<pre><code># A tibble: 10 × 7
+       k mean_AUC sd_AUC  se_AUC AUC_low AUC_high Delta_AUC_vs_previous
+   &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;                 &lt;dbl&gt;
+ 1     1    0.748 0.0596 0.00596   0.631    0.850              NA      
+ 2     2    0.768 0.0472 0.00472   0.671    0.844               0.0195 
+ 3     3    0.779 0.0384 0.00384   0.696    0.844               0.0118 
+ 4     4    0.786 0.0357 0.00357   0.703    0.847               0.00631
+ 5     5    0.794 0.0332 0.00332   0.726    0.854               0.00831
+ 6     6    0.800 0.0314 0.00314   0.735    0.852               0.00579
+ 7     7    0.805 0.0298 0.00298   0.740    0.852               0.00552
+ 8     8    0.810 0.0299 0.00299   0.754    0.853               0.00425
+ 9     9    0.813 0.0323 0.00323   0.745    0.857               0.00335
+10    10    0.815 0.0320 0.00320   0.757    0.865               0.00240</code></pre>
+<pre class="r"><code>lasso_delta_summary</code></pre>
+<pre><code># A tibble: 9 × 4
+      k mean_delta delta_low delta_high
+  &lt;int&gt;      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+1     2    0.0195   -0.0316      0.0870
+2     3    0.0118   -0.0242      0.0478
+3     4    0.00631  -0.0204      0.0362
+4     5    0.00831  -0.00882     0.0306
+5     6    0.00579  -0.0103      0.0269
+6     7    0.00552  -0.00833     0.0320
+7     8    0.00425  -0.0177      0.0227
+8     9    0.00335  -0.0140      0.0176
+9    10    0.00240  -0.0130      0.0130</code></pre>
+<pre class="r"><code>cat(&quot;Panel size fixed at:&quot;, lasso_k, &quot;proteins\n&quot;)</code></pre>
+<pre><code>Panel size fixed at: 5 proteins</code></pre>
+<pre class="r"><code>write.csv(lasso_cv$summary, here::here(output_dir_data, &quot;LASSO_nested_CV_summary_with_incremental_AUC.csv&quot;), row.names = FALSE)
+write.csv(lasso_delta_summary, here::here(output_dir_data, &quot;LASSO_incremental_AUC_by_panel_size.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>p_panel_size &lt;- ggplot(lasso_cv$summary, aes(k, mean_AUC)) +
+  geom_line() + geom_point(size = 2.5) +
+  geom_vline(xintercept = lasso_k, linetype = 2) +
+  scale_x_continuous(breaks = 1:10) +
+  coord_cartesian(ylim = c(0.45, 1)) +
+  labs(
+    x = &quot;Number of proteins&quot;,
+    y = &quot;Repeated nested-CV AUC&quot;,
+    title = &quot;Top 50 RV-PA coupling candidates; selected panel size = 5&quot;
+  ) +
+  theme_classic(base_size = 11)
+
+p_panel_size</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/plot_lasso_cv-1.png" width="2160" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Panel_size_nested_CV_1_to_10_k5.png&quot;),
+       p_panel_size, width = 7.2, height = 4.5, dpi = 300)</code></pre>
+</div>
+<div id="select-the-final-lasso-panel-in-poland" class="section level2">
+<h2>Select the final LASSO panel in Poland</h2>
+<p>After the panel size is fixed, the top 50 candidates from the full
+Polish development cohort are kept fixed. LASSO is fitted in the full
+Polish development cohort, and the solution with the selected number of
+proteins and the highest internal cross-validated AUC is used as the
+final panel. Bootstrap selection frequencies are calculated afterwards
+as a stability analysis and do not determine the final proteins.</p>
+<pre class="r"><code>select_best_panel_for_k &lt;- function(cvfit, k){
+  beta &lt;- as.matrix(coef(cvfit$glmnet.fit))
+  protein_names &lt;- rownames(beta)[-1]
+  nzero &lt;- colSums(beta[-1, , drop = FALSE] != 0)
+  valid &lt;- which(is.finite(cvfit$cvm))
+  exact &lt;- valid[nzero[valid] == k]
+
+  if (length(exact) &gt; 0){
+    best &lt;- exact[which.max(cvfit$cvm[exact])]
+    co &lt;- beta[-1, best]
+    names(co) &lt;- protein_names
+    selected &lt;- names(co)[co != 0]
+  } else {
+    above &lt;- valid[nzero[valid] &gt; k]
+    if (length(above) == 0) stop(&quot;No LASSO solution with at least the selected number of proteins was found.&quot;)
+    closest_n &lt;- min(nzero[above])
+    closest &lt;- above[nzero[above] == closest_n]
+    best &lt;- closest[which.max(cvfit$cvm[closest])]
+    co &lt;- beta[-1, best]
+    names(co) &lt;- protein_names
+    co &lt;- co[co != 0]
+    selected &lt;- names(sort(abs(co), decreasing = TRUE))[seq_len(k)]
+  }
+
+  list(proteins = selected, lambda = cvfit$lambda[best], cv_auc = cvfit$cvm[best], path_n = nzero[best])
+}</code></pre>
+<pre class="r"><code>X_lasso_full &lt;- t(as.matrix(data_p[candidate_proteins, p_dev$Barcode, drop = FALSE]))
+y_lasso_full &lt;- p_dev$Impaired
+
+set.seed(102)
+foldid_lasso_full &lt;- make_stratified_folds(y_lasso_full, 5)
+cvfit_lasso_full &lt;- cv.glmnet(X_lasso_full, y_lasso_full, family = &quot;binomial&quot;, alpha = 1, type.measure = &quot;auc&quot;,
+                              foldid = foldid_lasso_full, nlambda = 500, lambda.min.ratio = 1e-4,
+                              standardize = TRUE, dfmax = 10)
+
+final_panel_choice &lt;- select_best_panel_for_k(cvfit_lasso_full, lasso_k)
+final_panel &lt;- final_panel_choice$proteins
+
+cat(&quot;Selected panel size:&quot;, lasso_k, &quot;proteins\n&quot;)</code></pre>
+<pre><code>Selected panel size: 5 proteins</code></pre>
+<pre class="r"><code>cat(&quot;Internal CV AUC of the selected full-Poland LASSO solution:&quot;, round(final_panel_choice$cv_auc, 3), &quot;\n&quot;)</code></pre>
+<pre><code>Internal CV AUC of the selected full-Poland LASSO solution: 0.842 </code></pre>
+<pre class="r"><code>cat(&quot;Final proteins:\n&quot;)</code></pre>
+<pre><code>Final proteins:</code></pre>
+<pre class="r"><code>print(final_panel)</code></pre>
+<pre><code>[1] &quot;CLSTN2&quot; &quot;RSPO1&quot;  &quot;ADM&quot;    &quot;TAFA5&quot;  &quot;LRRN1&quot; </code></pre>
+<pre class="r"><code>write.csv(data.frame(Protein = final_panel), here::here(output_dir_data, &quot;Final_panel_proteins.csv&quot;), row.names = FALSE)</code></pre>
+</div>
+<div id="bootstrap-lasso-stability" class="section level2">
+<h2>Bootstrap LASSO stability</h2>
+<p>The final panel is already fixed above. The same top 50 candidate
+proteins are kept fixed in the bootstrap analysis. Each bootstrap LASSO
+selects the same number of proteins as the final panel, allowing
+assessment of individual selection frequency and pairwise
+co-selection.</p>
+<pre class="r"><code>bootstrap_lasso_selection &lt;- function(expr_mat, meta, candidates, k, B = 500, inner_folds = 5, seed = 1){
+  set.seed(seed)
+  selected_lists &lt;- vector(&quot;list&quot;, B)
+
+  for (b in seq_len(B)){
+    ids &lt;- sample(seq_len(nrow(meta)), nrow(meta), replace = TRUE)
+    meta_b &lt;- meta[ids, , drop = FALSE]
+    y &lt;- meta_b$Impaired
+    if (length(unique(y)) &lt; 2) next
+
+    X &lt;- t(as.matrix(expr_mat[candidates, meta_b$Barcode, drop = FALSE]))
+    folds_here &lt;- min(inner_folds, min(table(y)))
+    if (folds_here &lt; 3) next
+    foldid &lt;- make_stratified_folds(y, folds_here)
+
+    cvfit &lt;- try(cv.glmnet(X, y, family = &quot;binomial&quot;, alpha = 1, type.measure = &quot;auc&quot;, foldid = foldid,
+                           nlambda = 500, lambda.min.ratio = 1e-4, standardize = TRUE, dfmax = 10), silent = TRUE)
+    if (inherits(cvfit, &quot;try-error&quot;)) next
+
+    choice &lt;- try(select_best_panel_for_k(cvfit, k), silent = TRUE)
+    if (inherits(choice, &quot;try-error&quot;) || is.null(choice)) next
+    selected_lists[[b]] &lt;- choice$proteins
+  }
+
+  selected_lists &lt;- selected_lists[lengths(selected_lists) == k]
+  if (length(selected_lists) == 0) stop(&quot;No valid bootstrap LASSO models were obtained.&quot;)
+
+  selection_matrix &lt;- matrix(0, nrow = length(selected_lists), ncol = length(candidates),
+                             dimnames = list(NULL, candidates))
+  for (i in seq_along(selected_lists)) selection_matrix[i, selected_lists[[i]]] &lt;- 1
+
+  selection_frequency &lt;- colMeans(selection_matrix)
+  co_selection &lt;- crossprod(selection_matrix) / nrow(selection_matrix)
+  selection_counts &lt;- colSums(selection_matrix)
+
+  jaccard &lt;- matrix(NA_real_, nrow = ncol(selection_matrix), ncol = ncol(selection_matrix),
+                    dimnames = list(candidates, candidates))
+  for (i in seq_along(candidates)){
+    for (j in seq_along(candidates)){
+      inter &lt;- sum(selection_matrix[, i] == 1 &amp; selection_matrix[, j] == 1)
+      union &lt;- selection_counts[i] + selection_counts[j] - inter
+      jaccard[i, j] &lt;- ifelse(union &gt; 0, inter / union, NA_real_)
+    }
+  }
+
+  summary &lt;- data.frame(Protein = candidates, Selection_frequency = selection_frequency, row.names = NULL) %&gt;%
+    arrange(desc(Selection_frequency))
+
+  list(summary = summary, selected_lists = selected_lists, selection_matrix = selection_matrix,
+       co_selection = co_selection, jaccard = jaccard, n_valid = nrow(selection_matrix))
+}</code></pre>
+<pre class="r"><code>stability50 &lt;- bootstrap_lasso_selection(as.matrix(data_p), p_dev, candidate_proteins, k = lasso_k,
+                                         B = 500, inner_folds = 5, seed = 101)
+
+stability50$summary &lt;- stability50$summary %&gt;%
+  left_join(candidate_ranking_p %&gt;% select(Protein, logFC, t, P.Value, adj.P.Val), by = &quot;Protein&quot;) %&gt;%
+  arrange(desc(Selection_frequency), desc(abs(t)))
+
+cat(&quot;Valid bootstrap models:&quot;, stability50$n_valid, &quot;of 500\n&quot;)</code></pre>
+<pre><code>Valid bootstrap models: 500 of 500</code></pre>
+<pre class="r"><code>cat(&quot;Final panel fixed from full-Poland LASSO performance:\n&quot;)</code></pre>
+<pre><code>Final panel fixed from full-Poland LASSO performance:</code></pre>
+<pre class="r"><code>print(final_panel)</code></pre>
+<pre><code>[1] &quot;CLSTN2&quot; &quot;RSPO1&quot;  &quot;ADM&quot;    &quot;TAFA5&quot;  &quot;LRRN1&quot; </code></pre>
+<pre class="r"><code>stability50$summary %&gt;% head(20)</code></pre>
+<pre><code>    Protein Selection_frequency      logFC         t      P.Value    adj.P.Val
+1     RSPO1               0.602  0.6116502  5.366565 1.026411e-06 0.0005306546
+2    CLSTN2               0.594  0.8608327  5.389529 9.384115e-07 0.0005306546
+3     LRRN1               0.338 -0.4299838 -3.512639 7.896941e-04 0.0214879934
+4       ADM               0.284  0.6913191  4.419191 3.615276e-05 0.0053402786
+5   SIGLEC8               0.252  0.5584893  4.238890 6.871728e-05 0.0064594242
+6    CXCL17               0.230  0.8961132  4.581477 2.006323e-05 0.0034575630
+7     TAFA5               0.200  0.5224038  4.271986 6.113554e-05 0.0063214150
+8     PRELP               0.170  0.5193187  4.884279 6.521182e-06 0.0016857256
+9      LAG3               0.156  0.6524608  3.808120 3.013580e-04 0.0154412580
+10     CSF2               0.156  0.3192998  3.368536 1.242787e-03 0.0282135701
+11     ACE2               0.120  0.8413462  4.109402 1.080936e-04 0.0093140682
+12   EGFLAM               0.120  0.4542714  3.647716 5.111688e-04 0.0190337598
+13      HGF               0.116  0.5807348  4.279984 5.942837e-05 0.0063214150
+14 CEACAM16               0.104 -1.1743897 -4.724914 1.182760e-05 0.0024459467
+15    CD302               0.102  0.4228059  3.759548 3.541197e-04 0.0159199913
+16     CFC1               0.102  0.4684544  3.542424 7.180541e-04 0.0210617694
+17      HRC               0.092  0.3038139  3.804332 3.051859e-04 0.0154412580
+18     IL15               0.088  0.4525392  3.983440 1.667819e-04 0.0123180355
+19    EDA2R               0.080  0.7533139  3.841776 2.693056e-04 0.0154412580
+20   SCARB2               0.076  0.6399535  3.810500 2.989762e-04 0.0154412580</code></pre>
+<pre class="r"><code>write.csv(stability50$summary, here::here(output_dir_data, &quot;LASSO_bootstrap_selection_frequency.csv&quot;), row.names = FALSE)
+write.csv(stability50$co_selection, here::here(output_dir_data, &quot;LASSO_bootstrap_co_selection_frequency.csv&quot;))
+write.csv(stability50$jaccard, here::here(output_dir_data, &quot;LASSO_bootstrap_co_selection_Jaccard.csv&quot;))
+
+if (length(final_panel) &gt;= 2){
+  final_pairs &lt;- combn(final_panel, 2)
+  final_pair_table &lt;- data.frame(
+    Protein1 = final_pairs[1, ], Protein2 = final_pairs[2, ],
+    Co_selection_frequency = mapply(function(a, b) stability50$co_selection[a, b], final_pairs[1, ], final_pairs[2, ]),
+    Jaccard = mapply(function(a, b) stability50$jaccard[a, b], final_pairs[1, ], final_pairs[2, ])
+  )
+  final_pair_table
+  write.csv(final_pair_table, here::here(output_dir_data, &quot;Final_panel_pairwise_co_selection.csv&quot;), row.names = FALSE)
+}</code></pre>
+<pre class="r"><code>p_stability &lt;- stability50$summary %&gt;% slice_head(n = 20) %&gt;%
+  mutate(Protein = factor(Protein, levels = rev(Protein)), Final_panel = ifelse(Protein %in% final_panel, &quot;Final panel&quot;, &quot;Other&quot;)) %&gt;%
+  ggplot(aes(Protein, Selection_frequency, fill = Final_panel)) + geom_col() + coord_flip() +
+  scale_fill_manual(values = c(&quot;Final panel&quot; = &quot;#A63A2A&quot;, &quot;Other&quot; = &quot;#BDBDBD&quot;)) +
+  labs(x = NULL, y = &quot;Bootstrap selection frequency&quot;, title = &quot;Protein selection stability&quot;) + theme_classic(base_size = 11)
+p_stability</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/plot_lasso_stability-1.png" width="1950" style="display: block; margin: auto;" /></p>
+</div>
+<div id="co-selection-of-candidate-proteins" class="section level2">
+<h2>Co-selection of candidate proteins</h2>
+<pre class="r"><code>top_coselection &lt;- stability50$summary$Protein[seq_len(min(15, nrow(stability50$summary)))]
+
+p_coselection &lt;- pheatmap(stability50$co_selection[top_coselection, top_coselection, drop = FALSE],
+                          cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
+                          main = &quot;Bootstrap co-selection frequency&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;, silent = TRUE)
+
+p_jaccard &lt;- pheatmap(stability50$jaccard[top_coselection, top_coselection, drop = FALSE],
+                      cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
+                      main = &quot;Normalized co-selection (Jaccard)&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;, silent = TRUE)
+
+grid::grid.newpage()
+grid::grid.draw(p_coselection$gtable)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/coselection_heatmaps-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>grid::grid.newpage()
+grid::grid.draw(p_jaccard$gtable)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/coselection_heatmaps-2.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>png(here::here(output_dir_figs, &quot;Supplement_bootstrap_co_selection_frequency.png&quot;), width = 7, height = 6.5, units = &quot;in&quot;, res = 300)
+pheatmap(stability50$co_selection[top_coselection, top_coselection, drop = FALSE], cluster_rows = FALSE, cluster_cols = FALSE,
+         border_color = NA, main = &quot;Bootstrap co-selection frequency&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/coselection_heatmaps-3.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  3 </code></pre>
+<pre class="r"><code>png(here::here(output_dir_figs, &quot;Supplement_bootstrap_co_selection_Jaccard.png&quot;), width = 7, height = 6.5, units = &quot;in&quot;, res = 300)
+pheatmap(stability50$jaccard[top_coselection, top_coselection, drop = FALSE], cluster_rows = FALSE, cluster_cols = FALSE,
+         border_color = NA, main = &quot;Normalized co-selection (Jaccard)&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;)
+dev.off()</code></pre>
+<pre><code>png 
+  3 </code></pre>
+</div>
+<div id="correlation-between-final-panel-proteins"
+class="section level2">
+<h2>Correlation between final panel proteins</h2>
+<pre class="r"><code>final_panel_npx &lt;- t(as.matrix(data_p[final_panel, p_dev$Barcode, drop = FALSE]))
+final_panel_cor &lt;- cor(final_panel_npx, method = &quot;spearman&quot;)
+write.csv(final_panel_cor, here::here(output_dir_data, &quot;Final_panel_protein_Spearman_correlation.csv&quot;))
+
+pheatmap(final_panel_cor, cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
+         main = &quot;Final panel protein correlations&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/final_panel_protein_correlation-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>png(here::here(output_dir_figs, &quot;Supplement_final_panel_protein_correlations.png&quot;), width = 6, height = 5.5, units = &quot;in&quot;, res = 300)
+pheatmap(final_panel_cor, cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
+         main = &quot;Final panel protein correlations&quot;, display_numbers = TRUE, number_format = &quot;%.2f&quot;)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/final_panel_protein_correlation-2.png" width="1800" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  3 </code></pre>
+</div>
+<div id="fit-the-frozen-poland-model" class="section level2">
+<h2>Fit the frozen Poland model</h2>
+<p>A standard logistic model is fitted using the final selected
+proteins. Protein means and standard deviations, model coefficients, and
+score standardization are all estimated in Poland and then applied
+unchanged to Zurich.</p>
+<pre class="r"><code>fit_final_panel &lt;- function(expr_mat, clin_df, proteins){
+  X &lt;- t(as.matrix(expr_mat[proteins, clin_df$Barcode, drop = FALSE]))
+  mu &lt;- colMeans(X)
+  sdv &lt;- apply(X, 2, sd)
+  sdv[sdv == 0 | is.na(sdv)] &lt;- 1
+  Z &lt;- sweep(sweep(X, 2, mu, &quot;-&quot;), 2, sdv, &quot;/&quot;)
+  y &lt;- clin_df$y_impaired
+  fit &lt;- suppressWarnings(glm.fit(cbind(Intercept = 1, Z), y, family = binomial()))
+  beta &lt;- fit$coefficients
+  names(beta) &lt;- c(&quot;Intercept&quot;, colnames(Z))
+  if (!fit$converged) warning(&quot;Final logistic model did not fully converge. Inspect the final panel before interpretation.&quot;)
+  if (any(!is.finite(beta))) stop(&quot;Non-finite coefficient in final logistic model. Inspect separation in the selected panel.&quot;)
+  raw_score &lt;- as.numeric(cbind(Intercept = 1, Z) %*% beta)
+  score_center &lt;- mean(raw_score)
+  score_scale &lt;- sd(raw_score)
+  if (score_scale == 0 || is.na(score_scale)) score_scale &lt;- 1
+  list(proteins = proteins, mu = mu, sd = sdv, beta = beta, score_center = score_center, score_scale = score_scale)
+}
+
+predict_final_panel &lt;- function(model, expr_mat, barcodes){
+  X &lt;- t(as.matrix(expr_mat[model$proteins, barcodes, drop = FALSE]))
+  Z &lt;- sweep(sweep(X, 2, model$mu, &quot;-&quot;), 2, model$sd, &quot;/&quot;)
+  raw_score &lt;- as.numeric(cbind(Intercept = 1, Z) %*% model$beta)
+  data.frame(Barcode = barcodes, probability_impaired = plogis(raw_score), panel_score = (raw_score - model$score_center) / model$score_scale)
+}
+
+panel_model &lt;- fit_final_panel(as.matrix(data_p), p_dev, final_panel)
+
+pred_p_dev &lt;- predict_final_panel(panel_model, as.matrix(data_p), p_dev$Barcode) %&gt;%
+  left_join(p_dev %&gt;% select(Barcode, Group, TAPSE_sPAP, TAPSE_group, y_impaired), by = &quot;Barcode&quot;)
+
+pred_z_final &lt;- predict_final_panel(panel_model, as.matrix(data_z), z_val$Barcode) %&gt;%
+  left_join(z_val %&gt;% select(Barcode, TAPSE_sPAP, TAPSE_group, y_impaired), by = &quot;Barcode&quot;)
+
+# PAH-only Poland predictions are kept for downstream PAH clinical comparisons
+p_pah_score &lt;- p_pah %&gt;% filter(!is.na(TAPSE_sPAP), Barcode %in% colnames(data_p)) %&gt;% arrange(Barcode) %&gt;%
+  mutate(y_impaired = ifelse(TAPSE_sPAP &lt;= 0.32, 1, 0), TAPSE_group = factor(ifelse(y_impaired == 1, &quot;Impaired&quot;, &quot;Preserved&quot;), levels = c(&quot;Preserved&quot;, &quot;Impaired&quot;)))
+pred_p_final &lt;- predict_final_panel(panel_model, as.matrix(data_p), p_pah_score$Barcode) %&gt;%
+  left_join(p_pah_score %&gt;% select(Barcode, TAPSE_sPAP, TAPSE_group, y_impaired), by = &quot;Barcode&quot;)
+
+panel_coefficients &lt;- data.frame(Protein = final_panel, Coefficient = panel_model$beta[final_panel], OR_per_1SD_NPX = exp(panel_model$beta[final_panel])) %&gt;%
+  left_join(stability50$summary %&gt;% select(Protein, Selection_frequency, logFC, t, P.Value, adj.P.Val), by = &quot;Protein&quot;)
+panel_coefficients</code></pre>
+<pre><code>  Protein Coefficient OR_per_1SD_NPX Selection_frequency      logFC         t
+1  CLSTN2   2.6127325     13.6362604               0.594  0.8608327  5.389529
+2   RSPO1   1.3585662      3.8906108               0.602  0.6116502  5.366565
+3     ADM   0.5657496      1.7607671               0.284  0.6913191  4.419191
+4   TAFA5   0.7558358      2.1293905               0.200  0.5224038  4.271986
+5   LRRN1  -2.1408536      0.1175545               0.338 -0.4299838 -3.512639
+       P.Value    adj.P.Val
+1 9.384115e-07 0.0005306546
+2 1.026411e-06 0.0005306546
+3 3.615276e-05 0.0053402786
+4 6.113554e-05 0.0063214150
+5 7.896941e-04 0.0214879934</code></pre>
+<pre class="r"><code>write.csv(panel_coefficients, here::here(output_dir_data, &quot;Final_panel_coefficients.csv&quot;), row.names = FALSE)
+qs_save(panel_model, here::here(output_dir_data, &quot;Final_panel_model_frozen_from_Poland.qs2&quot;))</code></pre>
+</div>
+<div id="development-and-external-validation-performance"
+class="section level2">
+<h2>Development and external validation performance</h2>
+<pre class="r"><code>poland_oof_prob &lt;- lasso_cv$pred_avg[, paste0(&quot;k&quot;, lasso_k)]
+roc_panel_p &lt;- pROC::roc(p_dev$y_impaired, poland_oof_prob, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE)
+roc_panel_z &lt;- pROC::roc(pred_z_final$y_impaired, pred_z_final$probability_impaired, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE, ci = TRUE)
+roc_panel_p_apparent &lt;- pROC::roc(pred_p_dev$y_impaired, pred_p_dev$probability_impaired, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE)
+
+cv_selected_summary &lt;- lasso_cv$summary %&gt;% filter(k == lasso_k)
+panel_auc &lt;- data.frame(
+  Cohort = c(&quot;Poland nested CV&quot;, &quot;Poland apparent&quot;, &quot;Zurich external&quot;),
+  AUC = c(cv_selected_summary$mean_AUC, as.numeric(pROC::auc(roc_panel_p_apparent)), as.numeric(pROC::auc(roc_panel_z))),
+  AUC_low = c(cv_selected_summary$AUC_low, NA, as.numeric(pROC::ci.auc(roc_panel_z)[1])),
+  AUC_high = c(cv_selected_summary$AUC_high, NA, as.numeric(pROC::ci.auc(roc_panel_z)[3]))
+)
+panel_auc</code></pre>
+<pre><code>            Cohort       AUC   AUC_low  AUC_high
+1 Poland nested CV 0.7940278 0.7257407 0.8542824
+2  Poland apparent 0.9759259        NA        NA
+3  Zurich external 0.9416667 0.8502815 1.0000000</code></pre>
+<pre class="r"><code>write.csv(panel_auc, here::here(output_dir_data, &quot;Final_panel_AUC_validation.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>score_validation_df &lt;- bind_rows(
+  data.frame(Cohort = &quot;Poland development&quot;, TAPSE_group = pred_p_dev$TAPSE_group, Score = pred_p_dev$panel_score),
+  data.frame(Cohort = &quot;Zurich external&quot;, TAPSE_group = pred_z_final$TAPSE_group, Score = pred_z_final$panel_score)
+)
+
+p_score_validation &lt;- ggplot(score_validation_df, aes(TAPSE_group, Score, fill = TAPSE_group)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.75) + geom_jitter(width = 0.12, size = 1.7, alpha = 0.7) + facet_wrap(~Cohort) +
+  scale_fill_manual(values = cols_tapse) + labs(x = NULL, y = &quot;Impaired RV-PA coupling protein score&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;none&quot;)
+
+roc_panel_df &lt;- bind_rows(
+  data.frame(FPR = 1 - roc_panel_p$specificities, Sensitivity = roc_panel_p$sensitivities, Cohort = &quot;Poland nested CV&quot;),
+  data.frame(FPR = 1 - roc_panel_z$specificities, Sensitivity = roc_panel_z$sensitivities, Cohort = &quot;Zurich external&quot;)
+) %&gt;% arrange(Cohort, FPR, Sensitivity)
+
+p_panel_roc &lt;- ggplot(roc_panel_df, aes(FPR, Sensitivity, color = Cohort)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;grey75&quot;) + geom_step(direction = &quot;hv&quot;, linewidth = 0.9) +
+  scale_color_manual(values = c(&quot;Poland nested CV&quot; = &quot;#A63A2A&quot;, &quot;Zurich external&quot; = &quot;#004C8C&quot;)) + coord_equal() +
+  labs(x = &quot;1 - Specificity&quot;, y = &quot;Sensitivity&quot;, title = &quot;Impaired RV-PA coupling (TAPSE/sPAP &lt;= 0.32)&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;bottom&quot;)
+
+p_score_validation | p_panel_roc</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/panel_validation_plots-1.png" width="3000" style="display: block; margin: auto;" /></p>
+</div>
+<div id="score-across-ssc-nopah-preserved-pah-and-impaired-pah"
+class="section level2">
+<h2>Score across SSc-noPAH, preserved PAH and impaired PAH</h2>
+<pre class="r"><code>pred_p_all &lt;- predict_final_panel(panel_model, as.matrix(data_p), p_all$Barcode) %&gt;% left_join(p_all %&gt;% select(Barcode, Group, TAPSE_sPAP), by = &quot;Barcode&quot;)
+pred_z_all &lt;- predict_final_panel(panel_model, as.matrix(data_z), z_all$Barcode) %&gt;% left_join(z_all %&gt;% select(Barcode, Group, TAPSE_sPAP), by = &quot;Barcode&quot;)
+
+score_group_df &lt;- bind_rows(pred_p_all %&gt;% mutate(Cohort = &quot;Poland&quot;), pred_z_all %&gt;% mutate(Cohort = &quot;Zurich&quot;)) %&gt;%
+  mutate(Group3 = case_when(
+    Group == &quot;SSc-noPAH&quot; ~ &quot;SSc-noPAH&quot;,
+    Group == &quot;SSc-PAH&quot; &amp; TAPSE_sPAP &gt; 0.32 ~ &quot;SSc-PAH preserved&quot;,
+    Group == &quot;SSc-PAH&quot; &amp; TAPSE_sPAP &lt;= 0.32 ~ &quot;SSc-PAH impaired&quot;,
+    TRUE ~ NA_character_),
+    Group3 = factor(Group3, levels = c(&quot;SSc-noPAH&quot;, &quot;SSc-PAH preserved&quot;, &quot;SSc-PAH impaired&quot;))) %&gt;% filter(!is.na(Group3))
+
+p_score_three &lt;- ggplot(score_group_df, aes(Group3, panel_score, fill = Group3)) + geom_boxplot(outlier.shape = NA, alpha = 0.75) +
+  geom_jitter(width = 0.12, size = 1.5, alpha = 0.7) + facet_wrap(~Cohort) +
+  scale_fill_manual(values = c(&quot;SSc-noPAH&quot; = &quot;#8AA6B8&quot;, &quot;SSc-PAH preserved&quot; = &quot;#BDBDBD&quot;, &quot;SSc-PAH impaired&quot; = &quot;#A63A2A&quot;)) +
+  labs(x = NULL, y = &quot;Impaired RV-PA coupling protein score&quot;) + theme_classic(base_size = 11) +
+  theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 20, hjust = 1))
+p_score_three</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/score_three_groups-1.png" width="2700" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Figure4 &lt;- (p_panel_size | p_stability) / (p_score_three | p_panel_roc) + plot_annotation(tag_levels = &quot;A&quot;)
+Figure4</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/figure4_panel-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure4_panel_development_validation.png&quot;), Figure4, width = 11, height = 9, dpi = 300)
+ggsave(here::here(output_dir_figs, &quot;Supplement_score_binary_validation.png&quot;), p_score_validation, width = 9, height = 4.8, dpi = 300)</code></pre>
+</div>
+<div id="individual-selected-proteins-vs-continuous-tapsespap"
+class="section level2">
+<h2>Individual selected proteins vs continuous TAPSE/sPAP</h2>
+<pre class="r"><code>make_panel_long &lt;- function(expr_mat, clin_df, cohort){
+  x &lt;- t(as.matrix(expr_mat[final_panel, clin_df$Barcode, drop = FALSE])) %&gt;% as.data.frame() %&gt;% rownames_to_column(&quot;Barcode&quot;)
+  clin_df %&gt;% select(Barcode, TAPSE_sPAP) %&gt;% left_join(x, by = &quot;Barcode&quot;) %&gt;%
+    pivot_longer(all_of(final_panel), names_to = &quot;Protein&quot;, values_to = &quot;NPX&quot;) %&gt;% mutate(Cohort = cohort)
+}
+
+panel_long &lt;- bind_rows(
+  make_panel_long(data_p, p_pah_score, &quot;Poland&quot;),
+  make_panel_long(data_z, z_val, &quot;Zurich&quot;)
+)
+panel_protein_cor &lt;- panel_long %&gt;% group_by(Cohort, Protein) %&gt;% summarise(
+  n = sum(is.finite(TAPSE_sPAP) &amp; is.finite(NPX)), rho = cor(TAPSE_sPAP, NPX, method = &quot;spearman&quot;, use = &quot;complete.obs&quot;),
+  p = suppressWarnings(cor.test(TAPSE_sPAP, NPX, method = &quot;spearman&quot;, exact = FALSE)$p.value), .groups = &quot;drop&quot;)
+panel_protein_cor</code></pre>
+<pre><code># A tibble: 10 × 5
+   Cohort Protein     n    rho        p
+   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+ 1 Poland ADM        38 -0.436 0.00619 
+ 2 Poland CLSTN2     38 -0.401 0.0126  
+ 3 Poland LRRN1      38  0.157 0.346   
+ 4 Poland RSPO1      38 -0.534 0.000561
+ 5 Poland TAFA5      38 -0.487 0.00194 
+ 6 Zurich ADM        26 -0.475 0.0143  
+ 7 Zurich CLSTN2     26 -0.284 0.159   
+ 8 Zurich LRRN1      26  0.306 0.128   
+ 9 Zurich RSPO1      26 -0.539 0.00453 
+10 Zurich TAFA5      26 -0.554 0.00332 </code></pre>
+<pre class="r"><code>write.csv(panel_protein_cor, here::here(output_dir_data, &quot;Supplement_individual_panel_protein_correlations.csv&quot;), row.names = FALSE)
+
+panel_cor_labels &lt;- panel_protein_cor %&gt;% mutate(label = paste0(&quot;rho = &quot;, round(rho, 2), &quot;\np = &quot;, signif(p, 2)))
+p_panel_individual &lt;- ggplot(panel_long, aes(TAPSE_sPAP, NPX)) + geom_point(size = 1.4, alpha = 0.75) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.6) + facet_grid(Cohort ~ Protein, scales = &quot;free_y&quot;) +
+  geom_text(data = panel_cor_labels, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE, hjust = -0.05, vjust = 1.1, size = 3) +
+  labs(x = &quot;TAPSE/sPAP&quot;, y = &quot;NPX&quot;) + theme_classic(base_size = 10)
+p_panel_individual</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/individual_panel_proteins-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Supplement_individual_panel_proteins_TAPSE_sPAP.png&quot;), p_panel_individual, width = 11, height = 6, dpi = 300)</code></pre>
+</div>
+<div id="zurich-within-cohort-scaling-sensitivity"
+class="section level2">
+<h2>Zurich within-cohort scaling sensitivity</h2>
+<pre class="r"><code>Xz_panel &lt;- t(as.matrix(data_z[final_panel, z_val$Barcode, drop = FALSE]))
+mu_z_panel &lt;- colMeans(Xz_panel)
+sd_z_panel &lt;- apply(Xz_panel, 2, sd)
+sd_z_panel[sd_z_panel == 0 | is.na(sd_z_panel)] &lt;- 1
+Zz_panel &lt;- sweep(sweep(Xz_panel, 2, mu_z_panel, &quot;-&quot;), 2, sd_z_panel, &quot;/&quot;)
+raw_z_within &lt;- as.numeric(cbind(Intercept = 1, Zz_panel) %*% panel_model$beta)
+prob_z_within &lt;- plogis(raw_z_within)
+roc_z_within &lt;- pROC::roc(z_val$y_impaired, prob_z_within, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE)
+within_scaling_results &lt;- data.frame(Approach = c(&quot;Frozen Poland scaling&quot;, &quot;Zurich within-cohort scaling&quot;),
+                                     AUC = c(as.numeric(pROC::auc(roc_panel_z)), as.numeric(pROC::auc(roc_z_within))))
+within_scaling_results</code></pre>
+<pre><code>                      Approach       AUC
+1        Frozen Poland scaling 0.9416667
+2 Zurich within-cohort scaling 0.9333333</code></pre>
+<pre class="r"><code>write.csv(within_scaling_results, here::here(output_dir_data, &quot;Zurich_scaling_sensitivity.csv&quot;), row.names = FALSE)</code></pre>
+</div>
+</div>
+<div id="clinical-associations-of-the-final-protein-score"
+class="section level1">
+<h1>Clinical associations of the final protein score</h1>
+<div id="prepare-score-and-clinical-data" class="section level2">
+<h2>Prepare score and clinical data</h2>
+<pre class="r"><code>score_p &lt;- pred_p_final %&gt;% select(Barcode, panel_score) %&gt;% left_join(p_pah_score, by = &quot;Barcode&quot;) %&gt;% mutate(Cohort = &quot;Poland&quot;)
+score_z &lt;- pred_z_final %&gt;% select(Barcode, panel_score) %&gt;% left_join(z_val, by = &quot;Barcode&quot;) %&gt;% mutate(Cohort = &quot;Zurich&quot;)
+score_both &lt;- bind_rows(score_p, score_z)</code></pre>
+</div>
+<div id="score-associations-with-clinical-variables"
+class="section level2">
+<h2>Score associations with clinical variables</h2>
+<pre class="r"><code>clinical_vars &lt;- c(&quot;TAPSE_sPAP&quot;, &quot;TAPSE&quot;, &quot;sPAP&quot;, &quot;mPAP&quot;, &quot;PVR&quot;, &quot;CI&quot;, &quot;NTproBNP_common&quot;, &quot;SixMWD&quot;, &quot;FVC_pred_common&quot;, &quot;DLCO_pred_common&quot;, &quot;Creatinine_mg_dl&quot;, &quot;mRSS_common&quot;, &quot;COMPERA_number_common&quot;, &quot;Age&quot;)
+clinical_labels &lt;- c(
+  TAPSE_sPAP = &quot;TAPSE/sPAP&quot;, TAPSE = &quot;TAPSE&quot;, sPAP = &quot;sPAP&quot;, mPAP = &quot;mPAP&quot;, PVR = &quot;PVR&quot;, CI = &quot;Cardiac index&quot;,
+  NTproBNP_common = &quot;NT-proBNP&quot;, SixMWD = &quot;6MWD&quot;, FVC_pred_common = &quot;FVC&quot;, DLCO_pred_common = &quot;DLCO&quot;,
+  Creatinine_mg_dl = &quot;Creatinine&quot;, mRSS_common = &quot;mRSS&quot;, COMPERA_number_common = &quot;COMPERA&quot;, Age = &quot;Age&quot;
+)
+
+clinical_cor_list &lt;- list()
+counter &lt;- 1
+for (cohort in c(&quot;Poland&quot;, &quot;Zurich&quot;)){
+  dd &lt;- score_both %&gt;% filter(Cohort == cohort)
+  for (v in clinical_vars){
+    ok &lt;- is.finite(dd$panel_score) &amp; is.finite(as.numeric(dd[[v]]))
+    if (sum(ok) &gt;= 5){
+      ct &lt;- suppressWarnings(cor.test(dd$panel_score[ok], as.numeric(dd[[v]])[ok], method = &quot;spearman&quot;, exact = FALSE))
+      clinical_cor_list[[counter]] &lt;- data.frame(Cohort = cohort, Variable = v, n = sum(ok), rho = unname(ct$estimate), p = ct$p.value)
+    } else {
+      clinical_cor_list[[counter]] &lt;- data.frame(Cohort = cohort, Variable = v, n = sum(ok), rho = NA, p = NA)
+    }
+    counter &lt;- counter + 1
+  }
+}
+
+clinical_cor &lt;- bind_rows(clinical_cor_list) %&gt;% group_by(Cohort) %&gt;% mutate(FDR = p.adjust(p, method = &quot;BH&quot;)) %&gt;% ungroup() %&gt;%
+  mutate(Label = clinical_labels[Variable])
+clinical_cor</code></pre>
+<pre><code># A tibble: 28 × 7
+   Cohort Variable             n    rho            p         FDR Label        
+   &lt;chr&gt;  &lt;chr&gt;            &lt;int&gt;  &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;        
+ 1 Poland TAPSE_sPAP          38 -0.716 0.000000423  0.00000275  TAPSE/sPAP   
+ 2 Poland TAPSE               38 -0.759 0.0000000345 0.000000448 TAPSE        
+ 3 Poland sPAP                38  0.512 0.00101      0.00329     sPAP         
+ 4 Poland mPAP                35  0.436 0.00890      0.0171      mPAP         
+ 5 Poland PVR                 34  0.515 0.00183      0.00475     PVR          
+ 6 Poland CI                  35 -0.210 0.227        0.268       Cardiac index
+ 7 Poland NTproBNP_common     38  0.590 0.0000964    0.000418    NT-proBNP    
+ 8 Poland SixMWD              37 -0.294 0.0772       0.111       6MWD         
+ 9 Poland FVC_pred_common     33 -0.140 0.437        0.473       FVC          
+10 Poland DLCO_pred_common    31 -0.251 0.174        0.226       DLCO         
+# ℹ 18 more rows</code></pre>
+<pre class="r"><code>write.csv(clinical_cor, here::here(output_dir_data, &quot;Final_score_clinical_correlations.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>p_clinical_heatmap &lt;- clinical_cor %&gt;%
+  mutate(Label = factor(Label, levels = rev(unname(clinical_labels)))) %&gt;%
+  ggplot(aes(Cohort, Label, fill = rho)) + geom_tile(color = &quot;white&quot;) +
+  geom_text(aes(label = ifelse(is.na(rho), &quot;&quot;, sprintf(&quot;%.2f&quot;, rho))), size = 3.2) +
+  scale_fill_gradient2(low = &quot;#2166AC&quot;, mid = &quot;white&quot;, high = &quot;#B2182B&quot;, midpoint = 0, limits = c(-1, 1), na.value = &quot;grey90&quot;) +
+  labs(x = NULL, y = NULL, fill = &quot;Spearman rho&quot;, title = &quot;Clinical associations of the protein score&quot;) + theme_classic(base_size = 11)
+
+p_clinical_heatmap</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/clinical_heatmap-1.png" width="1740" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Clinical_association_heatmap.png&quot;), p_clinical_heatmap, width = 5.8, height = 6.2, dpi = 300)</code></pre>
+</div>
+<div id="ild-and-sex" class="section level2">
+<h2>ILD and sex</h2>
+<pre class="r"><code>score_binary_assoc &lt;- list()
+counter &lt;- 1
+for (cohort in c(&quot;Poland&quot;, &quot;Zurich&quot;)){
+  dd &lt;- score_both %&gt;% filter(Cohort == cohort)
+
+  dd_ild &lt;- dd %&gt;% filter(ILD_common %in% c(&quot;yes&quot;, &quot;no&quot;), !is.na(panel_score))
+  if (nrow(dd_ild) &gt;= 5 &amp;&amp; length(unique(dd_ild$ILD_common)) == 2){
+    wt &lt;- wilcox.test(panel_score ~ ILD_common, data = dd_ild)
+    score_binary_assoc[[counter]] &lt;- data.frame(Cohort = cohort, Variable = &quot;ILD&quot;, n = nrow(dd_ild), p = wt$p.value)
+    counter &lt;- counter + 1
+  }
+
+  dd_sex &lt;- dd %&gt;% filter(!is.na(Sex), !is.na(panel_score))
+  if (nrow(dd_sex) &gt;= 5 &amp;&amp; length(unique(dd_sex$Sex)) == 2){
+    wt &lt;- wilcox.test(panel_score ~ Sex, data = dd_sex)
+    score_binary_assoc[[counter]] &lt;- data.frame(Cohort = cohort, Variable = &quot;Sex&quot;, n = nrow(dd_sex), p = wt$p.value)
+    counter &lt;- counter + 1
+  }
+}
+score_binary_assoc &lt;- bind_rows(score_binary_assoc)
+score_binary_assoc</code></pre>
+<pre><code>  Cohort Variable  n         p
+1 Poland      ILD 35 0.8573452
+2 Poland      Sex 38 0.3715845
+3 Zurich      ILD 26 0.5267107
+4 Zurich      Sex 26 0.4094862</code></pre>
+<pre class="r"><code>write.csv(score_binary_assoc, here::here(output_dir_data, &quot;Final_score_binary_clinical_associations.csv&quot;), row.names = FALSE)</code></pre>
+</div>
+</div>
+<div id="compera-and-mortality---3-year-follow-up"
+class="section level1">
+<h1>COMPERA and mortality - 3-year follow-up</h1>
+<p>This section uses administrative censoring at 3 years. Deaths
+occurring after 3 years are treated as censored at 3 years. Patients who
+are alive with shorter available follow-up remain censored at their last
+available follow-up.</p>
+<pre class="r"><code>followup_limit_days &lt;- 3 * 365.25
+cat(&quot;Follow-up horizon:&quot;, followup_limit_days, &quot;days (3 years)\n&quot;)</code></pre>
+<pre><code>Follow-up horizon: 1095.75 days (3 years)</code></pre>
+<div id="protein-score-across-compera-strata" class="section level2">
+<h2>Protein score across COMPERA strata</h2>
+<p>This is a baseline cross-sectional analysis and therefore does not
+require time restriction.</p>
+<pre class="r"><code>score_compera_df &lt;- score_both %&gt;%
+  filter(!is.na(COMPERA), !is.na(COMPERA_number_common), !is.na(panel_score))
+
+compera_cor &lt;- score_compera_df %&gt;%
+  group_by(Cohort) %&gt;%
+  summarise(
+    n = n(),
+    rho = cor(COMPERA_number_common, panel_score, method = &quot;spearman&quot;),
+    p = suppressWarnings(cor.test(COMPERA_number_common, panel_score, method = &quot;spearman&quot;, exact = FALSE)$p.value),
+    .groups = &quot;drop&quot;
+  )
+
+compera_cor</code></pre>
+<pre><code># A tibble: 2 × 4
+  Cohort     n   rho        p
+  &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 Poland    38 0.417 0.00921 
+2 Zurich    26 0.622 0.000686</code></pre>
+<pre class="r"><code>p_score_compera &lt;- ggplot(score_compera_df, aes(COMPERA, panel_score, fill = COMPERA)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.75) +
+  geom_jitter(width = 0.12, size = 1.7, alpha = 0.7) +
+  facet_wrap(~Cohort) +
+  scale_fill_manual(values = cols_compera, drop = FALSE) +
+  labs(x = &quot;COMPERA risk stratum&quot;, y = &quot;RV dysfunction protein score&quot;) +
+  theme_classic(base_size = 11) +
+  theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 30, hjust = 1))
+
+p_score_compera</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/score_compera_3y-1.png" width="2700" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Score_across_COMPERA_both_cohorts.png&quot;),
+       p_score_compera, width = 9, height = 4.8, dpi = 300)</code></pre>
+</div>
+<div id="zurich-3-year-survival-data" class="section level2">
+<h2>Zurich 3-year survival data</h2>
+<pre class="r"><code>df_surv_z_3y &lt;- score_z %&gt;%
+  mutate(
+    time_days_original = as.numeric(DeathDAYS),
+    event_raw = tolower(trimws(as.character(Death))),
+    event_original = case_when(
+      event_raw %in% c(&quot;yes&quot;, &quot;y&quot;, &quot;true&quot;, &quot;1&quot;, &quot;dead&quot;, &quot;death&quot;) ~ 1,
+      event_raw %in% c(&quot;no&quot;, &quot;n&quot;, &quot;false&quot;, &quot;0&quot;, &quot;alive&quot;) ~ 0,
+      TRUE ~ NA_real_
+    )
+  ) %&gt;%
+  filter(
+    !is.na(time_days_original),
+    !is.na(event_original),
+    !is.na(COMPERA_number_common),
+    !is.na(panel_score)
+  ) %&gt;%
+  mutate(
+    time_days_3y = pmin(time_days_original, followup_limit_days),
+    event_3y = ifelse(event_original == 1 &amp; time_days_original &lt;= followup_limit_days, 1, 0)
+  )
+
+survival_3y_summary &lt;- df_surv_z_3y %&gt;%
+  summarise(
+    n = n(),
+    deaths_total_followup = sum(event_original),
+    deaths_within_3y = sum(event_3y),
+    censored_before_3y = sum(event_original == 0 &amp; time_days_original &lt; followup_limit_days),
+    followed_at_least_3y = sum(time_days_original &gt;= followup_limit_days)
+  )
+
+survival_3y_summary</code></pre>
+<pre><code>   n deaths_total_followup deaths_within_3y censored_before_3y
+1 25                     8                4                  5
+  followed_at_least_3y
+1                   16</code></pre>
+<pre class="r"><code>cat(&quot;3-year survival analysis n =&quot;, nrow(df_surv_z_3y),
+    &quot;deaths within 3 years =&quot;, sum(df_surv_z_3y$event_3y), &quot;\n&quot;)</code></pre>
+<pre><code>3-year survival analysis n = 25 deaths within 3 years = 4 </code></pre>
+<pre class="r"><code>write.csv(survival_3y_summary,
+          here::here(output_dir_data, &quot;Survival_3year_summary_Zurich.csv&quot;),
+          row.names = FALSE)</code></pre>
+</div>
+<div id="cox-models---3-years" class="section level2">
+<h2>Cox models - 3 years</h2>
+<pre class="r"><code>m_compera_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ COMPERA_number_common,
+  data = df_surv_z_3y, x = TRUE
+)
+
+m_score_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ panel_score,
+  data = df_surv_z_3y, x = TRUE
+)
+
+m_combined_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ COMPERA_number_common + panel_score,
+  data = df_surv_z_3y, x = TRUE
+)
+
+c_compera_3y &lt;- unname(summary(m_compera_3y)$concordance[1])
+c_score_3y &lt;- unname(summary(m_score_3y)$concordance[1])
+c_combined_3y &lt;- unname(summary(m_combined_3y)$concordance[1])
+
+lrt_score_added_3y &lt;- anova(m_compera_3y, m_combined_3y, test = &quot;LRT&quot;)
+lrt_score_added_3y</code></pre>
+<pre><code>Analysis of Deviance Table
+ Cox model: response is  Surv(time_days_3y, event_3y)
+ Model 1: ~ COMPERA_number_common
+ Model 2: ~ COMPERA_number_common + panel_score
+   loglik  Chisq Df Pr(&gt;|Chi|)
+1 -8.5543                     
+2 -7.6616 1.7854  1     0.1815</code></pre>
+<pre class="r"><code>cox_table_3y &lt;- bind_rows(
+  tidy(m_compera_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;COMPERA&quot;),
+  tidy(m_score_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;Protein score&quot;),
+  tidy(m_combined_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;COMPERA + protein score&quot;)
+)
+
+cox_table_3y</code></pre>
+<pre><code># A tibble: 4 × 8
+  term             estimate std.error statistic p.value conf.low conf.high Model
+  &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;
+1 COMPERA_number_…     5.80     0.926      1.90  0.0577    0.944     35.6  COMP…
+2 panel_score          3.06     0.455      2.46  0.0140    1.25       7.46 Prot…
+3 COMPERA_number_…     4.55     0.986      1.53  0.125     0.657     31.4  COMP…
+4 panel_score          1.92     0.488      1.33  0.182     0.736      4.99 COMP…</code></pre>
+<pre class="r"><code>write.csv(cox_table_3y,
+          here::here(output_dir_data, &quot;Cox_models_Zurich_3year.csv&quot;),
+          row.names = FALSE)</code></pre>
+</div>
+<div id="bootstrap-c-index-and-c-index-differences---3-years"
+class="section level2">
+<h2>Bootstrap C-index and C-index differences - 3 years</h2>
+<pre class="r"><code>set.seed(30)
+
+B_surv_3y &lt;- 2000
+
+boot_cindex_3y &lt;- matrix(
+  NA_real_,
+  nrow = B_surv_3y,
+  ncol = 3,
+  dimnames = list(NULL, c(&quot;COMPERA&quot;, &quot;Score&quot;, &quot;Combined&quot;))
+)
+
+for (b in seq_len(B_surv_3y)){
+  idx &lt;- sample(seq_len(nrow(df_surv_z_3y)), replace = TRUE)
+  dd &lt;- df_surv_z_3y[idx, , drop = FALSE]
+
+  if (length(unique(dd$event_3y)) &lt; 2) next
+
+  tmp &lt;- tryCatch({
+    m0 &lt;- coxph(Surv(time_days_3y, event_3y) ~ COMPERA_number_common, data = dd)
+    m1 &lt;- coxph(Surv(time_days_3y, event_3y) ~ panel_score, data = dd)
+    m2 &lt;- coxph(Surv(time_days_3y, event_3y) ~ COMPERA_number_common + panel_score, data = dd)
+
+    c(
+      unname(summary(m0)$concordance[1]),
+      unname(summary(m1)$concordance[1]),
+      unname(summary(m2)$concordance[1])
+    )
+  }, error = function(e) c(NA, NA, NA))
+
+  boot_cindex_3y[b, ] &lt;- tmp
+}
+
+cindex_table_3y &lt;- data.frame(
+  Model = c(&quot;COMPERA&quot;, &quot;Protein score&quot;, &quot;COMPERA + protein score&quot;),
+  C_index = c(c_compera_3y, c_score_3y, c_combined_3y),
+  CI_low = apply(boot_cindex_3y, 2, quantile, probs = 0.025, na.rm = TRUE),
+  CI_high = apply(boot_cindex_3y, 2, quantile, probs = 0.975, na.rm = TRUE)
+)
+
+boot_delta_score_3y &lt;- boot_cindex_3y[, &quot;Score&quot;] - boot_cindex_3y[, &quot;COMPERA&quot;]
+boot_delta_combined_3y &lt;- boot_cindex_3y[, &quot;Combined&quot;] - boot_cindex_3y[, &quot;COMPERA&quot;]
+
+delta_cindex_table_3y &lt;- data.frame(
+  Comparison = c(
+    &quot;Protein score - COMPERA&quot;,
+    &quot;COMPERA + protein score - COMPERA&quot;
+  ),
+  Delta_C = c(
+    c_score_3y - c_compera_3y,
+    c_combined_3y - c_compera_3y
+  ),
+  CI_low = c(
+    quantile(boot_delta_score_3y, 0.025, na.rm = TRUE),
+    quantile(boot_delta_combined_3y, 0.025, na.rm = TRUE)
+  ),
+  CI_high = c(
+    quantile(boot_delta_score_3y, 0.975, na.rm = TRUE),
+    quantile(boot_delta_combined_3y, 0.975, na.rm = TRUE)
+  )
+)
+
+cindex_table_3y</code></pre>
+<pre><code>                           Model   C_index    CI_low   CI_high
+COMPERA                  COMPERA 0.8705882 0.7197500 0.9621212
+Score              Protein score 0.7647059 0.5300211 1.0000000
+Combined COMPERA + protein score 0.8941176 0.7901583 1.0000000</code></pre>
+<pre class="r"><code>delta_cindex_table_3y</code></pre>
+<pre><code>                         Comparison     Delta_C      CI_low   CI_high
+1           Protein score - COMPERA -0.10588235 -0.37500000 0.2548696
+2 COMPERA + protein score - COMPERA  0.02352941 -0.05153313 0.2556544</code></pre>
+<pre class="r"><code>write.csv(cindex_table_3y,
+          here::here(output_dir_data, &quot;Cindex_models_Zurich_3year.csv&quot;),
+          row.names = FALSE)
+
+write.csv(delta_cindex_table_3y,
+          here::here(output_dir_data, &quot;Cindex_differences_Zurich_3year.csv&quot;),
+          row.names = FALSE)
+
+cox.zph(m_combined_3y)</code></pre>
+<pre><code>                      chisq df     p
+COMPERA_number_common  1.00  1 0.317
+panel_score            5.33  1 0.021
+GLOBAL                 6.93  2 0.031</code></pre>
+</div>
+<div id="prognostic-plots---3-years" class="section level2">
+<h2>Prognostic plots - 3 years</h2>
+<pre class="r"><code>forest_df_3y &lt;- bind_rows(
+  tidy(m_compera_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;COMPERA only&quot;),
+  tidy(m_score_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;Score only&quot;),
+  tidy(m_combined_3y, exponentiate = TRUE, conf.int = TRUE) %&gt;% mutate(Model = &quot;Combined&quot;)
+) %&gt;%
+  mutate(
+    Label = case_when(
+      Model == &quot;COMPERA only&quot; &amp; term == &quot;COMPERA_number_common&quot; ~ &quot;COMPERA&quot;,
+      Model == &quot;Score only&quot; &amp; term == &quot;panel_score&quot; ~ &quot;Protein score&quot;,
+      Model == &quot;Combined&quot; &amp; term == &quot;COMPERA_number_common&quot; ~ &quot;COMPERA | combined&quot;,
+      Model == &quot;Combined&quot; &amp; term == &quot;panel_score&quot; ~ &quot;Protein score | combined&quot;,
+      TRUE ~ term
+    )
+  )
+
+p_cox_forest_3y &lt;- ggplot(forest_df_3y, aes(estimate, Label)) +
+  geom_vline(xintercept = 1, linetype = 2, color = &quot;grey65&quot;) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.18) +
+  geom_point(size = 2.6) +
+  scale_x_log10() +
+  labs(x = &quot;Hazard ratio&quot;, y = NULL, title = &quot;3-year all-cause mortality&quot;) +
+  theme_classic(base_size = 11)
+
+p_cox_forest_3y</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/cox_forest_3y-1.png" width="2040" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Cox_forest_Zurich_3year.png&quot;),
+       p_cox_forest_3y, width = 6.8, height = 4.8, dpi = 300)</code></pre>
+<pre class="r"><code>p_cindex_3y &lt;- cindex_table_3y %&gt;%
+  mutate(Model = factor(Model, levels = rev(Model))) %&gt;%
+  ggplot(aes(C_index, Model)) +
+  geom_errorbarh(aes(xmin = CI_low, xmax = CI_high), height = 0.15) +
+  geom_point(size = 3) +
+  coord_cartesian(xlim = c(0.5, 1)) +
+  labs(x = &quot;C-index&quot;, y = NULL, title = &quot;3-year model discrimination&quot;) +
+  theme_classic(base_size = 11)
+
+p_delta_cindex_3y &lt;- delta_cindex_table_3y %&gt;%
+  mutate(Comparison = factor(Comparison, levels = rev(Comparison))) %&gt;%
+  ggplot(aes(Delta_C, Comparison)) +
+  geom_vline(xintercept = 0, linetype = 2, color = &quot;grey65&quot;) +
+  geom_errorbarh(aes(xmin = CI_low, xmax = CI_high), height = 0.15) +
+  geom_point(size = 3) +
+  labs(x = &quot;Delta C-index&quot;, y = NULL, title = &quot;Difference from COMPERA&quot;) +
+  theme_classic(base_size = 11)
+
+p_cindex_3y + p_delta_cindex_3y</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/cindex_plots_3y-1.png" width="3000" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Cindex_and_delta_Zurich_3year.png&quot;),
+       p_cindex_3y + p_delta_cindex_3y, width = 10, height = 4.2, dpi = 300)</code></pre>
+<pre class="r"><code>Figure5_3y &lt;- (p_score_compera | p_clinical_heatmap) /
+  (p_cox_forest_3y | p_cindex_3y) /
+  (p_delta_cindex_3y | plot_spacer()) +
+  plot_annotation(tag_levels = &quot;A&quot;)
+
+Figure5_3y</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/figure5_prognosis_3y-1.png" width="3300" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Figure5_COMPERA_mortality_3year.png&quot;),
+       Figure5_3y, width = 11, height = 10, dpi = 300)</code></pre>
+</div>
+<div id="kaplan-meier-plot---3-years" class="section level2">
+<h2>Kaplan-Meier plot - 3 years</h2>
+<pre class="r"><code>km_df_3y &lt;- df_surv_z_3y %&gt;%
+  mutate(
+    score_group = ifelse(panel_score &gt;= median(panel_score), &quot;High score&quot;, &quot;Low score&quot;),
+    score_group = factor(score_group, levels = c(&quot;Low score&quot;, &quot;High score&quot;))
+  )
+
+km_fit_3y &lt;- survfit(
+  Surv(time_days_3y, event_3y) ~ score_group,
+  data = km_df_3y
+)
+
+logrank_p_3y &lt;- 1 - pchisq(
+  survdiff(Surv(time_days_3y, event_3y) ~ score_group, data = km_df_3y)$chisq,
+  df = 1
+)
+
+plot(
+  km_fit_3y,
+  col = c(&quot;#004C8C&quot;, &quot;#A63A2A&quot;),
+  lwd = 2,
+  xlim = c(0, followup_limit_days),
+  xaxt = &quot;n&quot;,
+  xlab = &quot;Follow-up (years)&quot;,
+  ylab = &quot;Survival probability&quot;,
+  main = &quot;3-year survival by protein score&quot;
+)
+
+axis(
+  1,
+  at = c(0, 365.25, 2 * 365.25, 3 * 365.25),
+  labels = c(&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;)
+)
+
+legend(
+  &quot;bottomleft&quot;,
+  legend = levels(km_df_3y$score_group),
+  col = c(&quot;#004C8C&quot;, &quot;#A63A2A&quot;),
+  lwd = 2,
+  bty = &quot;n&quot;
+)
+
+mtext(
+  paste0(&quot;Log-rank p = &quot;, signif(logrank_p_3y, 3)),
+  side = 3, adj = 1, line = 0.2, cex = 0.9
+)</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/km_score_3y-1.png" width="1740" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>png(
+  here::here(output_dir_figs, &quot;Supplement_KM_score_Zurich_3year.png&quot;),
+  width = 5.8, height = 4.8, units = &quot;in&quot;, res = 300
+)
+
+plot(
+  km_fit_3y,
+  col = c(&quot;#004C8C&quot;, &quot;#A63A2A&quot;),
+  lwd = 2,
+  xlim = c(0, followup_limit_days),
+  xaxt = &quot;n&quot;,
+  xlab = &quot;Follow-up (years)&quot;,
+  ylab = &quot;Survival probability&quot;,
+  main = &quot;3-year survival by protein score&quot;
+)
+
+axis(
+  1,
+  at = c(0, 365.25, 2 * 365.25, 3 * 365.25),
+  labels = c(&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;)
+)
+
+legend(
+  &quot;bottomleft&quot;,
+  legend = levels(km_df_3y$score_group),
+  col = c(&quot;#004C8C&quot;, &quot;#A63A2A&quot;),
+  lwd = 2,
+  bty = &quot;n&quot;
+)
+
+mtext(
+  paste0(&quot;Log-rank p = &quot;, signif(logrank_p_3y, 3)),
+  side = 3, adj = 1, line = 0.2, cex = 0.9
+)
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+<div id="supplementary-protein-score-and-nt-probnp"
+class="section level1">
+<h1>Supplementary: protein score and NT-proBNP</h1>
+<p>This section compares the final protein score with NT-proBNP as a
+marker of impaired RV-PA coupling and explores whether the protein score
+can replace or complement NT-proBNP within the clinical components used
+by COMPERA 2.0. These analyses are exploratory and are intended for
+supplementary material.</p>
+<div id="protein-score-and-nt-probnp-vs-tapsespap"
+class="section level2">
+<h2>Protein score and NT-proBNP vs TAPSE/sPAP</h2>
+<p>For direct comparison, the same SSc-PAH patients with available
+TAPSE/sPAP, protein score and NT-proBNP are used for both
+biomarkers.</p>
+<pre class="r"><code>rvpa_biomarker_df &lt;- bind_rows(
+  score_p %&gt;% transmute(Cohort = &quot;Poland&quot;, Barcode, TAPSE_sPAP, panel_score, NTproBNP_common),
+  score_z %&gt;% transmute(Cohort = &quot;Zurich&quot;, Barcode, TAPSE_sPAP, panel_score, NTproBNP_common)
+) %&gt;%
+  filter(!is.na(TAPSE_sPAP), !is.na(panel_score), !is.na(NTproBNP_common), NTproBNP_common &gt; 0) %&gt;%
+  mutate(y_impaired = ifelse(TAPSE_sPAP &lt;= 0.32, 1, 0), log2_NTproBNP = log2(NTproBNP_common))
+
+table(rvpa_biomarker_df$Cohort, rvpa_biomarker_df$y_impaired)</code></pre>
+<pre><code>        
+          0  1
+  Poland 14 24
+  Zurich 20  6</code></pre>
+<pre class="r"><code>nt_cor_results &lt;- list()
+counter &lt;- 1
+
+for (cohort in c(&quot;Poland&quot;, &quot;Zurich&quot;)){
+  dd &lt;- rvpa_biomarker_df %&gt;% filter(Cohort == cohort)
+
+  ct_score &lt;- cor.test(dd$TAPSE_sPAP, dd$panel_score, method = &quot;spearman&quot;, exact = FALSE)
+  ct_nt &lt;- cor.test(dd$TAPSE_sPAP, dd$log2_NTproBNP, method = &quot;spearman&quot;, exact = FALSE)
+
+  nt_cor_results[[counter]] &lt;- data.frame(Cohort = cohort, Biomarker = &quot;Protein score&quot;, n = nrow(dd), rho = unname(ct_score$estimate), p = ct_score$p.value)
+  counter &lt;- counter + 1
+  nt_cor_results[[counter]] &lt;- data.frame(Cohort = cohort, Biomarker = &quot;NT-proBNP&quot;, n = nrow(dd), rho = unname(ct_nt$estimate), p = ct_nt$p.value)
+  counter &lt;- counter + 1
+}
+
+nt_cor_results &lt;- bind_rows(nt_cor_results)
+nt_cor_results</code></pre>
+<pre><code>  Cohort     Biomarker  n        rho            p
+1 Poland Protein score 38 -0.7164195 4.233870e-07
+2 Poland     NT-proBNP 38 -0.7874378 4.494784e-09
+3 Zurich Protein score 26 -0.5180373 6.710864e-03
+4 Zurich     NT-proBNP 26 -0.6233544 6.689390e-04</code></pre>
+<pre class="r"><code>write.csv(nt_cor_results, here::here(output_dir_data, &quot;Supplement_protein_score_vs_NTproBNP_correlations.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>nt_biomarker_long &lt;- bind_rows(
+  rvpa_biomarker_df %&gt;% transmute(Cohort, Barcode, TAPSE_sPAP, Biomarker = &quot;Protein score&quot;, Value = panel_score),
+  rvpa_biomarker_df %&gt;% transmute(Cohort, Barcode, TAPSE_sPAP, Biomarker = &quot;NT-proBNP&quot;, Value = log2_NTproBNP)
+)
+
+nt_cor_labels &lt;- nt_cor_results %&gt;% mutate(label = paste0(&quot;rho = &quot;, round(rho, 2), &quot;\np = &quot;, signif(p, 2)))
+
+p_nt_cor &lt;- ggplot(nt_biomarker_long, aes(TAPSE_sPAP, Value)) +
+  geom_point(size = 1.6, alpha = 0.75) + geom_smooth(method = &quot;lm&quot;, se = FALSE, linewidth = 0.7) +
+  facet_grid(Cohort ~ Biomarker, scales = &quot;free_y&quot;) +
+  geom_text(data = nt_cor_labels, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE, hjust = -0.05, vjust = 1.1, size = 3.4) +
+  labs(x = &quot;TAPSE/sPAP&quot;, y = &quot;Protein score / log2 NT-proBNP&quot;, title = &quot;Association with TAPSE/sPAP&quot;) +
+  theme_classic(base_size = 11)
+
+p_nt_cor</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/supplementary_ntprobnp_correlation_plot-1.png" width="2850" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Supplement_NTproBNP_TAPSE_sPAP_correlations.png&quot;), p_nt_cor, width = 9.5, height = 6.2, dpi = 300)</code></pre>
+</div>
+<div id="discrimination-of-impaired-rv-pa-coupling"
+class="section level2">
+<h2>Discrimination of impaired RV-PA coupling</h2>
+<pre class="r"><code>nt_auc_results &lt;- list()
+nt_delong_results &lt;- list()
+nt_roc_score &lt;- list()
+nt_roc_nt &lt;- list()
+
+for (cohort in c(&quot;Poland&quot;, &quot;Zurich&quot;)){
+  dd &lt;- rvpa_biomarker_df %&gt;% filter(Cohort == cohort)
+
+  roc_score &lt;- pROC::roc(dd$y_impaired, dd$panel_score, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE, ci = TRUE)
+  roc_nt &lt;- pROC::roc(dd$y_impaired, dd$NTproBNP_common, levels = c(0, 1), direction = &quot;&lt;&quot;, quiet = TRUE, ci = TRUE)
+  ci_score &lt;- pROC::ci.auc(roc_score)
+  ci_nt &lt;- pROC::ci.auc(roc_nt)
+  test_auc &lt;- pROC::roc.test(roc_score, roc_nt, paired = TRUE, method = &quot;delong&quot;)
+
+  nt_auc_results[[cohort]] &lt;- bind_rows(
+    data.frame(Cohort = cohort, Biomarker = &quot;Protein score&quot;, n = nrow(dd), AUC = as.numeric(pROC::auc(roc_score)), CI_low = as.numeric(ci_score[1]), CI_high = as.numeric(ci_score[3])),
+    data.frame(Cohort = cohort, Biomarker = &quot;NT-proBNP&quot;, n = nrow(dd), AUC = as.numeric(pROC::auc(roc_nt)), CI_low = as.numeric(ci_nt[1]), CI_high = as.numeric(ci_nt[3]))
+  )
+
+  nt_delong_results[[cohort]] &lt;- data.frame(Cohort = cohort, Delta_AUC = as.numeric(pROC::auc(roc_score) - pROC::auc(roc_nt)), DeLong_p = test_auc$p.value)
+  nt_roc_score[[cohort]] &lt;- roc_score
+  nt_roc_nt[[cohort]] &lt;- roc_nt
+}
+
+nt_auc_results &lt;- bind_rows(nt_auc_results)
+nt_delong_results &lt;- bind_rows(nt_delong_results)
+nt_auc_results</code></pre>
+<pre><code>  Cohort     Biomarker  n       AUC    CI_low   CI_high
+1 Poland Protein score 38 0.9642857 0.9035488 1.0000000
+2 Poland     NT-proBNP 38 0.9136905 0.8274477 0.9999332
+3 Zurich Protein score 26 0.9416667 0.8502815 1.0000000
+4 Zurich     NT-proBNP 26 0.9583333 0.8887147 1.0000000</code></pre>
+<pre class="r"><code>nt_delong_results</code></pre>
+<pre><code>  Cohort   Delta_AUC  DeLong_p
+1 Poland  0.05059524 0.3682319
+2 Zurich -0.01666667 0.7638997</code></pre>
+<pre class="r"><code>write.csv(nt_auc_results, here::here(output_dir_data, &quot;Supplement_protein_score_vs_NTproBNP_AUC.csv&quot;), row.names = FALSE)
+write.csv(nt_delong_results, here::here(output_dir_data, &quot;Supplement_protein_score_vs_NTproBNP_DeLong.csv&quot;), row.names = FALSE)</code></pre>
+<pre class="r"><code>nt_roc_df &lt;- bind_rows(
+  data.frame(Cohort = &quot;Poland&quot;, Biomarker = &quot;Protein score&quot;, FPR = 1 - nt_roc_score[[&quot;Poland&quot;]]$specificities, Sensitivity = nt_roc_score[[&quot;Poland&quot;]]$sensitivities),
+  data.frame(Cohort = &quot;Poland&quot;, Biomarker = &quot;NT-proBNP&quot;, FPR = 1 - nt_roc_nt[[&quot;Poland&quot;]]$specificities, Sensitivity = nt_roc_nt[[&quot;Poland&quot;]]$sensitivities),
+  data.frame(Cohort = &quot;Zurich&quot;, Biomarker = &quot;Protein score&quot;, FPR = 1 - nt_roc_score[[&quot;Zurich&quot;]]$specificities, Sensitivity = nt_roc_score[[&quot;Zurich&quot;]]$sensitivities),
+  data.frame(Cohort = &quot;Zurich&quot;, Biomarker = &quot;NT-proBNP&quot;, FPR = 1 - nt_roc_nt[[&quot;Zurich&quot;]]$specificities, Sensitivity = nt_roc_nt[[&quot;Zurich&quot;]]$sensitivities)
+) %&gt;% arrange(Cohort, Biomarker, FPR, Sensitivity)
+
+p_nt_roc &lt;- ggplot(nt_roc_df, aes(FPR, Sensitivity, color = Biomarker)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;grey75&quot;) + geom_step(direction = &quot;hv&quot;, linewidth = 0.9) +
+  facet_wrap(~Cohort) + coord_equal() + scale_color_manual(values = c(&quot;Protein score&quot; = &quot;#A63A2A&quot;, &quot;NT-proBNP&quot; = &quot;#004C8C&quot;)) +
+  labs(x = &quot;1 - Specificity&quot;, y = &quot;Sensitivity&quot;, title = &quot;Impaired RV-PA coupling&quot;) +
+  theme_classic(base_size = 11) + theme(legend.position = &quot;bottom&quot;)
+
+p_nt_roc</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/supplementary_ntprobnp_roc-1.png" width="2550" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(here::here(output_dir_figs, &quot;Supplement_NTproBNP_RVPA_ROC.png&quot;), p_nt_roc, width = 8.5, height = 4.2, dpi = 300)</code></pre>
+</div>
+<div
+id="nt-probnp-replacement-within-the-compera-clinical-components---3-years"
+class="section level2">
+<h2>NT-proBNP replacement within the COMPERA clinical components - 3
+years</h2>
+<p>This repeats the NT-proBNP replacement/complement analysis using the
+same 3-year mortality horizon.</p>
+</div>
+<div id="prepare-common-zurich-cohort" class="section level2">
+<h2>Prepare common Zurich cohort</h2>
+<pre class="r"><code>compera_components_z_3y &lt;- score_z %&gt;%
+  mutate(
+    time_days_original = as.numeric(DeathDAYS),
+    event_raw = tolower(trimws(as.character(Death))),
+    event_original = case_when(
+      event_raw %in% c(&quot;yes&quot;, &quot;y&quot;, &quot;true&quot;, &quot;1&quot;, &quot;dead&quot;, &quot;death&quot;) ~ 1,
+      event_raw %in% c(&quot;no&quot;, &quot;n&quot;, &quot;false&quot;, &quot;0&quot;, &quot;alive&quot;) ~ 0,
+      TRUE ~ NA_real_
+    ),
+    log2_NTproBNP = ifelse(NTproBNP_common &gt; 0, log2(NTproBNP_common), NA_real_),
+    SixMWD_100m = SixMWD / 100
+  ) %&gt;%
+  filter(
+    !is.na(time_days_original),
+    !is.na(event_original),
+    !is.na(WHO_FC),
+    !is.na(SixMWD_100m),
+    !is.na(log2_NTproBNP),
+    !is.na(panel_score),
+    !is.na(COMPERA_number_common)
+  ) %&gt;%
+  mutate(
+    time_days_3y = pmin(time_days_original, followup_limit_days),
+    event_3y = ifelse(event_original == 1 &amp; time_days_original &lt;= followup_limit_days, 1, 0)
+  )
+
+cat(
+  &quot;3-year COMPERA component analysis n =&quot;, nrow(compera_components_z_3y),
+  &quot;deaths within 3 years =&quot;, sum(compera_components_z_3y$event_3y), &quot;\n&quot;
+)</code></pre>
+<pre><code>3-year COMPERA component analysis n = 22 deaths within 3 years = 3 </code></pre>
+</div>
+<div id="compera-component-models---3-years" class="section level2">
+<h2>COMPERA component models - 3 years</h2>
+<pre class="r"><code>m_components_nt_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + log2_NTproBNP,
+  data = compera_components_z_3y, x = TRUE
+)
+
+m_components_protein_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + panel_score,
+  data = compera_components_z_3y, x = TRUE
+)
+
+m_components_both_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + log2_NTproBNP + panel_score,
+  data = compera_components_z_3y, x = TRUE
+)
+
+m_compera_same_n_3y &lt;- coxph(
+  Surv(time_days_3y, event_3y) ~ COMPERA_number_common,
+  data = compera_components_z_3y, x = TRUE
+)
+
+c_compera_same_n_3y &lt;- unname(summary(m_compera_same_n_3y)$concordance[1])
+c_nt_3y &lt;- unname(summary(m_components_nt_3y)$concordance[1])
+c_protein_component_3y &lt;- unname(summary(m_components_protein_3y)$concordance[1])
+c_both_component_3y &lt;- unname(summary(m_components_both_3y)$concordance[1])
+
+component_models_3y &lt;- data.frame(
+  Model = c(
+    &quot;COMPERA 2.0 risk stratum&quot;,
+    &quot;WHO-FC + 6MWD + NT-proBNP&quot;,
+    &quot;WHO-FC + 6MWD + protein score&quot;,
+    &quot;WHO-FC + 6MWD + both biomarkers&quot;
+  ),
+  C_index = c(
+    c_compera_same_n_3y,
+    c_nt_3y,
+    c_protein_component_3y,
+    c_both_component_3y
+  )
+)
+
+component_models_3y</code></pre>
+<pre><code>                            Model   C_index
+1        COMPERA 2.0 risk stratum 0.8965517
+2       WHO-FC + 6MWD + NT-proBNP 0.9482759
+3   WHO-FC + 6MWD + protein score 0.9482759
+4 WHO-FC + 6MWD + both biomarkers 1.0000000</code></pre>
+<pre class="r"><code>lrt_add_protein_3y &lt;- anova(
+  m_components_nt_3y,
+  m_components_both_3y,
+  test = &quot;LRT&quot;
+)
+
+lrt_add_ntprobnp_3y &lt;- anova(
+  m_components_protein_3y,
+  m_components_both_3y,
+  test = &quot;LRT&quot;
+)
+
+lrt_add_protein_3y</code></pre>
+<pre><code>Analysis of Deviance Table
+ Cox model: response is  Surv(time_days_3y, event_3y)
+ Model 1: ~ WHO_FC + SixMWD_100m + log2_NTproBNP
+ Model 2: ~ WHO_FC + SixMWD_100m + log2_NTproBNP + panel_score
+   loglik  Chisq Df Pr(&gt;|Chi|)   
+1 -4.0049                        
+2  0.0000 8.0097  1   0.004653 **
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>lrt_add_ntprobnp_3y</code></pre>
+<pre><code>Analysis of Deviance Table
+ Cox model: response is  Surv(time_days_3y, event_3y)
+ Model 1: ~ WHO_FC + SixMWD_100m + panel_score
+ Model 2: ~ WHO_FC + SixMWD_100m + log2_NTproBNP + panel_score
+  loglik Chisq Df Pr(&gt;|Chi|)   
+1 -4.994                       
+2  0.000 9.988  1   0.001576 **
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>write.csv(
+  component_models_3y,
+  here::here(output_dir_data, &quot;Supplement_COMPERA_biomarker_component_Cindex_3year.csv&quot;),
+  row.names = FALSE
+)</code></pre>
+</div>
+<div id="bootstrap-compera-component-c-index---3-years"
+class="section level2">
+<h2>Bootstrap COMPERA component C-index - 3 years</h2>
+<pre class="r"><code>set.seed(402)
+
+B_components_3y &lt;- 2000
+
+boot_components_3y &lt;- matrix(
+  NA_real_,
+  nrow = B_components_3y,
+  ncol = 4,
+  dimnames = list(NULL, c(&quot;COMPERA&quot;, &quot;NTproBNP&quot;, &quot;Protein&quot;, &quot;Both&quot;))
+)
+
+for (b in seq_len(B_components_3y)){
+  idx &lt;- sample(seq_len(nrow(compera_components_z_3y)), replace = TRUE)
+  dd &lt;- compera_components_z_3y[idx, , drop = FALSE]
+
+  if (length(unique(dd$event_3y)) &lt; 2) next
+
+  vals &lt;- tryCatch({
+    m0 &lt;- coxph(Surv(time_days_3y, event_3y) ~ COMPERA_number_common, data = dd)
+    m1 &lt;- coxph(Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + log2_NTproBNP, data = dd)
+    m2 &lt;- coxph(Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + panel_score, data = dd)
+    m3 &lt;- coxph(Surv(time_days_3y, event_3y) ~ WHO_FC + SixMWD_100m + log2_NTproBNP + panel_score, data = dd)
+
+    c(
+      unname(summary(m0)$concordance[1]),
+      unname(summary(m1)$concordance[1]),
+      unname(summary(m2)$concordance[1]),
+      unname(summary(m3)$concordance[1])
+    )
+  }, error = function(e) rep(NA_real_, 4))
+
+  boot_components_3y[b, ] &lt;- vals
+}
+
+component_cindex_ci_3y &lt;- data.frame(
+  Model = c(
+    &quot;COMPERA 2.0 risk stratum&quot;,
+    &quot;WHO-FC + 6MWD + NT-proBNP&quot;,
+    &quot;WHO-FC + 6MWD + protein score&quot;,
+    &quot;WHO-FC + 6MWD + both biomarkers&quot;
+  ),
+  C_index = c(
+    c_compera_same_n_3y,
+    c_nt_3y,
+    c_protein_component_3y,
+    c_both_component_3y
+  ),
+  CI_low = apply(boot_components_3y, 2, quantile, 0.025, na.rm = TRUE),
+  CI_high = apply(boot_components_3y, 2, quantile, 0.975, na.rm = TRUE)
+)
+
+boot_delta_replace_3y &lt;- boot_components_3y[, &quot;Protein&quot;] - boot_components_3y[, &quot;NTproBNP&quot;]
+boot_delta_add_3y &lt;- boot_components_3y[, &quot;Both&quot;] - boot_components_3y[, &quot;NTproBNP&quot;]
+
+component_delta_3y &lt;- data.frame(
+  Comparison = c(
+    &quot;Protein score instead of NT-proBNP&quot;,
+    &quot;Protein score added to NT-proBNP&quot;
+  ),
+  Delta_C = c(
+    c_protein_component_3y - c_nt_3y,
+    c_both_component_3y - c_nt_3y
+  ),
+  CI_low = c(
+    quantile(boot_delta_replace_3y, 0.025, na.rm = TRUE),
+    quantile(boot_delta_add_3y, 0.025, na.rm = TRUE)
+  ),
+  CI_high = c(
+    quantile(boot_delta_replace_3y, 0.975, na.rm = TRUE),
+    quantile(boot_delta_add_3y, 0.975, na.rm = TRUE)
+  )
+)
+
+component_cindex_ci_3y</code></pre>
+<pre><code>                                   Model   C_index    CI_low   CI_high
+COMPERA         COMPERA 2.0 risk stratum 0.8965517 0.8055556 0.9761905
+NTproBNP       WHO-FC + 6MWD + NT-proBNP 0.9482759 0.8991807 1.0000000
+Protein    WHO-FC + 6MWD + protein score 0.9482759 0.8485056 1.0000000
+Both     WHO-FC + 6MWD + both biomarkers 1.0000000 1.0000000 1.0000000</code></pre>
+<pre class="r"><code>component_delta_3y</code></pre>
+<pre><code>                          Comparison    Delta_C     CI_low   CI_high
+1 Protein score instead of NT-proBNP 0.00000000 -0.1428571 0.0000000
+2   Protein score added to NT-proBNP 0.05172414  0.0000000 0.1008193</code></pre>
+<pre class="r"><code>write.csv(
+  component_cindex_ci_3y,
+  here::here(output_dir_data, &quot;Supplement_COMPERA_biomarker_component_Cindex_bootstrap_3year.csv&quot;),
+  row.names = FALSE
+)
+
+write.csv(
+  component_delta_3y,
+  here::here(output_dir_data, &quot;Supplement_COMPERA_biomarker_component_delta_Cindex_3year.csv&quot;),
+  row.names = FALSE
+)</code></pre>
+</div>
+<div id="compera-component-plots---3-years" class="section level2">
+<h2>COMPERA component plots - 3 years</h2>
+<pre class="r"><code>p_component_cindex_3y &lt;- component_cindex_ci_3y %&gt;%
+  mutate(Model = factor(Model, levels = rev(Model))) %&gt;%
+  ggplot(aes(C_index, Model)) +
+  geom_errorbarh(aes(xmin = CI_low, xmax = CI_high), height = 0.15) +
+  geom_point(size = 3) +
+  coord_cartesian(xlim = c(0.45, 1)) +
+  labs(x = &quot;C-index&quot;, y = NULL, title = &quot;3-year COMPERA biomarker component analysis&quot;) +
+  theme_classic(base_size = 11)
+
+p_component_delta_3y &lt;- component_delta_3y %&gt;%
+  mutate(Comparison = factor(Comparison, levels = rev(Comparison))) %&gt;%
+  ggplot(aes(Delta_C, Comparison)) +
+  geom_vline(xintercept = 0, linetype = 2, color = &quot;grey65&quot;) +
+  geom_errorbarh(aes(xmin = CI_low, xmax = CI_high), height = 0.15) +
+  geom_point(size = 3) +
+  labs(x = &quot;Delta C-index&quot;, y = NULL, title = &quot;Difference from NT-proBNP model&quot;) +
+  theme_classic(base_size = 11)
+
+p_component_cindex_3y | p_component_delta_3y</code></pre>
+<p><img src="figure/SSc_PAH_serum_proteomics.Rmd/supplementary_compera_components_plot_3y-1.png" width="3150" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(output_dir_figs, &quot;Supplement_COMPERA_biomarker_component_analysis_3year.png&quot;),
+  p_component_cindex_3y | p_component_delta_3y,
+  width = 10.5, height = 4.5, dpi = 300
+)</code></pre>
+</div>
+</div>
+<div id="save-important-objects" class="section level1">
+<h1>Save important objects</h1>
+<pre class="r"><code>qs_save(list(
+  data_z = data_z, data_p = data_p, clin_z = clin_z, clin_p = clin_p,
+  DE_group_z = DE_group_z, DE_group_p = DE_group_p, DE_coupling_z = DE_coupling_z, DE_coupling_p = DE_coupling_p,
+  p_dev = p_dev, z_val = z_val, candidate_ranking_p = candidate_ranking_p, final_panel = final_panel,
+  candidate_proteins = candidate_proteins, final_panel_choice = final_panel_choice, stability50 = stability50,
+  panel_model = panel_model, pred_p_dev = pred_p_dev, pred_p_final = pred_p_final, pred_z_final = pred_z_final,
+  lasso_cv_summary = lasso_cv$summary, lasso_delta_summary = lasso_delta_summary, panel_auc = panel_auc, clinical_cor = clinical_cor,
+  df_surv_z_3y = df_surv_z_3y, survival_3y_summary = survival_3y_summary,
+  cox_table_3y = cox_table_3y, cindex_table_3y = cindex_table_3y, delta_cindex_table_3y = delta_cindex_table_3y,
+  lrt_score_added_3y = lrt_score_added_3y,
+  nt_cor_results = nt_cor_results, nt_auc_results = nt_auc_results, nt_delong_results = nt_delong_results,
+  component_models_3y = component_models_3y, component_cindex_ci_3y = component_cindex_ci_3y,
+  component_delta_3y = component_delta_3y,
+  lrt_add_protein_3y = lrt_add_protein_3y, lrt_add_ntprobnp_3y = lrt_add_ntprobnp_3y
+), here::here(output_dir_data, &quot;SSc_PAH_serum_proteomics_top50_k5_3year_main_objects.qs2&quot;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Etc/UTC
+tzcode source: system (glibc)
+
+attached base packages:
+[1] grid      stats4    stats     graphics  grDevices datasets  utils    
+[8] methods   base     
+
+other attached packages:
+ [1] broom_1.0.11                survival_3.8-3             
+ [3] pheatmap_1.0.13             pROC_1.19.0.1              
+ [5] glmnet_4.1-10               Matrix_1.6-5               
+ [7] EnhancedVolcano_1.29.1      ggrepel_0.9.6              
+ [9] limma_3.66.0                SummarizedExperiment_1.40.0
+[11] Biobase_2.70.0              GenomicRanges_1.62.0       
+[13] Seqinfo_1.0.0               IRanges_2.44.0             
+[15] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+[17] generics_0.1.4              MatrixGenerics_1.22.0      
+[19] matrixStats_1.5.0           qs2_0.1.7                  
+[21] patchwork_1.3.2             scales_1.4.0               
+[23] ggplot2_4.0.1               tibble_3.3.0               
+[25] tidyr_1.3.1                 dplyr_1.1.4                
+[27] readxl_1.4.5                readr_2.1.6                
+[29] here_1.0.2                 
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1      farver_2.1.2          S7_0.2.1             
+ [4] fastmap_1.2.0         promises_1.5.0        stringfish_0.18.0    
+ [7] digest_0.6.39         lifecycle_1.0.4       statmod_1.5.1        
+[10] magrittr_2.0.4        compiler_4.5.2        rlang_1.1.6          
+[13] sass_0.4.10           tools_4.5.2           utf8_1.2.6           
+[16] yaml_2.3.11           knitr_1.50            labeling_0.4.3       
+[19] S4Arrays_1.10.1       DelayedArray_0.36.0   RColorBrewer_1.1-3   
+[22] abind_1.4-8           workflowr_1.7.2       withr_3.0.2          
+[25] purrr_1.2.0           git2r_0.36.2          MASS_7.3-65          
+[28] iterators_1.0.14      cli_3.6.5             rmarkdown_2.30       
+[31] ragg_1.5.0            otel_0.2.0            RcppParallel_5.1.11-1
+[34] rstudioapi_0.17.1     tzdb_0.5.0            cachem_1.1.0         
+[37] stringr_1.6.0         splines_4.5.2         BiocManager_1.30.27  
+[40] cellranger_1.1.0      XVector_0.50.0        vctrs_0.6.5          
+[43] jsonlite_2.0.0        hms_1.1.4             systemfonts_1.3.1    
+[46] foreach_1.5.2         jquerylib_0.1.4       glue_1.8.0           
+[49] codetools_0.2-20      stringi_1.8.7         gtable_0.3.6         
+[52] shape_1.4.6.1         later_1.4.4           pillar_1.11.1        
+[55] htmltools_0.5.9       R6_2.6.1              textshaping_1.0.4    
+[58] rprojroot_2.1.1       evaluate_1.0.5        lattice_0.22-7       
+[61] backports_1.5.0       renv_1.1.5            httpuv_1.6.16        
+[64] bslib_0.9.0           Rcpp_1.1.0            nlme_3.1-168         
+[67] SparseArray_1.10.4    mgcv_1.9-3            whisker_0.4.1        
+[70] xfun_0.56             fs_1.6.6              pkgconfig_2.0.3      </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
